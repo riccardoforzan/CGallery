@@ -19,7 +19,7 @@
 * <a href="https://github.com/android/compose-samples/blob/main/Owl">OWL Example</a>
 * <a href="https://github.com/andkulikov/compose-photoapp">Compose PhotoApp</a>
 * <a href="https://github.com/zsoltk/compose-pokedex">Jetpack Compose Pokedex</a>
-
+* <a href="https://github.com/vinaygaba/Learn-Jetpack-Compose-By-Example/blob/master/app/src/main/java/com/example/jetpackcompose/customview/ZoomableActivity.kt">Zoomable Activity</a>
 ____
 
 # TODO
