@@ -1,7 +1,7 @@
 # Progetto SE
 
 **Documentazione generale:**
-
+* <a href="https://developer.android.com/studio/preview">Android Studio Canary</a>
 * <a href="https://developer.android.com/jetpack">Android Jetpack</a>
 * <a href="https://developer.android.com/jetpack/compose/setup">Android Jetpack - Compose</a>
 * <a href="https://developer.android.com/jetpack/androidx/releases/compose">Compose</a>
