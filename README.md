@@ -1,7 +1,8 @@
 # Progetto SE
 
+Usare <a href="https://developer.android.com/studio/preview">Android Studio Canary</a>, versione utilizzata nello sviluppo: ARCTIC FOX (2020.3.1) CANARY 14
+
 **Documentazione generale:**
-* <a href="https://developer.android.com/studio/preview">Android Studio Canary</a>
 * <a href="https://developer.android.com/jetpack">Android Jetpack</a>
 * <a href="https://developer.android.com/jetpack/compose/setup">Android Jetpack - Compose</a>
 * <a href="https://developer.android.com/jetpack/androidx/releases/compose">Compose</a>
@@ -23,7 +24,7 @@
 ____
 
 # TODO
- * [ ] Richiedere accesso in lettura alle foto del sistema
+ * [x] Richiedere accesso in lettura alle foto del sistema
  * [ ] Progettare la view per la visione di tutte le foto
  * [ ] Progettare la view per la visione di una foto specifica
  * [ ] Progettare view per la creazione di tag
