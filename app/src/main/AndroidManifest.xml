@@ -21,11 +21,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ImageActivity"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Gallery.NoActionBar">
-        </activity>
     </application>
 
     <!--Permission to read photos from external storage-->

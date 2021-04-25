@@ -3,6 +3,7 @@ package com.epse.gallery
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +27,7 @@ import androidx.compose.ui.unit.dp
  * - Retrieve info to show from metadata
  */
 
-class ImageActivity : ComponentActivity() {
+class ImageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
