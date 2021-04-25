@@ -34,4 +34,4 @@ ____
  
  **Extra:**
 - Leggere dai metadata delle foto la posizione in cui sono state scattate e mostrare una mappa con dei segnaposti fissi sul luogo dove la foto è stata scattata
-- Implementare la ricerca per luogo tra le foto
+- Implementare la ricerca per luogo tra le  foto
