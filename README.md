@@ -22,11 +22,13 @@ Usare <a href="https://developer.android.com/studio/preview">Android Studio Cana
 * <a href="https://github.com/zsoltk/compose-pokedex">Jetpack Compose Pokedex</a>
 * <a href="https://github.com/vinaygaba/Learn-Jetpack-Compose-By-Example/blob/master/app/src/main/java/com/example/jetpackcompose/customview/ZoomableActivity.kt">Zoomable Activity</a>
 ____
+## Per 10/05:
+ * [ ] Sostituire Image con Box in DisplayImage 
+ * [ ] Lanciare i fragment alla pressione dell'immagine nel MainActivity
+ * [ ] ContentProvider per avere le immagini
 
 # TODO
- * [x] Richiedere accesso in lettura alle foto del sistema
- * [ ] Progettare la view per la visione di tutte le foto
- * [ ] Progettare la view per la visione di una foto specifica
+ * [ ] Richiedere accesso in lettura alle foto del sistema
  * [ ] Progettare view per la creazione di tag
  * [ ] Progettare view per l'assegnazione di tag ad una foto
  * [ ] Scrittura dei metadati su una foto (<a href="https://developer.android.com/reference/android/media/ExifInterface.html">Documentazione</a>)
