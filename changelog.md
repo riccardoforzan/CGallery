@@ -1,5 +1,4 @@
 # Changelog
-
 Comparing this project with an **empty composable activity project**,
 this file contains the names (and the relative path) of all the files that have been added or
 modified.
@@ -11,6 +10,7 @@ modified.
 
 ## Kotlin classes 
 * /app/src/main/java/com/epse/gallery/DisplayImage.kt
+* /app/src/main/java/com/epse/gallery/ImagesGrid.kt
 * /app/src/main/java/com/epse/gallery/MainActivity.kt
 
 ## Other
