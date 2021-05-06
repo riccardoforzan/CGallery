@@ -33,6 +33,15 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
         useIR = true
+        /**
+         * Add suppressKotlinVersionCompatibilityCheck to build the app
+         * despite the mismatch of Kotlin versions
+         */
+        freeCompilerArgs += [
+                "-Xallow-jvm-ir-dependencies",
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+        ]
     }
     buildFeatures {
         compose true
