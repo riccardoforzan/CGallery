@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             //ImagesGrid().ShowGridAllImages()
-            DisplayImage().ImageElement()
+            DisplayImage().MovingImage(painterResource(R.drawable.forest))
         }
     }
 
