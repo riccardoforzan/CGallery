@@ -1,8 +1,6 @@
 package com.epse.gallery
 
 import android.content.Context
-import android.database.Cursor
-import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -15,14 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
-import android.provider.MediaStore
 import android.util.Log
-import android.net.Uri
-import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.coil.rememberCoilPainter
 
 /**
@@ -31,26 +25,16 @@ import com.google.accompanist.coil.rememberCoilPainter
 class ImagesGrid(private val ctx: Context, private val navController: NavController) {
 
     /**
-     * Generates an array of Dummy Elements with number elements
-     * @param number: number of dummy items
-     * @return ArrayList of dummy items
+     * Shows a grid layout with random images fetched from https://picsum.photos/300/300
+     * This functions requires the internet access (see AndroidManifest.xml).
+     * This function uses the coil library to fetch images.
      */
-    private fun generateDummyArray(number: Int):ArrayList<Uri>{
-        val examplePhoto: Uri = Uri.parse("android.resource://com.epse.gallery/"
-                + R.drawable.forest)
-        Log.d("URI EXAMPLE",examplePhoto.toString())
-        val imagesURIs: ArrayList<Uri> = ArrayList()
-        for(index in 0..number){
-            imagesURIs.add(examplePhoto)
-        }
-        return imagesURIs
-    }
-
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun ShowGridAllImages(){
+    fun ShowGridAllImages(navController: NavController) {
 
-        val photos = generateDummyArray(20)
+        val photos = ImagesFetcher().getImageURIs(ctx)
+        Log.d("DEB: # of photo: ", photos.size.toString())
 
         LazyVerticalGrid(
             cells = GridCells.Fixed(4)
@@ -58,14 +42,18 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
             items(photos.size) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     photos.forEach { photo ->
-                        val tmpBitmap:Bitmap = MediaStore.Images.Media.getBitmap(ctx.contentResolver,photo)
+
+                        val uri = photo.toString()
+                        //Prints out the URI of the photo
+                        Log.d("DEB: URI ", uri)
+
                         Image(
-                            /**
-                             * TODO:
-                             * Find a method to replace the argument of the painter
-                             * with the bitmap variable in tmpBitMap
-                             */
-                            painter = painterResource(R.drawable.forest),
+                            painter = rememberCoilPainter(
+                                /**
+                                 * TODO: Pass to request something it can handle
+                                 */
+                                request = uri
+                            ),
                             contentDescription = null,
                             modifier = Modifier
                                 .height(180.dp)
@@ -73,36 +61,11 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
                                 .fillMaxWidth(),
                             contentScale = ContentScale.Crop
                         )
+
                     }
                 }
             }
         }
-
-    }
-
-
-    /**
-     * This function returns the images saved inside the storage of the smartphone.
-     * Requires access to the media.
-     * @param context: context of the application, used to query the internal storage
-     * @return ArrayList containing image URIs
-     */
-    private fun getImageURIs(context:Context): ArrayList<String>{
-        val imagesURIs: ArrayList<String> = ArrayList()
-        val columns = arrayOf(MediaStore.Images.Media.DATE_ADDED, MediaStore.Images.Media._ID)
-        val imageCursor: Cursor? = context.contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,columns,
-            null,null,null)
-
-        while(imageCursor!!.moveToNext()){
-            val dataColumnIndex = imageCursor.getColumnIndex(MediaStore.Images.Media.DATE_ADDED)
-            imagesURIs.add(imageCursor.getString(dataColumnIndex))
-        }
-
-        Log.d("Number of elements", imageCursor.count.toString())
-        Log.d("ARRAY OF IMAGES",imagesURIs.toString())
-
-        return imagesURIs
     }
 
     /**
@@ -114,7 +77,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
     @Composable
     fun ShowGridRandomImages(navController: NavController){
 
-        val photos = generateDummyArray(20)
+        val photos = ImagesFetcher().generateDummyArray(20)
 
         LazyVerticalGrid(
             cells = GridCells.Fixed(4)
@@ -140,11 +103,12 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
     /**
      * The preview function does not work because the ImagesGrid class does not have
      * a default constructor
-     */
+     *
     @Preview(showBackground = true)
     @Composable
     fun ShowGridPreview() {
         ShowGridAllImages()
     }
+    */
 
 }

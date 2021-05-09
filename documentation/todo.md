@@ -1,14 +1,8 @@
 # TODO
 
-Bisogna cercare di scorporare il più possibile la parte dell'applicazione che lavora con i dati
-da quella che lavora con la UI Compose.
-
-Creare quindi una classe kotlin che fornisca:
-* ArrayList di tutte le immagini della galleria (forse meglio con un oggetto custom che contenga bitmap + eventuali metadati)
-* Immagini di prova prese da internet a caso
 
 ## Next
- * [ ] Scorporare la parte che lavora con i dati da quella che lavora con la UI
+ * [X] Scorporare la parte che lavora con i dati da quella che lavora con la UI
  * [ ] Caricare immagini dall'URI interno del sistema
  * [ ] Richiedere accesso in lettura alle foto del sistema
  * [ ] Progettare view per la creazione di tag
