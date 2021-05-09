@@ -38,7 +38,8 @@ class MainActivity : ComponentActivity() {
         val navController= rememberNavController()
 
         NavHost(navController = navController, startDestination = "imagesGrid" ) {
-            composable("imagesGrid"){ImagesGrid().ShowGridAllImages(navController,this@MainActivity)}
+            //composable("imagesGrid"){ImagesGrid().ShowGridAllImages(navController,this@MainActivity)}
+            composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridRandomImages(navController)}
             composable("displayImage"){DisplayImage().MovingImage(painterResource(R.drawable.forest))}
         }
     }

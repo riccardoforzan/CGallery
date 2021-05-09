@@ -22,15 +22,33 @@ import androidx.navigation.compose.navigate
 import android.provider.MediaStore
 import android.util.Log
 import android.net.Uri
+import androidx.compose.ui.tooling.preview.Preview
+import com.google.accompanist.coil.rememberCoilPainter
 
+/**
+ * @param ctx: context of the calling activity
+ */
+class ImagesGrid(private val ctx: Context, private val navController: NavController) {
 
-class ImagesGrid {
+    /**
+     * Generates an array of Dummy Elements with number elements
+     * @param number: number of dummy items
+     * @return ArrayList of dummy items
+     */
+    private fun generateDummyArray(number: Int):ArrayList<Uri>{
+        val examplePhoto: Uri = Uri.parse("android.resource://com.epse.gallery/"
+                + R.drawable.forest)
+        Log.d("URI EXAMPLE",examplePhoto.toString())
+        val imagesURIs: ArrayList<Uri> = ArrayList()
+        for(index in 0..number){
+            imagesURIs.add(examplePhoto)
+        }
+        return imagesURIs
+    }
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun ShowGridAllImages(navController: NavController, ctx:Context){
-
-        //val navController = rememberNavController()
+    fun ShowGridAllImages(){
 
         val photos = generateDummyArray(20)
 
@@ -59,22 +77,7 @@ class ImagesGrid {
                 }
             }
         }
-    }
 
-    /**
-     * Generates an array of Dummy Elements with number elements
-     * @param number: number of dummy items
-     * @return ArrayList of dummy items
-     */
-    private fun generateDummyArray(number: Int):ArrayList<Uri>{
-        val examplePhoto: Uri = Uri.parse("android.resource://com.epse.gallery/"
-                + R.drawable.forest)
-        Log.d("URI EXAMPLE",examplePhoto.toString())
-        val imagesURIs: ArrayList<Uri> = ArrayList()
-        for(index in 0..number){
-            imagesURIs.add(examplePhoto)
-        }
-        return imagesURIs
     }
 
 
@@ -103,14 +106,45 @@ class ImagesGrid {
     }
 
     /**
-     * Dev stuff only
-     * Allows previewing the setContent block of the onCreate() function
-     * on the right of the screen
+     * Shows a grid layout with random images fetched from https://picsum.photos/300/300
+     * This functions requires the internet access (see AndroidManifest.xml).
+     * This function uses the coil library to fetch images.
      */
-    /*
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    fun ShowGridRandomImages(navController: NavController){
+
+        val photos = generateDummyArray(20)
+
+        LazyVerticalGrid(
+            cells = GridCells.Fixed(4)
+        ) {
+            items(photos.size) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = rememberCoilPainter(
+                            request = "https://picsum.photos/300/300"
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(180.dp)
+                            .clickable { navController.navigate("displayImage") }
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
+    }
+
+    /**
+     * The preview function does not work because the ImagesGrid class does not have
+     * a default constructor
+     */
     @Preview(showBackground = true)
     @Composable
     fun ShowGridPreview() {
         ShowGridAllImages()
-    }*/
+    }
+
 }

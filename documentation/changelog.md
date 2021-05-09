@@ -4,8 +4,8 @@ this file contains the names (and the relative path) of all the files that have 
 modified.
 
 ## Gradle configuration files
-* build.gradle: set compose version
-* /settings.gradle: removed jceneter repository
+* build.gradle
+* /settings.gradle
 * /app/build.gradle: added freeCompilerArgs (to address problems caused by Kotlin version mismatch)
 
 ## Kotlin classes 

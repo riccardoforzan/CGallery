@@ -29,4 +29,7 @@
     <!--Permission to write on the external storage-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <!--Permission to access the Internet, used to fetch images from https://picsum.photos-->
+    <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>
