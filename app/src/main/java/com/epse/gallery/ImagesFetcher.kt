@@ -35,24 +35,20 @@ class ImagesFetcher {
      * @return ArrayList containing image URIs
      */
     fun getImageURIs(context: Context): ArrayList<Uri>{
-
         val columns = arrayOf(MediaStore.Images.Media._ID)
         val orderBy = MediaStore.Images.Media.DATE_TAKEN
 
-        val imageCursor: Cursor? = context.contentResolver.query(
+        var imageCursor: Cursor? = context.contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,columns,
             null,null,"$orderBy DESC")
 
+        var columnIndex = imageCursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+
         while(imageCursor!!.moveToNext()){
-            val columnIndex = imageCursor.getColumnIndex(MediaStore.Images.Media._ID)
-            val imageUri = ContentUris.withAppendedId(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                columnIndex.toLong())
+            var name = imageCursor.getLong(columnIndex)
+            var imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,name)
             imagesURIs.add(imageUri)
         }
-
-        Log.d("DEBUG: # OF IMAGES", imageCursor.count.toString())
-        Log.d("DEBUG: ARRAY: ",imagesURIs.toString())
 
         return imagesURIs
     }

@@ -36,24 +36,17 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
         val photos = ImagesFetcher().getImageURIs(ctx)
         Log.d("DEB: # of photo: ", photos.size.toString())
 
+        var index = 0
+
         LazyVerticalGrid(
             cells = GridCells.Fixed(4)
         ) {
             items(photos.size) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    photos.forEach { photo ->
-
-                        val uri = photo.toString()
-                        //Prints out the URI of the photo
-                        Log.d("DEB: URI ", uri)
-
-                        Image(
-                            painter = rememberCoilPainter(
-                                /**
-                                 * TODO: Pass to request something it can handle
-                                 */
-                                request = uri
-                            ),
+                    Image(
+                        painter = rememberCoilPainter(
+                            request = photos.get(index++)
+                        ),
                             contentDescription = null,
                             modifier = Modifier
                                 .height(180.dp)
@@ -62,7 +55,6 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
                             contentScale = ContentScale.Crop
                         )
 
-                    }
                 }
             }
         }
