@@ -1,5 +1,6 @@
 package com.epse.gallery
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -40,7 +41,11 @@ class MainActivity : ComponentActivity() {
         NavHost(navController = navController, startDestination = "imagesGrid" ) {
             composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridAllImages(navController)}
             //composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridRandomImages(navController)}
-            composable("displayImage"){DisplayImage().MovingImage(painterResource(R.drawable.forest))}
+            /**
+             * TODO:
+             * Find a way to pass a URI
+             */
+            composable("displayImage"){DisplayImage().MovingImage(Uri.parse("content://media/external/images/media/31"))}
         }
     }
 }

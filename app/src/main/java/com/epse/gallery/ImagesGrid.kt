@@ -32,10 +32,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun ShowGridAllImages(navController: NavController) {
-
         val photos = ImagesFetcher().getImageURIs(ctx)
-        Log.d("DEB: # of photo: ", photos.size.toString())
-
         var index = 0
 
         LazyVerticalGrid(
@@ -45,7 +42,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Image(
                         painter = rememberCoilPainter(
-                            request = photos.get(index++)
+                            request = photos[index++]
                         ),
                             contentDescription = null,
                             modifier = Modifier

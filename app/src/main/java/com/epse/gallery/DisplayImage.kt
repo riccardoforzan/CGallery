@@ -1,6 +1,6 @@
 package com.epse.gallery
 
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
@@ -9,24 +9,25 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
+import com.google.accompanist.coil.rememberCoilPainter
 import kotlin.math.roundToInt
 
 class DisplayImage{
 
     @Composable
-    fun MovingImage(paint: Painter) {
+    fun MovingImage(imageURI:Uri) {
+
+        val paint = rememberCoilPainter(imageURI)
+
         var allowedRotation by remember { mutableStateOf(false) }
         var angle by remember { mutableStateOf(0f) }
         var zoom by remember { mutableStateOf(1f) }
         var offsetX by remember { mutableStateOf(0f) }
         var offsetY by remember { mutableStateOf(0f) }
+
         Scaffold(
             bottomBar = {
                 BottomAppBar(
@@ -90,7 +91,10 @@ class DisplayImage{
                     // Text aggiunti solo per debug
                     Column() {
                         Text("Zoom:$zoom" + " x:$offsetX" + " y:$offsetY")
-                        Text("heigth:${paint.intrinsicSize.height}  width:${paint.intrinsicSize.width}")
+                        /**
+                         * Throws an exception
+                         */
+                        //Text("heigth:${paint.intrinsicSize.height}  width:${paint.intrinsicSize.width}")
                     }
 
                 }
@@ -101,12 +105,10 @@ class DisplayImage{
     }
 
 
-
-
     @Preview(showBackground = true)
     @Composable
     fun DisplayImagePreview() {
-        MovingImage(painterResource(R.drawable.forest))
+        MovingImage(Uri.parse("content://media/external/images/media/31"))
     }
 
 }

@@ -45,8 +45,8 @@ class ImagesFetcher {
         var columnIndex = imageCursor!!.getColumnIndex(MediaStore.Images.Media._ID)
 
         while(imageCursor!!.moveToNext()){
-            var name = imageCursor.getLong(columnIndex)
-            var imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,name)
+            var id = imageCursor.getLong(columnIndex)
+            var imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,id)
             imagesURIs.add(imageUri)
         }
 
