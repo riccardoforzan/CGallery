@@ -14,14 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
-import android.util.Log
 import com.google.accompanist.coil.rememberCoilPainter
 /**
  * @param ctx: context of the calling activity
  */
-class ImagesGrid(private val ctx: Context, private val navController: NavController) {
+class ImagesGrid(private val ctx: Context, private val navController: NavHostController) {
 
     /**
      * Shows a grid layout with random images fetched from https://picsum.photos/300/300
@@ -30,14 +29,13 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
      */
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun ShowGridAllImages(navController: NavController) {
+    fun ShowGridAllImages(navController: NavHostController) {
         val photos = ImagesFetcher().getImageURIs(ctx)
 
         LazyVerticalGrid(
             cells = GridCells.Fixed(4)
         ) {
             items(photos.size) { index ->
-                Log.d("DEB IND -> ", index.toString())
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Image(
                         painter = rememberCoilPainter(
@@ -46,7 +44,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
                             contentDescription = null,
                             modifier = Modifier
                                 .height(180.dp)
-                                .clickable { navController.navigate("displayImage") }
+                                .clickable { navController.navigate("displayImage/${photos[index]}") }
                                 .fillMaxWidth(),
                             contentScale = ContentScale.Crop
                         )
@@ -63,7 +61,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
      */
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun ShowGridRandomImages(navController: NavController){
+    fun ShowGridRandomImages(navController: NavHostController){
 
         val photos = ImagesFetcher().generateDummyArray(20)
 

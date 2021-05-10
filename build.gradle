@@ -4,11 +4,13 @@ buildscript {
 
         /**
          * Check new versions here:
-         * Compose version: https://developer.android.com/jetpack/androidx/releases/compose
-         * Coil version: https://google.github.io/accompanist/coil/
+         * Coil: https://google.github.io/accompanist/coil/
+         * Compose: https://developer.android.com/jetpack/androidx/releases/compose
+         * Compose Navigation: https://developer.android.com/jetpack/androidx/releases/navigation
          */
-        compose_version = '1.0.0-beta06'
         coil_version='0.9.1'
+        compose_version = '1.0.0-beta06'
+        compose_navigation_version = '1.0.0-alpha10'
     }
     repositories {
         google()

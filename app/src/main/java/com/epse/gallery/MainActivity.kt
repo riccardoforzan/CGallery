@@ -2,26 +2,14 @@ package com.epse.gallery
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
@@ -35,17 +23,50 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun SetNavigation(){
-        //Surface(color= MaterialTheme.colors.primary)
+
         val navController= rememberNavController()
 
         NavHost(navController = navController, startDestination = "imagesGrid" ) {
-            composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridAllImages(navController)}
-            //composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridRandomImages(navController)}
+
             /**
-             * TODO:
-             * Find a way to pass a URI
+             * Debug route, creates a ImagesGrid with images from the web
+             composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridRandomImages(navController)}
              */
-            composable("displayImage"){DisplayImage().MovingImage(Uri.parse("content://media/external/images/media/31"))}
+
+            composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridAllImages(navController)}
+
+            /**
+             * This is how we are supposed to pass custom objects
+             * but this way does not work right now because
+             * 'Parcelables don't support default values'
+             * even if android.net.Uri is a Parcelable type
+             * https://developer.android.com/reference/android/net/Uri
+            composable("displayImage/{imageURI}",
+                arguments = listOf(navArgument("imageURI"){
+                    type = NavType.ParcelableType(Uri::class.java)
+                })
+            ){ backStackEntry ->
+                val imageURI = backStackEntry.arguments?.getParcelable<Uri>("imageURI")
+                Log.d("DEB Passed URI:",imageURI.toString())
+                DisplayImage().MovingImage(imageURI = imageURI!!)
+            }
+            */
+
+            /**
+             * Workaround: Passing URI as a string and then reconstruct it
+             */
+            composable("displayImage/{imageURI}",
+                arguments = listOf(navArgument("imageURI"){
+                    type = NavType.StringType
+                })
+            ){ backStackEntry ->
+                val imageURI = backStackEntry.arguments?.getString("imageURI")
+                Log.d("DEB Passed URI:",imageURI.toString())
+                DisplayImage().MovingImage(imageURI = Uri.parse(imageURI))
+            }
+
         }
     }
+
+
 }
