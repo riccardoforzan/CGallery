@@ -18,7 +18,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.navigate
 import android.util.Log
 import com.google.accompanist.coil.rememberCoilPainter
-
 /**
  * @param ctx: context of the calling activity
  */
@@ -33,16 +32,16 @@ class ImagesGrid(private val ctx: Context, private val navController: NavControl
     @Composable
     fun ShowGridAllImages(navController: NavController) {
         val photos = ImagesFetcher().getImageURIs(ctx)
-        var index = 0
 
         LazyVerticalGrid(
             cells = GridCells.Fixed(4)
         ) {
-            items(photos.size) {
+            items(photos.size) { index ->
+                Log.d("DEB IND -> ", index.toString())
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Image(
                         painter = rememberCoilPainter(
-                            request = photos[index++]
+                            request = photos[index]
                         ),
                             contentDescription = null,
                             modifier = Modifier
