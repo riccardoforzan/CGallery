@@ -4,11 +4,11 @@
 ## Next
  * [X] Scorporare la parte che lavora con i dati da quella che lavora con la UI
  * [X] Caricare immagini dall'URI interno del sistema
- * [X] Richiedere accesso in lettura alle foto del sistema
  * [ ] Progettare composable Immagine a schermo intero (Tumiati) + Button + SnackBar
  * [ ] ImagesDetails con modello grafico: [Riferimento](https://developer.android.com/jetpack/compose/tutorial). Versione visualizzazione e versione modifica
  * [ ] Rendere responsive ImagesGrid
  * [X] Passaggio argomenti via navController alle funzioni composable
+ * [ ] Schermata di installazione per richiedere accesso in lettura alle foto del sistema
  * [ ] Scrittura dei metadati su una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
  * [ ] Rierca tra i metadata delle foto quelle taggate con i tag creati
 
