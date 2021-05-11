@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">gallery</string>
+
+    <string name="permission_read_external_storage_not_granted">
+        The permission to read the external storage has not been granted</string>
+    <string name="permission_write_external_storage_not_granted">
+        The permission to write on the external storage has not been granted</string>
+    <string name="permission_internet_not_granted">
+        The permission to access the internet has not been granted</string>
 </resources>

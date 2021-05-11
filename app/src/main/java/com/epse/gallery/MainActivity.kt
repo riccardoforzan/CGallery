@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -12,7 +13,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 
+@ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
+
+    /**
+     * TODO:
+     * Create a setup screen to ask for permissions at the start of the app if permission are
+     * not granted
+     */
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +42,7 @@ class MainActivity : ComponentActivity() {
              composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridRandomImages(navController)}
              */
 
-            composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridAllImages(navController)}
+            composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridAllImages()}
 
             /**
              * This is how we are supposed to pass custom objects
@@ -67,6 +76,5 @@ class MainActivity : ComponentActivity() {
 
         }
     }
-
 
 }

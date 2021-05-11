@@ -11,8 +11,9 @@ modified.
 ## Kotlin classes 
 * /app/src/main/java/com/epse/gallery/DisplayImage.kt
 * /app/src/main/java/com/epse/gallery/ImagesGrid.kt
-* /app/src/main/java/com/epse/gallery/ImagesFetcher.kt
 * /app/src/main/java/com/epse/gallery/MainActivity.kt
+* /app/src/main/java/com/epse/gallery/StorageUtils.kt
 
 ## Other
-* /app/src/main/res/drawableforest.jpg
+* /app/src/main/res/drawable/drawableforest.jpg
+* /app/src/main/res/values/strings.xml
