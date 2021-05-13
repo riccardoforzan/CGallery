@@ -12,13 +12,15 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.navigate
 import com.google.accompanist.coil.rememberCoilPainter
 import kotlin.math.roundToInt
 
 class DisplayImage{
 
     @Composable
-    fun MovingImage(imageURI:Uri) {
+    fun MovingImage(imageURI:Uri,  navController: NavHostController) {
 
         val paint = rememberCoilPainter(imageURI)
 
@@ -46,6 +48,16 @@ class DisplayImage{
                         if (allowedRotation) Text("disable rotation")
                         else Text("enable rotation")
                     }
+
+                    TextButton(
+                        onClick = {
+                            navController.navigate("ImageDetails/${imageURI}")
+                        },
+                        colors = ButtonDefaults.textButtonColors(backgroundColor= Color.Blue, contentColor= Color.White)
+                    ) { Text("Details") }
+
+
+
                 }
             },
             content= {
@@ -104,11 +116,11 @@ class DisplayImage{
 
     }
 
-
+/*
     @Preview(showBackground = true)
     @Composable
     fun DisplayImagePreview() {
-        MovingImage(Uri.parse("content://media/external/images/media/31"))
+        MovingImage(Uri.parse("content://media/external/images/media/31"), )
     }
-
+*/
 }

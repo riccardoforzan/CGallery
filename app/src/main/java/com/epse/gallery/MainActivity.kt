@@ -87,7 +87,18 @@ class MainActivity : ComponentActivity() {
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
                 Log.d("DEB Passed URI:",imageURI.toString())
-                DisplayImage().MovingImage(imageURI = Uri.parse(imageURI))
+                DisplayImage().MovingImage(imageURI = Uri.parse(imageURI), navController)
+            }
+
+
+            composable("ImageDetails/{imageURI}",
+                arguments = listOf(navArgument("imageURI"){
+                    type = NavType.StringType
+                })
+            ){ backStackEntry ->
+                val imageURI = backStackEntry.arguments?.getString("imageURI")
+                Log.d("DEB Passed URI:",imageURI.toString())
+                ImageDetails().ShowDetail(this@MainActivity,imageURI = Uri.parse(imageURI))
             }
 
         }
