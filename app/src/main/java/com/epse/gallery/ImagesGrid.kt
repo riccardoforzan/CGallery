@@ -65,7 +65,9 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                         contentDescription = null,
                         modifier = Modifier
                             .height(180.dp)
-                            .clickable { navController.navigate("displayImage/${photos[index]}") }
+                            .clickable { //navController.navigate("displayImage/${photos[index]}")
+                                navController.navigate("fullImage/${photos[index]}")
+                            }
                             .fillMaxWidth(),
                         contentScale = ContentScale.Crop
                     )
