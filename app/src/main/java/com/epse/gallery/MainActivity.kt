@@ -80,17 +80,6 @@ class MainActivity : ComponentActivity() {
                 FullImage(navController).ShowFullImage(imageURI = Uri.parse(imageURI))
             }
 
-            composable("displayImage/{imageURI}",
-                arguments = listOf(navArgument("imageURI"){
-                    type = NavType.StringType
-                })
-            ){ backStackEntry ->
-                val imageURI = backStackEntry.arguments?.getString("imageURI")
-                Log.d("DEB Passed URI:",imageURI.toString())
-                DisplayImage().MovingImage(imageURI = Uri.parse(imageURI), navController)
-            }
-
-
             composable("ImageDetails/{imageURI}",
                 arguments = listOf(navArgument("imageURI"){
                     type = NavType.StringType
