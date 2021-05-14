@@ -17,13 +17,14 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.google.accompanist.coil.rememberCoilPainter
 
 
 class ImageDetails {
 
     @Composable
-    fun ShowDetail(ctx: Context, imageURI: Uri){
+    fun ShowDetail(ctx: Context, navController: NavHostController, imageURI: Uri){
 
       //  Log.d("DEB Passed URI:",imageURI.toString())
         val imageStream = ctx.contentResolver.openInputStream(imageURI)
@@ -36,7 +37,7 @@ class ImageDetails {
                 TopAppBar(
                     title = { Text("Image Name") },
                     navigationIcon = {
-                        IconButton(onClick = { /* doSomething() */ }) {
+                        IconButton(onClick = { navController.popBackStack() }) {
                             Icon(Icons.Filled.ArrowBack, contentDescription = null)
                         }
                     },

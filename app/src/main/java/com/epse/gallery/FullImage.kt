@@ -70,7 +70,7 @@ class FullImage (private val navController: NavController){
                     modifier= Modifier
                         .align(Alignment.BottomEnd)
                         .padding(10.dp),
-                    onClick = { navController.navigate("displayImage/${myURI}")})
+                    onClick = { navController.navigate("imageDetails/${myURI}")})
                 {
                     Icon(Icons.Filled.Edit, contentDescription = null)
                 }
