@@ -41,11 +41,6 @@ class MainActivity : ComponentActivity() {
          */
         val navController= rememberNavController()
 
-        /**
-         * Init all screens
-         */
-        val scr = Screens(this,navController)
-
         NavHost(
             navController = navController,
             startDestination = Screens.SetupAskForStorage
@@ -55,7 +50,7 @@ class MainActivity : ComponentActivity() {
              * Calls in SetupScreen the function to ask for read permission in storage
              */
             composable(route = Screens.SetupAskForStorage){
-                scr.setup.AskForStorage()
+                SetupScreen(this@MainActivity,navController).AskForStorage()
             }
 
             /**
@@ -63,7 +58,7 @@ class MainActivity : ComponentActivity() {
              * has not been granted by the user (or has been revoke)
              */
             composable(route = Screens.SetupReadStorageDenied){
-                scr.setup.ReadStorageDenied()
+                SetupScreen(this@MainActivity,navController).ReadStorageDenied()
             }
 
             //
@@ -73,7 +68,7 @@ class MainActivity : ComponentActivity() {
              * Calls ImagesGrid
              */
             composable(route = Screens.ImagesGridShowGrid){
-                scr.imagesGrid.ShowGrid()
+                ImagesGrid(this@MainActivity,navController).ShowGrid()
             }
 
             /**
@@ -106,7 +101,7 @@ class MainActivity : ComponentActivity() {
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
                 //Log.d("DEB Passed URI:",imageURI.toString())
-                scr.fullImage.ShowFullImage(imageURI = Uri.parse(imageURI))
+                FullImage(this@MainActivity,navController).ShowFullImage(imageURI = Uri.parse(imageURI))
             }
 
             composable(
@@ -117,7 +112,7 @@ class MainActivity : ComponentActivity() {
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
                 //Log.d("DEB Passed URI:",imageURI.toString())
-                scr.imageDetails.ShowDetail(imageURI = Uri.parse(imageURI))
+                ImageDetails(this@MainActivity,navController).ShowDetail(imageURI = Uri.parse(imageURI))
             }
 
         }
