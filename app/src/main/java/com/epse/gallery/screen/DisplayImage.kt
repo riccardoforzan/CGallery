@@ -1,6 +1,8 @@
-package com.epse.gallery
+package com.epse.gallery.screen
 
+import android.content.Context
 import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
@@ -17,10 +19,11 @@ import androidx.navigation.compose.navigate
 import com.google.accompanist.coil.rememberCoilPainter
 import kotlin.math.roundToInt
 
-class DisplayImage{
+@ExperimentalFoundationApi
+class DisplayImage(private val ctx: Context, private val navController: NavHostController){
 
     @Composable
-    fun MovingImage(imageURI:Uri,  navController: NavHostController) {
+    fun MovingImage(imageURI:Uri) {
 
         val paint = rememberCoilPainter(imageURI)
 
@@ -51,7 +54,8 @@ class DisplayImage{
 
                     TextButton(
                         onClick = {
-                            navController.navigate("ImageDetails/${imageURI}")
+                            navController.navigate(
+                                route = Screens.ImageDetailsShowDetail+"/${imageURI}")
                         },
                         colors = ButtonDefaults.textButtonColors(backgroundColor= Color.Blue, contentColor= Color.White)
                     ) { Text("Details") }

@@ -17,15 +17,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.epse.gallery.screen.*
 
 var isPortrait by mutableStateOf(true)
+
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
-    /**
-     * TODO:
-     * Create a setup screen to ask for permissions at the start of the app if permission are
-     * not granted
-     */
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,16 +36,45 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun SetNavigation(){
 
+        /**
+         * Init nav controller
+         */
         val navController= rememberNavController()
 
-        NavHost(navController = navController, startDestination = "imagesGrid" ) {
+        /**
+         * Init all screens
+         */
+        val scr = Screens(this,navController)
+
+        NavHost(
+            navController = navController,
+            startDestination = Screens.SetupAskForStorage
+        ) {
 
             /**
-             * Debug route, creates a ImagesGrid with images from the web
-             composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridRandomImages(navController)}
+             * Calls in SetupScreen the function to ask for read permission in storage
              */
+            composable(route = Screens.SetupAskForStorage){
+                scr.setup.AskForStorage()
+            }
 
-            composable("imagesGrid"){ImagesGrid(this@MainActivity, navController).ShowGridAllImages()}
+            /**
+             * Calls in SetupScreen the function to show error when permission to read the storage
+             * has not been granted by the user (or has been revoke)
+             */
+            composable(route = Screens.SetupReadStorageDenied){
+                scr.setup.ReadStorageDenied()
+            }
+
+            //
+
+
+            /**
+             * Calls ImagesGrid
+             */
+            composable(route = Screens.ImagesGridShowGrid){
+                scr.imagesGrid.ShowGrid()
+            }
 
             /**
              * This is how we are supposed to pass custom objects
@@ -56,7 +82,8 @@ class MainActivity : ComponentActivity() {
              * 'Parcelables don't support default values'
              * even if android.net.Uri is a Parcelable type
              * https://developer.android.com/reference/android/net/Uri
-            composable("displayImage/{imageURI}",
+            composable(
+                route = Screens.FullImageShowFullImage + "/{imageURI}",
                 arguments = listOf(navArgument("imageURI"){
                     type = NavType.ParcelableType(Uri::class.java)
                 })
@@ -70,24 +97,27 @@ class MainActivity : ComponentActivity() {
             /**
              * Workaround: Passing URI as a string and then reconstruct it
              */
-            composable("fullImage/{imageURI}",
+
+            composable(
+                route = Screens.FullImageShowFullImage + "/{imageURI}",
                 arguments = listOf(navArgument("imageURI"){
                     type = NavType.StringType
                 })
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
-                Log.d("DEB Passed URI:",imageURI.toString())
-                FullImage(navController).ShowFullImage(imageURI = Uri.parse(imageURI))
+                //Log.d("DEB Passed URI:",imageURI.toString())
+                scr.fullImage.ShowFullImage(imageURI = Uri.parse(imageURI))
             }
 
-            composable("ImageDetails/{imageURI}",
+            composable(
+                route = Screens.ImageDetailsShowDetail + "/{imageURI}",
                 arguments = listOf(navArgument("imageURI"){
                     type = NavType.StringType
                 })
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
-                Log.d("DEB Passed URI:",imageURI.toString())
-                ImageDetails().ShowDetail(this@MainActivity,navController ,imageURI = Uri.parse(imageURI))
+                //Log.d("DEB Passed URI:",imageURI.toString())
+                scr.imageDetails.ShowDetail(imageURI = Uri.parse(imageURI))
             }
 
         }

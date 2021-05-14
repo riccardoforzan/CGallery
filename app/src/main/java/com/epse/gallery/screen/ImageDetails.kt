@@ -1,4 +1,4 @@
-package com.epse.gallery
+package com.epse.gallery.screen
 
 import android.content.Context
 import androidx.exifinterface.media.ExifInterface
@@ -21,10 +21,10 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.coil.rememberCoilPainter
 
 
-class ImageDetails {
+class ImageDetails(private val ctx: Context, private val navController: NavHostController){
 
     @Composable
-    fun ShowDetail(ctx: Context, navController: NavHostController, imageURI: Uri){
+    fun ShowDetail(imageURI: Uri){
 
       //  Log.d("DEB Passed URI:",imageURI.toString())
         val imageStream = ctx.contentResolver.openInputStream(imageURI)

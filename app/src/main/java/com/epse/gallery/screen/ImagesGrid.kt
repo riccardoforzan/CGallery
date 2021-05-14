@@ -1,13 +1,12 @@
-package com.epse.gallery
+package com.epse.gallery.screen
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.MaterialTheme
@@ -19,6 +18,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
+import com.epse.gallery.R
+import com.epse.gallery.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 
 /**
@@ -34,74 +35,72 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
      * otherwise shows an error
      */
     @Composable
-    fun ShowGridAllImages() {
+    fun ShowGrid() {
 
+        /**
+         * This is redundant but if the app is suspended and permissions are revoked
+         * this call shows an error
+         */
         if(StorageUtils.hasReadStoragePermission(ctx)){
-            var column = 4;
             val photos = StorageUtils.getImageURIs(ctx)
-            createGrid(photos = photos,column = column)
+            CreateGrid(photos,180)
         }else{
-            readStorageDenied()
+            navController.navigate("setup-RSD")
         }
-        
+
+    }
+
+    /**
+     * TODO: Implement calculation
+     * This function calculates dimensions to
+     * Google guide https://developer.android.com/training/multiscreen/screensizes#TaskUseSWQuali
+     */
+    private fun calculateBoxSize(column:Int){
+        val screenDensity = ctx.resources.displayMetrics.densityDpi
+        val screenWidth = ctx.resources.displayMetrics.xdpi
+        val screenHeight = ctx.resources.displayMetrics.ydpi
+
+        /*
+        Log.d("DENSITY:", screenDensity.toString())
+        Log.d("WIDTH:", screenWidth.toString())
+        Log.d("HEIGHT:", screenHeight.toString())
+        */
     }
 
     /**
      * This functions prints on screen a grid with photos and columns number passed as a parameter
      * @param photos ArrayList containing URIs
-     * @param columns number of column to display
+     * @param boxSize Size in dp of every box element in the grid
      */
     @Composable
-    private fun createGrid(photos: ArrayList<Uri>, column:Int){
+    private fun CreateGrid(photos: ArrayList<Uri>, boxSize:Int){
         LazyVerticalGrid(
-            cells = GridCells.Fixed(column)
+            cells = GridCells.Fixed(3)
         ) {
             items(photos.size) { index ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    Modifier
+                        .size(boxSize.dp)
+                ) {
                     Image(
                         painter = rememberCoilPainter(
                             request = photos[index]
                         ),
                         contentDescription = null,
                         modifier = Modifier
-                            .height(180.dp)
-                            .clickable { //navController.navigate("displayImage/${photos[index]}")
-                                navController.navigate("fullImage/${photos[index]}")
+                            .fillMaxSize()
+                            .padding(1.dp)
+                            .clickable {
+                                navController.navigate(
+                                    route = Screens.FullImageShowFullImage + "/${photos[index]}")
                             }
                             .fillMaxWidth(),
                         contentScale = ContentScale.Crop
                     )
-
                 }
             }
         }
     }
 
-    /**
-     * Screen to show when read on external storage permission has not been granted
-     */
-    @Composable
-    fun readStorageDenied(){
-        MaterialTheme{
-            val typography = MaterialTheme.typography
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    ctx.getString(R.string.permission_read_external_storage_not_granted),
-                    style = typography.h6
-                )
-            }
-        }
-    }
-
-    /**
-     * The preview function does not work because the ImagesGrid class does not have
-     * a default constructor
-     *
-    @Preview(showBackground = true)
-    @Composable
-    fun ShowGridPreview() {
-        ShowGridAllImages()
-    }
-    */
-
 }
+

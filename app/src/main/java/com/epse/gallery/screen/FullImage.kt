@@ -1,6 +1,8 @@
-package com.epse.gallery
+package com.epse.gallery.screen
 
+import android.content.Context
 import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,10 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
+import com.epse.gallery.isPortrait
 import com.google.accompanist.coil.rememberCoilPainter
 
-class FullImage (private val navController: NavController){
+@ExperimentalFoundationApi
+class FullImage (private val ctx: Context, private val navController: NavHostController){
+
     private var backgroundColor = Color.Black
     private lateinit var myURI:Uri
 
@@ -35,7 +41,7 @@ class FullImage (private val navController: NavController){
     }
 
     @Composable
-    fun Portrait(){
+    private fun Portrait(){
         val paint = rememberCoilPainter(myURI)
         Column(
             modifier= Modifier
@@ -52,7 +58,9 @@ class FullImage (private val navController: NavController){
                     modifier= Modifier
                         .padding(10.dp)
                         .size(30.dp)
-                        .clickable { navController.navigate("imagesGrid") }
+                        .clickable {
+                            navController.navigate(route = Screens.ImagesGridShowGrid)
+                        }
                 )
             }
             Box(modifier = Modifier
@@ -70,8 +78,11 @@ class FullImage (private val navController: NavController){
                     modifier= Modifier
                         .align(Alignment.BottomEnd)
                         .padding(10.dp),
-                    onClick = { navController.navigate("imageDetails/${myURI}")})
-                {
+                    onClick = {
+                        navController.navigate(
+                            route = Screens.ImageDetailsShowDetail+"/${myURI}")
+                    }
+                ){
                     Icon(Icons.Filled.Edit, contentDescription = null)
                 }
             }
@@ -80,7 +91,7 @@ class FullImage (private val navController: NavController){
     }
 
     @Composable
-    fun Landscape(){
+    private fun Landscape(){
         val paint = rememberCoilPainter(myURI)
         Row(
             modifier= Modifier
@@ -97,7 +108,9 @@ class FullImage (private val navController: NavController){
                     modifier= Modifier
                         .padding(10.dp)
                         .size(30.dp)
-                        .clickable { navController.navigate("imagesGrid") }
+                        .clickable {
+                            navController.navigate(route = Screens.ImagesGridShowGrid)
+                        }
                 )
             }
             Box(modifier = Modifier
@@ -115,8 +128,11 @@ class FullImage (private val navController: NavController){
                     modifier= Modifier
                         .align(Alignment.BottomEnd)
                         .padding(10.dp),
-                    onClick = { navController.navigate("imageDetails/${myURI}") })
-                {
+                    onClick = {
+                        navController.navigate(
+                            route = Screens.ImageDetailsShowDetail+"/${myURI}")
+                    }
+                ){
                     Icon(Icons.Filled.Edit, contentDescription = null)
                 }
             }
