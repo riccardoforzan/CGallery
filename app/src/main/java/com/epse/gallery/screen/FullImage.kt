@@ -59,7 +59,7 @@ class FullImage (private val ctx: Context, private val navController: NavHostCon
                         .padding(10.dp)
                         .size(30.dp)
                         .clickable {
-                            navController.navigate(route = Screens.ImagesGridShowGrid)
+                            navController.navigate(route = Screens.ImagesGrid_ShowGrid)
                         }
                 )
             }
@@ -80,7 +80,7 @@ class FullImage (private val ctx: Context, private val navController: NavHostCon
                         .padding(10.dp),
                     onClick = {
                         navController.navigate(
-                            route = Screens.ImageDetailsShowDetail+"/${myURI}")
+                            route = Screens.ImageDetails_ShowDetail+"/${myURI}")
                     }
                 ){
                     Icon(Icons.Filled.Edit, contentDescription = null)
@@ -109,7 +109,7 @@ class FullImage (private val ctx: Context, private val navController: NavHostCon
                         .padding(10.dp)
                         .size(30.dp)
                         .clickable {
-                            navController.navigate(route = Screens.ImagesGridShowGrid)
+                            navController.navigate(route = Screens.ImagesGrid_ShowGrid)
                         }
                 )
             }
@@ -130,7 +130,7 @@ class FullImage (private val ctx: Context, private val navController: NavHostCon
                         .padding(10.dp),
                     onClick = {
                         navController.navigate(
-                            route = Screens.ImageDetailsShowDetail+"/${myURI}")
+                            route = Screens.ImageDetails_ShowDetail+"/${myURI}")
                     }
                 ){
                     Icon(Icons.Filled.Edit, contentDescription = null)

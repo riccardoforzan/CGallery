@@ -55,7 +55,7 @@ class DisplayImage(private val ctx: Context, private val navController: NavHostC
                     TextButton(
                         onClick = {
                             navController.navigate(
-                                route = Screens.ImageDetailsShowDetail+"/${imageURI}")
+                                route = Screens.ImageDetails_ShowDetail+"/${imageURI}")
                         },
                         colors = ButtonDefaults.textButtonColors(backgroundColor= Color.Blue, contentColor= Color.White)
                     ) { Text("Details") }

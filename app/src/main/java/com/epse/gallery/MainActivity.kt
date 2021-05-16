@@ -43,21 +43,28 @@ class MainActivity : ComponentActivity() {
 
         NavHost(
             navController = navController,
-            startDestination = Screens.SetupAskForStorage
+            startDestination = Screens.SetupScreen_AskPermissions
         ) {
 
             /**
              * Calls in SetupScreen the function to ask for read permission in storage
              */
-            composable(route = Screens.SetupAskForStorage){
-                SetupScreen(this@MainActivity,navController).AskForStorage()
+            composable(route = Screens.SetupScreen_AskPermissions){
+                SetupScreen(this@MainActivity,navController).AskPermissions()
+            }
+
+            /**
+             * Calls in SetupScreen the function to ask for read permission in storage
+             */
+            composable(route = Screens.SetupScreen_AskForReadStorage){
+                SetupScreen(this@MainActivity,navController).AskForReadStorage()
             }
 
             /**
              * Calls in SetupScreen the function to show error when permission to read the storage
              * has not been granted by the user (or has been revoke)
              */
-            composable(route = Screens.SetupReadStorageDenied){
+            composable(route = Screens.SetupScreen_ReadStorageDenied){
                 SetupScreen(this@MainActivity,navController).ReadStorageDenied()
             }
 
@@ -67,7 +74,7 @@ class MainActivity : ComponentActivity() {
             /**
              * Calls ImagesGrid
              */
-            composable(route = Screens.ImagesGridShowGrid){
+            composable(route = Screens.ImagesGrid_ShowGrid){
                 ImagesGrid(this@MainActivity,navController).ShowGrid()
             }
 
@@ -94,7 +101,7 @@ class MainActivity : ComponentActivity() {
              */
 
             composable(
-                route = Screens.FullImageShowFullImage + "/{imageURI}",
+                route = Screens.FullImage_ShowFullImage + "/{imageURI}",
                 arguments = listOf(navArgument("imageURI"){
                     type = NavType.StringType
                 })
@@ -105,7 +112,7 @@ class MainActivity : ComponentActivity() {
             }
 
             composable(
-                route = Screens.ImageDetailsShowDetail + "/{imageURI}",
+                route = Screens.ImageDetails_ShowDetail + "/{imageURI}",
                 arguments = listOf(navArgument("imageURI"){
                     type = NavType.StringType
                 })
@@ -118,4 +125,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
 }

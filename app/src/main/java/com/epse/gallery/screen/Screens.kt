@@ -9,11 +9,12 @@ sealed class Screens {
      * This companion object stores all the possible routes in the application
      */
     companion object{
-        const val SetupAskForStorage = "SetupScreen.AskForStorage"
-        const val SetupReadStorageDenied = "SetupScreen.ReadStorageDenied"
-        const val ImagesGridShowGrid = "ImagesGrid.ShowGrid"
-        const val FullImageShowFullImage = "FullImage.ShowFullImage"
-        const val ImageDetailsShowDetail = "ImageDetails.ShowDetail"
+        const val SetupScreen_AskPermissions = "SetupScreen.AskPermissions"
+        const val SetupScreen_AskForReadStorage = "SetupScreen.AskForReadStorage"
+        const val SetupScreen_ReadStorageDenied = "SetupScreen.ReadStorageDenied"
+        const val ImagesGrid_ShowGrid = "ImagesGrid.ShowGrid"
+        const val FullImage_ShowFullImage = "FullImage.ShowFullImage"
+        const val ImageDetails_ShowDetail = "ImageDetails.ShowDetail"
     }
 
 }

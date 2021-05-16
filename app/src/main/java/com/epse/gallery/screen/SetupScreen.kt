@@ -1,11 +1,13 @@
 package com.epse.gallery.screen
 
 import android.app.Activity
-import androidx.activity.result.contract.ActivityResultContracts
+import android.content.DialogInterface
+import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -15,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.epse.gallery.R
+import com.epse.gallery.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 
 /**
@@ -33,14 +35,21 @@ import com.google.accompanist.coil.rememberCoilPainter
 
 @ExperimentalFoundationApi
 class SetupScreen(
-    private val ctx: Activity, private val navController: NavHostController) {
+    private val act: Activity, private val navController: NavHostController) {
 
-    /**
-     * Take inspiration from
-     * https://github.com/AppIntro/AppIntro
-     */
     @Composable
-    fun AskForStorage(){
+    fun AskPermissions(){
+
+        if(StorageUtils.hasReadStoragePermission(act)){
+            navController.navigate(Screens.ImagesGrid_ShowGrid)
+        } else {
+            navController.navigate(Screens.SetupScreen_AskForReadStorage)
+        }
+
+    }
+
+    @Composable
+    fun AskForReadStorage(){
             MaterialTheme {
                 val typography = MaterialTheme.typography
                 Column(
@@ -67,21 +76,31 @@ class SetupScreen(
                     Spacer(Modifier.height(16.dp))
 
                     Text(
-                        text=ctx.getString(R.string.permission_read_external_storage_description),
+                        text=act.getString(R.string.permission_read_external_storage_description),
                         style = typography.h6
                     )
 
                     Button(
                         modifier = Modifier.padding(30.dp),
                         onClick = {
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                val STORAGE_PERMISSION_CODE = 1
+                                val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+                                act.requestPermissions(arrayOf(permission),STORAGE_PERMISSION_CODE)
+                            }
                             /**
-                             * TODO: Ask for permissions
+                             * Check if the permission has been granted
                              */
-                            navController.navigate(Screens.ImagesGridShowGrid)
+                            if(StorageUtils.hasReadStoragePermission(act)) {
+                                navController.navigate(Screens.ImagesGrid_ShowGrid)
+                            } else {
+                                navController.navigate(Screens.SetupScreen_ReadStorageDenied)
+                            }
                         }
                     ){
                         Text(
-                            text = ctx.getString(R.string.btn_manage_permissions),
+                            text = act.getString(R.string.btn_manage_permissions),
                         )
                     }
                     
@@ -99,7 +118,7 @@ class SetupScreen(
             val typography = MaterialTheme.typography
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    ctx.getString(R.string.permission_read_external_storage_not_granted),
+                    act.getString(R.string.permission_read_external_storage_not_granted),
                     style = typography.h6
                 )
             }
