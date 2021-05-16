@@ -19,10 +19,12 @@ import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.epse.gallery.screen.*
 
-var isPortrait by mutableStateOf(true)
-
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
+
+    companion object{
+        var isPortrait by mutableStateOf(true)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,11 +127,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
 }

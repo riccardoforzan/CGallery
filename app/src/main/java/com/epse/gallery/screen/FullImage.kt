@@ -17,10 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
-import com.epse.gallery.isPortrait
+import com.epse.gallery.MainActivity
 import com.google.accompanist.coil.rememberCoilPainter
 
 @ExperimentalFoundationApi
@@ -32,7 +31,7 @@ class FullImage (private val ctx: Context, private val navController: NavHostCon
     @Composable
     fun ShowFullImage(imageURI: Uri){
         myURI=imageURI
-        if(isPortrait){
+        if(MainActivity.isPortrait){
             Portrait()
         }
         else{
