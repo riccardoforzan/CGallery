@@ -6,13 +6,14 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +28,7 @@ class FullImage (private val ctx: Context, private val navController: NavHostCon
 
     private var backgroundColor = Color.Black
     private lateinit var myURI:Uri
+    private var showButton by mutableStateOf(false)
 
     @Composable
     fun ShowFullImage(imageURI: Uri){
@@ -51,38 +53,47 @@ class FullImage (private val ctx: Context, private val navController: NavHostCon
             Box(modifier = Modifier
                 .weight(0.1f)
                 .fillMaxSize()){
-                Icon(Icons.Filled.ArrowBack,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier= Modifier
-                        .padding(10.dp)
-                        .size(30.dp)
-                        .clickable {
-                            navController.navigate(route = Screens.ImagesGrid_ShowGrid)
-                        }
-                )
+                if(showButton) {
+                    Icon(Icons.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(30.dp)
+                            .clickable {
+                                navController.navigate(route = Screens.ImagesGrid_ShowGrid)
+                            }
+                    )
+                }
             }
             Box(modifier = Modifier
                 .weight(0.8f)
                 .fillMaxSize()){
                 Image(painter = paint, contentDescription = null, modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth())
+                    .fillMaxWidth()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {showButton=!showButton})
             }
             Box(modifier = Modifier
                 .weight(0.1f)
-                .fillMaxSize()){
-                FloatingActionButton(
-                    backgroundColor = Color.White,
-                    modifier= Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(10.dp),
-                    onClick = {
-                        navController.navigate(
-                            route = Screens.ImageDetails_ShowDetail+"/${myURI}")
+                .fillMaxSize()) {
+                if (showButton) {
+                    FloatingActionButton(
+                        backgroundColor = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(10.dp),
+                        onClick = {
+                            navController.navigate(
+                                route = Screens.ImageDetails_ShowDetail + "/${myURI}"
+                            )
+                        }
+                    ) {
+                        Icon(Icons.Filled.Edit, contentDescription = null)
                     }
-                ){
-                    Icon(Icons.Filled.Edit, contentDescription = null)
                 }
             }
         }
@@ -101,38 +112,47 @@ class FullImage (private val ctx: Context, private val navController: NavHostCon
             Box(modifier = Modifier
                 .weight(0.1f)
                 .fillMaxSize()){
-                Icon(Icons.Filled.ArrowBack,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier= Modifier
-                        .padding(10.dp)
-                        .size(30.dp)
-                        .clickable {
-                            navController.navigate(route = Screens.ImagesGrid_ShowGrid)
-                        }
-                )
+                if(showButton) {
+                    Icon(Icons.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(30.dp)
+                            .clickable {
+                                navController.navigate(route = Screens.ImagesGrid_ShowGrid)
+                            }
+                    )
+                }
             }
             Box(modifier = Modifier
                 .weight(0.8f)
                 .fillMaxSize()){
                 Image(painter = paint, contentDescription = null, modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth())
+                    .fillMaxWidth()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {showButton=!showButton})
             }
             Box(modifier = Modifier
                 .weight(0.1f)
                 .fillMaxSize()){
-                FloatingActionButton(
-                    backgroundColor = Color.White,
-                    modifier= Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(10.dp),
-                    onClick = {
-                        navController.navigate(
-                            route = Screens.ImageDetails_ShowDetail+"/${myURI}")
+                if (showButton) {
+                    FloatingActionButton(
+                        backgroundColor = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(10.dp),
+                        onClick = {
+                            navController.navigate(
+                                route = Screens.ImageDetails_ShowDetail + "/${myURI}"
+                            )
+                        }
+                    ) {
+                        Icon(Icons.Filled.Edit, contentDescription = null)
                     }
-                ){
-                    Icon(Icons.Filled.Edit, contentDescription = null)
                 }
             }
         }
