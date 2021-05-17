@@ -1,13 +1,17 @@
 # TODO
 
-
 ## Next
  * [X] Scorporare la parte che lavora con i dati da quella che lavora con la UI
  * [X] Caricare immagini dall'URI interno del sistema
- * [ ] Progettare composable Immagine a schermo intero + Button + SnackBar
- * [ ] ImagesDetails con modello grafico: [Riferimento](https://developer.android.com/jetpack/compose/tutorial). Versione visualizzazione e versione modifica
- * [ ] Rendere responsive ImagesGrid
  * [X] Passaggio argomenti via navController alle funzioni composable
+   
+ * [ ] Progettare composable Immagine a schermo intero + Button + SnackBar
+   
+ * [ ] ImagesDetails con modello grafico: [Riferimento](https://developer.android.com/jetpack/compose/tutorial). Versione visualizzazione e versione modifica
+ * [ ] Rendere responsive ImagesGrid (rendere quadrate le immagini)
+
+ * [ ] Implementare backstack su Navigation
+ * [X] Implementare i metodi su StroageUtils (cancellazione e recupero ulteriori files)
  * [ ] Schermata di installazione per richiedere accesso in lettura alle foto del sistema
 
 ## Other

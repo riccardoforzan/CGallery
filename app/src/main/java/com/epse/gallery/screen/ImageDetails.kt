@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.epse.gallery.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 import java.io.File
 import kotlin.math.round
@@ -120,6 +121,15 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
 
                 }
 
+
+                val fileAttributes:Map<String, String> = StorageUtils.getFileData(ctx,imageURI)
+
+                /**
+                 * Iterate oer the entries of the map
+                 */
+
+                Log.d("DEB keys: ",fileAttributes.keys.toString())
+                Log.d("DEB values: ",fileAttributes.values.toString())
 
                 Column (
                     modifier = Modifier

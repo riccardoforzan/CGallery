@@ -16,9 +16,14 @@ class StorageUtils {
     companion object {
 
         /**
+         * This companion object must be refreshed every time
+         */
+        private val imagesURIs: ArrayList<Uri> = ArrayList()
+
+        /**
          * Boolean function that checks if the application has the READ_EXTERNAL_STORAGE
          * permission granted
-         * @param context: Context of the application
+         * @param context Context of the application
          * @return true if the permission is granted, false otherwise
          */
         fun hasReadStoragePermission(context: Context): Boolean {
@@ -37,7 +42,7 @@ class StorageUtils {
         /**
          * Boolean function that checks if the application has the READ_EXTERNAL_STORAGE
          * permission granted
-         * @param context: Context of the application
+         * @param context Context of the application
          * @return true if the permission is granted, false otherwise
          */
         fun hasWriteStoragePermission(context: Context): Boolean {
@@ -56,11 +61,13 @@ class StorageUtils {
         /**
          * This function returns the images saved inside the storage of the smartphone.
          * REQUIRES READ ACCESS TO THE STORAGE
-         * @param context: context of the application, used to query the internal storage
+         * @param context context of the application, used to query the internal storage
          * @return ArrayList containing image URIs
          * @throws SecurityException if the permission to read the storage has not been granted
          */
         fun getImageURIs(context: Context): ArrayList<Uri> {
+
+            imagesURIs.clear()
 
             /**
              * Checking permission
@@ -68,12 +75,6 @@ class StorageUtils {
              */
             if (!hasReadStoragePermission(context = context))
                 throw SecurityException(context.getString(R.string.permission_read_external_storage_not_granted))
-
-            /**
-             * TODO:
-             * Find a way to cache this array and rebuild it only if the dataset changes
-             */
-            val imagesURIs: ArrayList<Uri> = ArrayList()
 
             /**
              * Setting un the query
@@ -100,7 +101,7 @@ class StorageUtils {
 
         /**
          * This function returns the number of images found in the device storage
-         * @param context: context of the application, used to query the internal storage
+         * @param context context of the application, used to query the internal storage
          * @return number of images found
          * @throws SecurityException if the permission to read the storage has not been granted
          */
@@ -114,6 +115,7 @@ class StorageUtils {
          * and saves them on the internal storage.
          * REQUIRES NETWORK ACCESS AND WRITE ACCESS TO THE STORAGE (this permission should always be
          * available because is not marked as dangerous)
+         * @param context context of the application, used to query the internal storage
          * @param number number of images to download
          */
         fun downloadDummyImages(context: Context, number: Int) {
@@ -132,7 +134,66 @@ class StorageUtils {
 
         }
 
-    }
 
+        /**
+         * This function returns an HashMap<String,String> containing information on images
+         * as part of the device's file system. In details it returns info about
+         * https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#SIZE
+         * https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#DISPLAY_NAME
+         * https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#DATA
+         * https://developer.android.com/reference/android/provider/MediaStore.MediaColumns#VOLUME_NAME
+         * @param context context of the application, used to query the internal storage
+         * @param uri URI of the image to look for
+         * @return HashMap containing values
+         */
+        fun getFileData(context: Context,uri:Uri):Map<String,String>{
+            val rv = HashMap<String,String>()
+
+            /**
+             * TODO: Alternative way to get the full path because DATA is deprecated
+             * TODO: MediaStore.Images.Media.VOLUME_NAME is not available in version <Android Q
+             */
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+                val projection = arrayOf(
+                    MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DISPLAY_NAME,
+                    MediaStore.Images.Media.DATA, MediaStore.Images.Media.VOLUME_NAME
+                )
+
+                val cursor = context.contentResolver.query(
+                    uri,
+                    projection, null, null, null
+                )
+                cursor!!.moveToFirst()
+
+                val sizeIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE)
+                val nameIndex = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
+                val dataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+                val volumeIndex = cursor.getColumnIndex(MediaStore.Images.Media.VOLUME_NAME)
+
+                rv["size"] = cursor.getString(sizeIndex)
+                rv["name"] = cursor.getString(nameIndex)
+                rv["path"] = cursor.getString(dataIndex)
+                rv["storage"] = cursor.getString(volumeIndex)
+
+            }
+            return rv
+        }
+
+        /**
+         * This function removes from the storage the image passed as parameter
+         * @param context context of the application, used to query the internal storage
+         * @param uri URI of the image to look for
+         * @return true if deleted, false otherwise
+         */
+        fun deleteImage(context: Context,uri:Uri): Boolean{
+            val deletedRows = context.contentResolver.delete(uri,null,null)
+            //Refresh the imageURIs array
+            getImageURIs(context = context)
+            return deletedRows == 1
+        }
+
+    }
 
 }
