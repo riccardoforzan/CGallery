@@ -1,40 +1,176 @@
 package com.epse.gallery
 
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import com.epse.gallery.screen.*
+import com.google.accompanist.coil.rememberCoilPainter
 
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
+
+    private val storagePermissionCode = 1
 
     companion object{
         var isPortrait by mutableStateOf(true)
     }
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
         setContent {
             isPortrait = (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
-            SetNavigation()
+            ManagePermissions()
         }
     }
 
+    override fun onResume() {
+        if(StorageUtils.hasReadStoragePermission(this)){
+            super.onResume()
+        } else {
+            super.onStart()
+        }
+    }
+
+    /**
+     * Managed permission following guidelines
+     * https://developer.android.com/training/permissions/requesting
+     */
+    @SuppressLint("MissingSuperCall")
+    override fun onRequestPermissionsResult( requestCode: Int, permissions: Array<out String>,
+                                             grantResults: IntArray) {
+
+        if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+            setContent{
+                SetNavigation()
+            }
+        } else {
+            setContent{
+                ReadStorageDenied()
+            }
+        }
+
+    }
+
+    @Composable
+    fun ManagePermissions(){
+        if(StorageUtils.hasReadStoragePermission(this)){
+            Log.d("DEB PERMISSION","Permission granted")
+            SetNavigation()
+        } else {
+            Log.d("DEB PERMISSION","Permission denied")
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+                val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
+                Log.d("DEB SHOW RATIONALE", shouldShowRationaleUI.toString())
+                if(shouldShowRationaleUI){
+                    RationateUI()
+                } else {
+                    ReadStorageDenied()
+                }
+            } else {
+                ReadStorageDenied()
+            }
+        }
+    }
+
+    @Composable
+    fun RationateUI(){
+        MaterialTheme {
+            val typography = MaterialTheme.typography
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    /**
+                     * TODO:
+                     * Insert application logo as request parameter
+                     */
+                    painter = rememberCoilPainter(request = null),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(120.dp)
+                        .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(4.dp)),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(Modifier.height(16.dp))
+
+                Text(
+                    text=this@MainActivity.getString(R.string.permission_read_external_storage_description),
+                    style = typography.h6
+                )
+
+                Button(
+                    modifier = Modifier.padding(30.dp),
+                    onClick = {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+                            this@MainActivity.requestPermissions(arrayOf(permission),storagePermissionCode)
+                        }
+                    }
+                ){
+                    Text(
+                        text = this@MainActivity.getString(R.string.btn_manage_permissions),
+                    )
+                }
+
+            }
+        }
+
+    }
+
+    /**
+     * Screen to show when read on external storage permission has not been granted
+     */
+    @Composable
+    fun ReadStorageDenied(){
+        MaterialTheme{
+            val typography = MaterialTheme.typography
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text=this@MainActivity.getString(R.string.permission_read_external_storage_not_granted),
+                    style = typography.h6
+                )
+            }
+        }
+    }
+
+    /**
+     * Composable function used to init the nav controller
+     */
     @Composable
     fun SetNavigation(){
 
@@ -45,32 +181,8 @@ class MainActivity : ComponentActivity() {
 
         NavHost(
             navController = navController,
-            startDestination = Screens.SetupScreen_AskPermissions
+            startDestination = Screens.ImagesGrid_ShowGrid
         ) {
-
-            /**
-             * Calls in SetupScreen the function to ask for read permission in storage
-             */
-            composable(route = Screens.SetupScreen_AskPermissions){
-                SetupScreen(this@MainActivity,navController).AskPermissions()
-            }
-
-            /**
-             * Calls in SetupScreen the function to ask for read permission in storage
-             */
-            composable(route = Screens.SetupScreen_AskForReadStorage){
-                SetupScreen(this@MainActivity,navController).AskForReadStorage()
-            }
-
-            /**
-             * Calls in SetupScreen the function to show error when permission to read the storage
-             * has not been granted by the user (or has been revoke)
-             */
-            composable(route = Screens.SetupScreen_ReadStorageDenied){
-                SetupScreen(this@MainActivity,navController).ReadStorageDenied()
-            }
-
-            //
 
 
             /**
