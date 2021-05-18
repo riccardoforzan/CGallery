@@ -22,8 +22,13 @@ import com.epse.gallery.screen.*
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
 
+    /**
+     * This variable is used to manage permission changes while the app is paused
+     */
+    private var readPermission = false
+
     companion object{
-        val storagePermissionCode = 1
+        const val storagePermissionCode = 1
         var isPortrait by mutableStateOf(true)
     }
 
@@ -35,13 +40,43 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /**
-     * TODO: Improve, when app is in background and permission changes from denied to granted
-     */
+    @Composable
+    private fun ManagePermissions(){
+        readPermission = StorageUtils.hasReadStoragePermission(this)
+        if(readPermission){
+            //Permission granted
+            SetNavigation()
+        } else {
+            /**
+             * This code block is executed if the permission has been denied.
+             * If the version of Android is > 6.0 then check if the application should show an UI
+             * to ask for permissions.
+             * If the version od Android is < 6.0 then permission must have been granted during
+             * installation.
+             */
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+                val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
+
+                if(shouldShowRationaleUI){
+                    PermissionScreen(this).RationateUI()
+                } else {
+                    PermissionScreen(this).ReadStorageDenied()
+                }
+
+            } else {
+                PermissionScreen(this).ReadStorageDenied()
+            }
+        }
+    }
+
     override fun onResume() {
-        if(StorageUtils.hasReadStoragePermission(this)){
+        //Check if permissions has changed while the app was in background
+        val actualPermission = StorageUtils.hasReadStoragePermission(this)
+        if(actualPermission== this.readPermission){
             super.onResume()
         } else {
+            this.readPermission = actualPermission
             super.onStart()
         }
     }
@@ -66,34 +101,11 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    @Composable
-    fun ManagePermissions(){
-        if(StorageUtils.hasReadStoragePermission(this)){
-            Log.d("DEB PERMISSION","Permission granted")
-            SetNavigation()
-        } else {
-            Log.d("DEB PERMISSION","Permission denied")
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
-                val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
-                Log.d("DEB SHOW RATIONALE", shouldShowRationaleUI.toString())
-                if(shouldShowRationaleUI){
-                    PermissionScreen(this).RationateUI()
-                } else {
-                    PermissionScreen(this).ReadStorageDenied()
-                }
-            } else {
-                PermissionScreen(this).ReadStorageDenied()
-            }
-        }
-    }
-
     /**
-     * Composable function used to init the nav controller
+     * Composable function used to init the nav controller and it's path.
      */
     @Composable
-    fun SetNavigation(){
+    private fun SetNavigation(){
 
         /**
          * Init nav controller
