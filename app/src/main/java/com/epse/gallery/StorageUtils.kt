@@ -62,12 +62,24 @@ class StorageUtils {
         /**
          * This function returns the images saved inside the storage of the smartphone.
          * REQUIRES READ ACCESS TO THE STORAGE
+         * @return ArrayList containing image URIs
+         */
+        fun getImageURIs(): ArrayList<Uri> {
+            return imagesURIs
+        }
+
+        /**
+         * This function refreshes the URIs of the available photos inside the device's storage.
+         * REQUIRES READ ACCESS TO THE STORAGE
          * @param context context of the application, used to query the internal storage
          * @return ArrayList containing image URIs
          * @throws SecurityException if the permission to read the storage has not been granted
          */
-        fun getImageURIs(context: Context): ArrayList<Uri> {
+        fun acquireImageURIs(context: Context){
 
+            /**
+             * Clear up the actual list
+             */
             imagesURIs.clear()
 
             /**
@@ -98,18 +110,15 @@ class StorageUtils {
             }
 
             imageCursor.close()
-
-            return imagesURIs
         }
 
         /**
          * This function returns the number of images found in the device storage
-         * @param context context of the application, used to query the internal storage
          * @return number of images found
          * @throws SecurityException if the permission to read the storage has not been granted
          */
-        fun numberOfImages(context: Context): Int{
-            return getImageURIs(context).size
+        fun numberOfImages(): Int{
+            return imagesURIs.size
         }
 
 
@@ -125,6 +134,7 @@ class StorageUtils {
          * @return HashMap containing values
          */
         fun getFileData(context: Context,uri:Uri):Map<String,String>{
+
             val rv = HashMap<String,String>()
 
             /**
@@ -196,7 +206,7 @@ class StorageUtils {
         fun deleteImage(context: Context,uri:Uri): Boolean{
             val deletedRows = context.contentResolver.delete(uri,null,null)
             //Refresh the imageURIs array
-            getImageURIs(context = context)
+            acquireImageURIs(context = context)
             return deletedRows == 1
         }
 

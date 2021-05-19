@@ -32,9 +32,9 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
     fun ShowGrid() {
 
         //Minimum size of each image
-        var size = 120.dp
+        val size = 120.dp
 
-        val photos = StorageUtils.getImageURIs(ctx)
+        val photos = StorageUtils.getImageURIs()
 
         CreateGrid(photos,size)
     }
