@@ -35,6 +35,8 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         setContent {
+            //Start reading the image and cache them
+            StorageUtils.acquireImageURIs(this)
             isPortrait = (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
             ManagePermissions()
         }
@@ -74,6 +76,8 @@ class MainActivity : ComponentActivity() {
         //Check if permissions has changed while the app was in background
         val actualPermission = StorageUtils.hasReadStoragePermission(this)
         if(actualPermission== this.readPermission){
+            //Start reading the image and cache them
+            StorageUtils.acquireImageURIs(this)
             super.onResume()
         } else {
             this.readPermission = actualPermission
