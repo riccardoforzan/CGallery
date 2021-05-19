@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -22,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.epse.gallery.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
-import java.io.File
+import kotlin.math.pow
 import kotlin.math.round
 
 
@@ -31,32 +30,58 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
     @Composable
     fun ShowDetail(imageURI: Uri) {
 
-
         Log.d("DEB  URI toString:", imageURI.toString())
         Log.d("DEB URI path:", imageURI.path!!)
 
-        //var imageFile = File(imageURI.path)
         val imageStream = ctx.contentResolver.openInputStream(imageURI)
-
         val imageEI = ExifInterface(imageStream!!)
         val paint = rememberCoilPainter(imageURI)
+        val fileAttributes:Map<String, String> = StorageUtils.getFileData(ctx,imageURI)
         var addedToFavorite by remember { mutableStateOf(false) }
+
+        Log.d("DEB keys: ",fileAttributes.keys.toString())
+        Log.d("DEB values: ",fileAttributes.values.toString())
+
+
+        // Exif data
         val description = imageEI.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)
         val length = imageEI.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)
         val width = imageEI.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)
-        val imageName = imageEI.getAttribute(ExifInterface.TAG_FILE_SOURCE)
         val date = imageEI.getAttribute(ExifInterface.TAG_DATETIME)
         val focal = imageEI.getAttribute(ExifInterface.TAG_FOCAL_LENGTH)
         val iso = imageEI.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
         val expTime = round(imageEI.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME,0.0)*1000)/1000
         val exp = imageEI.getAttribute(ExifInterface.TAG_EXPOSURE_INDEX)
+        val model = imageEI.getAttribute(ExifInterface.TAG_MODEL)
         val GPSlatitude =  imageEI.getAttribute(ExifInterface.TAG_GPS_LATITUDE)
         val GPSlongitude =  imageEI.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)
+
+        //Other data
+        var imageName : String? = null
+        var imagePath: String? = null
+        var imageStorage: String? = null
+        var imageSize: String? = null
+
+        val attributesIterator = fileAttributes.iterator()
+        while(attributesIterator.hasNext()){
+           val E = attributesIterator.next()
+            when( E.key){
+                "name" -> imageName = E.value
+                "path" -> imagePath = E.value
+                "size" -> {
+                    val sizeMB =  round(E.value.toDouble()/ 2.0.pow(20.0)*100)/100
+                    imageSize = sizeMB.toString()
+                }
+                "storage" -> imageStorage = E.value
+            }
+        }
+
+        Log.d("DEB imageName: ",imageName.toString())
 
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Image Name") },
+                    title = { Text(imageName.toString()) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(Icons.Filled.ArrowBack, contentDescription = null)
@@ -90,8 +115,7 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                     contentDescription = null,
                     modifier = Modifier
                         .height(200.dp)
-                        .fillMaxWidth()
-                        .clickable(onClick = {}),
+                        .fillMaxWidth(),
                     contentScale = ContentScale.Crop
                 )
 
@@ -122,14 +146,6 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                 }
 
 
-                val fileAttributes:Map<String, String> = StorageUtils.getFileData(ctx,imageURI)
-
-                /**
-                 * Iterate oer the entries of the map
-                 */
-
-                Log.d("DEB keys: ",fileAttributes.keys.toString())
-                Log.d("DEB values: ",fileAttributes.values.toString())
 
                 Column (
                     modifier = Modifier
@@ -137,23 +153,27 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                     .padding(20.dp)
                 ){
                     if (state == 0) {
-                        Text(text = "NOME= $imageName", Modifier.height(50.dp))
-                        Text(text = "Path:", Modifier.height(50.dp))
-                        Text(text = "latitude= $GPSlatitude", Modifier.height(50.dp))
-                        Text(text = "longitude= $GPSlongitude", Modifier.height(50.dp))
-                        Text(text = "data= $date", Modifier.height(50.dp))
+
+                        Text(text = "Nome= $imageName", Modifier.height(50.dp))
+                        Text(text = "Path: $imagePath", Modifier.height(50.dp))
+                        Text(text = "Date= $date", Modifier.height(50.dp))
+                        Text(text = "Size= $imageSize MB", Modifier.height(50.dp))
+                        Text(text = "Storage= $imageStorage", Modifier.height(50.dp))
                     }
                     if (state == 1) {
 
-                        Text(text = "Focale = $focal", Modifier.height(50.dp))
+                        Text(text = "Focal Length = $focal", Modifier.height(50.dp))
                         Text(text = "ISO = $iso", Modifier.height(50.dp))
                         Text(text = "exposure time = $expTime", Modifier.height(50.dp))
                         Text(text = "exposure index = $exp", Modifier.height(50.dp))
-                        Text(text = "length= $length", Modifier.height(50.dp))
-                        Text(text = "width= $width", Modifier.height(50.dp))
+                        Text(text = "Camera model= $model", Modifier.height(50.dp))
+
                     }
                     if (state == 2) {
-                        Text(text = "altro", Modifier.height(50.dp))
+                        Text(text = "latitude= $GPSlatitude", Modifier.height(50.dp))
+                        Text(text = "longitude= $GPSlongitude", Modifier.height(50.dp))
+                        Text(text = "length= $length", Modifier.height(50.dp))
+                        Text(text = "width= $width", Modifier.height(50.dp))
                     }
 
                 }
