@@ -1,6 +1,10 @@
-# Gallery
+# CGallery
 
-Galleria sviluppata utlizzando JetPack compose
+<p align="center">
+  <img src="https://github.com/riccardoforzan/ProgettoSE/blob/main/app/src/main/res/mipmap-xxxhdpi/app_icon.png"/>
+</p>
+
+Galleria per la visualizzazione di sole foto sviluppata utlizzando JetPack Compose
 
 ## Tecnologie utilizzate:
 * [Android Jetpack - Compose](https://developer.android.com/jetpack/compose)
