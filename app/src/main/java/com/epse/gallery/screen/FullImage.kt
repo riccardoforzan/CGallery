@@ -7,6 +7,7 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.FloatingActionButton
@@ -18,12 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.epse.gallery.MainActivity
 import com.google.accompanist.coil.rememberCoilPainter
+import kotlin.math.roundToInt
 
 @ExperimentalFoundationApi
 class FullImage(private val ctx: Context, private val navController: NavHostController) {
@@ -32,6 +37,9 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
     private lateinit var myURI: Uri
     private var showButton by mutableStateOf(false)
     private var expandedState by mutableStateOf(false)
+    var zoom by mutableStateOf(1f)
+    var offsetX by mutableStateOf(0f)
+    var offsetY by mutableStateOf(0f)
 
     @Composable
     fun ShowFullImage(imageURI: Uri) {
@@ -45,6 +53,30 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                 .fillMaxHeight()
                 .fillMaxWidth()
                 .align(Alignment.Center)
+                .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                .graphicsLayer(
+                    scaleX = zoom,
+                    scaleY = zoom
+                )
+                .pointerInput(Unit) {
+                    detectTransformGestures(
+                        onGesture = { _, pan, gestureZoom, _ ->
+                            val newZoom = zoom * gestureZoom
+                            zoom = maxOf(1.0F, minOf(3.0F, newZoom))
+
+                            val newOffSetX = offsetX + pan.x * zoom
+                            val maxOffSetX = (paint.intrinsicSize.width / 2) * (zoom - 1)
+                            offsetX = maxOf(maxOffSetX * (-1), minOf(maxOffSetX, newOffSetX))
+
+                            val newOffSetY = offsetY + pan.y * zoom
+                            val maxOffSetY = (paint.intrinsicSize.height / 2) * (zoom - 1)
+                            offsetY = maxOf(maxOffSetY * (-1), minOf(maxOffSetY, newOffSetY))
+
+                            showButton=false
+                            expandedState=false
+                        }
+                    )
+                }
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
