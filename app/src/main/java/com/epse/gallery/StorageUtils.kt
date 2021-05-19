@@ -27,7 +27,7 @@ class StorageUtils {
          * @return true if the permission is granted, false otherwise
          */
         fun hasReadStoragePermission(context: Context): Boolean {
-            var permission =
+            val permission =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 } else {
@@ -46,7 +46,7 @@ class StorageUtils {
          * @return true if the permission is granted, false otherwise
          */
         fun hasWriteStoragePermission(context: Context): Boolean {
-            var permission =
+            val permission =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 } else {
@@ -82,19 +82,21 @@ class StorageUtils {
             val columns = arrayOf(MediaStore.Images.Media._ID)
             val orderBy = MediaStore.Images.Media.DATE_TAKEN
 
-            var imageCursor: Cursor? = context.contentResolver.query(
+            val imageCursor: Cursor? = context.contentResolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns,
                 null, null, "$orderBy DESC"
             )
 
-            var columnIndex = imageCursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+            val columnIndex = imageCursor!!.getColumnIndex(MediaStore.Images.Media._ID)
 
             while (imageCursor!!.moveToNext()) {
-                var id = imageCursor.getLong(columnIndex)
-                var imageUri =
+                val id = imageCursor.getLong(columnIndex)
+                val imageUri =
                     ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
                 imagesURIs.add(imageUri)
             }
+
+            imageCursor.close()
 
             return imagesURIs
         }
@@ -107,30 +109,6 @@ class StorageUtils {
          */
         fun numberOfImages(context: Context): Int{
             return getImageURIs(context).size
-        }
-
-        /**
-         * This function is used to populate an empty gallery (for example the emulator gallery)
-         * Downloads from "https://picsum.photos/300/300" the specified number images
-         * and saves them on the internal storage.
-         * REQUIRES NETWORK ACCESS AND WRITE ACCESS TO THE STORAGE (this permission should always be
-         * available because is not marked as dangerous)
-         * @param context context of the application, used to query the internal storage
-         * @param number number of images to download
-         */
-        fun downloadDummyImages(context: Context, number: Int) {
-
-            /**
-             * Checking permission
-             * if permission to write the storage has not been granted throw SecurityException
-             */
-            if (!hasWriteStoragePermission(context = context))
-                throw SecurityException(context.getString(R.string.permission_write_external_storage_not_granted))
-
-            /**
-             * TODO: Download images and save those on the external storage
-             */
-
         }
 
 
@@ -176,7 +154,10 @@ class StorageUtils {
                 rv["path"] = cursor.getString(dataIndex)
                 rv["storage"] = cursor.getString(volumeIndex)
 
+                cursor.close()
+
             }
+
             return rv
         }
 

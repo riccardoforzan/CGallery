@@ -1,4 +1,4 @@
-# Gallery
+# CGallery
 
 <p align="center">
   <img src="https://github.com/riccardoforzan/ProgettoSE/blob/main/app/src/main/res/mipmap-xxxhdpi/app_icon.png"/>
