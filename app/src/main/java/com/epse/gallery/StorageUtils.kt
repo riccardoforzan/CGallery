@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.content.PermissionChecker
+import androidx.core.database.getStringOrNull
 
 class StorageUtils {
 
@@ -128,9 +129,12 @@ class StorageUtils {
 
             /**
              * TODO: Alternative way to get the full path because DATA is deprecated
-             * TODO: MediaStore.Images.Media.VOLUME_NAME is not available in version <Android Q
              */
 
+            /**
+             * If the version of Android is <Q then the MediaStore.Images.Media.VOLUME_NAME
+             * is not available
+             */
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 
                 val projection = arrayOf(
@@ -153,6 +157,28 @@ class StorageUtils {
                 rv["name"] = cursor.getString(nameIndex)
                 rv["path"] = cursor.getString(dataIndex)
                 rv["storage"] = cursor.getString(volumeIndex)
+
+                cursor.close()
+
+            } else {
+
+                val projection = arrayOf(
+                    MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DISPLAY_NAME,
+                    MediaStore.Images.Media.DATA )
+
+                val cursor = context.contentResolver.query(
+                    uri,
+                    projection, null, null, null
+                )
+                cursor!!.moveToFirst()
+
+                val sizeIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE)
+                val nameIndex = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
+                val dataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+
+                rv["size"] = cursor.getString(sizeIndex)
+                rv["name"] = cursor.getString(nameIndex)
+                rv["path"] = cursor.getString(dataIndex)
 
                 cursor.close()
 
