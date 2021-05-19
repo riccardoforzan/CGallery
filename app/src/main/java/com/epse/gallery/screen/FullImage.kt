@@ -7,6 +7,7 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -37,9 +38,9 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
     private lateinit var myURI: Uri
     private var showButton by mutableStateOf(false)
     private var expandedState by mutableStateOf(false)
-    var zoom by mutableStateOf(1f)
-    var offsetX by mutableStateOf(0f)
-    var offsetY by mutableStateOf(0f)
+    private var zoom by mutableStateOf(1f)
+    private var offsetX by mutableStateOf(0f)
+    private var offsetY by mutableStateOf(0f)
 
     @Composable
     fun ShowFullImage(imageURI: Uri) {
@@ -48,6 +49,20 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
         Box(modifier = Modifier
             .fillMaxSize()
             .background(backgroundColor)
+            .pointerInput(Unit){
+                detectTapGestures(
+                    onDoubleTap = {
+                        if(zoom==1f)
+                            zoom=2.5f
+                        else{
+                            zoom=1f
+                            offsetX=0f
+                            offsetY=0f
+                        }
+                    },
+                    onTap = {showButton=!showButton}
+                )
+            }
         ) {
             Image(painter = paint, contentDescription = null, modifier = Modifier
                 .fillMaxHeight()
@@ -76,14 +91,16 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                             expandedState=false
                         }
                     )
+
+
                 }
-                .clickable(
+                /*.clickable(
                     indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() },
                 ) {
-                    Log.d("TESTER","TESTER")
                     showButton = !showButton
-                })
+                }*/)
+
             if (showButton) {
                 Icon(Icons.Filled.ArrowBack,
                     contentDescription = null,
