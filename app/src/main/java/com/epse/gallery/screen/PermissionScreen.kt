@@ -36,14 +36,10 @@ class PermissionScreen(val act:ComponentActivity) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    /**
-                     * TODO: Insert application logo as request parameter
-                     */
-                    painter = rememberCoilPainter(request = null),
+                    painter = rememberCoilPainter(request = R.mipmap.app_icon),
                     contentDescription = null,
                     modifier = Modifier
-                        .height(120.dp)
-                        .fillMaxWidth()
+                        .size(100.dp)
                         .clip(shape = RoundedCornerShape(4.dp)),
                     contentScale = ContentScale.Crop
                 )
