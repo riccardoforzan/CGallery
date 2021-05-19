@@ -128,8 +128,7 @@ class StorageUtils {
                 throw SecurityException(context.getString(R.string.permission_write_external_storage_not_granted))
 
             /**
-             * TODO:
-             * Download images and save those on the external storage
+             * TODO: Download images and save those on the external storage
              */
 
         }
