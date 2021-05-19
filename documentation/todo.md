@@ -8,11 +8,11 @@
  * [ ] Progettare composable Immagine a schermo intero + Button + SnackBar
    
  * [ ] ImagesDetails con modello grafico: [Riferimento](https://developer.android.com/jetpack/compose/tutorial). Versione visualizzazione e versione modifica
- * [ ] Rendere responsive ImagesGrid (rendere quadrate le immagini)
 
- * [ ] Implementare backstack su Navigation
+ * [X] Rendere responsive ImagesGrid
+ * [X] Fixare gli stati di Navigation
  * [X] Implementare i metodi su StroageUtils (cancellazione e recupero ulteriori files)
- * [ ] Schermata di installazione per richiedere accesso in lettura alle foto del sistema
+ * [X] Schermata di installazione per richiedere accesso in lettura alle foto del sistema
 
 ## Other
 * [ ] Supporto per le gesture
@@ -24,4 +24,4 @@
 ## Extra
 * Leggere dai metadata delle foto la posizione in cui sono state scattate e
   mostrare una mappa con dei segnaposti fissi sul luogo dove la foto è stata scattata
-* Implementare la ricerca per luogo tra le  foto
+* Implementare la ricerca per luogo tra le foto
