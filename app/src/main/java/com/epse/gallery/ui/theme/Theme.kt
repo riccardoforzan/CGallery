@@ -6,13 +6,16 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
+/**
+ * Some components like Button supports only colours found in android.graphics.Color
+ */
 
 private val DarkColorPalette = darkColors(
-    primary = Indigo,
-    primaryVariant = LightBlue,
+    primary = Red,
+    primaryVariant = Magenta,
     onPrimary = White,
 
-    secondary = DarkRed,
+    secondary = Yellow,
     onSecondary = White,
 
     surface = Black,
@@ -23,11 +26,11 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
-    primary = Cyan,
-    primaryVariant = Blue,
+    primary = Blue,
+    primaryVariant = Cyan,
     onPrimary = White,
 
-    secondary = Amber,
+    secondary = Yellow,
     onSecondary = White,
 
     surface = White,

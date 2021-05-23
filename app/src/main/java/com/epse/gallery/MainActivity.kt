@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -69,6 +70,9 @@ class MainActivity : ComponentActivity() {
         //Check if permissions has changed while the app was in background
         val actualPermission = StorageUtils.hasReadStoragePermission(this)
         if(actualPermission){
+            /**
+             * TODO: When an image has been deleted while app is suspended there is inconsistency
+             */
             super.onResume()
         } else {
             super.onStart()
@@ -117,6 +121,7 @@ class MainActivity : ComponentActivity() {
              * storage
              */
             composable(route = Screens.ImagesGrid_ShowGrid){
+                Log.d("DEB","Called")
                 StorageUtils.acquireImageURIs(this@MainActivity)
                 ImagesGrid(this@MainActivity,navController).ShowGrid()
             }

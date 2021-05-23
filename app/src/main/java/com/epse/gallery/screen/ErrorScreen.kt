@@ -52,9 +52,7 @@ class ErrorScreen(private val act:ComponentActivity) {
                 )
 
                 Button(
-                    modifier = Modifier
-                        .padding(30.dp),
-                    //TODO: Not working for some strange reason (https://foso.github.io/Jetpack-Compose-Playground/material/button/)
+                    modifier = Modifier.padding(30.dp),
                     colors = ButtonDefaults.textButtonColors(
                         backgroundColor = MaterialTheme.colors.primary,
                         contentColor = MaterialTheme.colors.onPrimary
@@ -81,29 +79,17 @@ class ErrorScreen(private val act:ComponentActivity) {
      */
     @Composable
     fun ReadStorageDenied(){
-        MaterialTheme(){
+        GalleryTheme(){
             Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     text = act.getString(R.string.permission_read_external_storage_not_granted),
-                    color = MaterialTheme.colors.onBackground
-                )
-            }
-        }
-    }
-
-    /**
-     * Screen to show when read on external storage permission has not been granted
-     */
-    @Composable
-    fun NoPhotos(){
-        MaterialTheme(){
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = act.getString(R.string.no_images),
                     color = MaterialTheme.colors.onBackground
                 )
             }
