@@ -6,25 +6,35 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
+
 private val DarkColorPalette = darkColors(
-        primary = Purple200,
-        primaryVariant = Purple700,
-        secondary = Teal200
+    primary = Indigo,
+    primaryVariant = LightBlue,
+    onPrimary = White,
+
+    secondary = DarkRed,
+    onSecondary = White,
+
+    surface = Black,
+    onSurface = White,
+
+    background = Black,
+    onBackground = White
 )
 
 private val LightColorPalette = lightColors(
-        primary = Purple500,
-        primaryVariant = Purple700,
-        secondary = Teal200
+    primary = Cyan,
+    primaryVariant = Blue,
+    onPrimary = White,
 
-        /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+    secondary = Amber,
+    onSecondary = White,
+
+    surface = White,
+    onSurface = Black,
+
+    background = White,
+    onBackground = Black,
 )
 
 @Composable
@@ -36,9 +46,9 @@ fun GalleryTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
     }
 
     MaterialTheme(
-            colors = colors,
-            typography = Typography,
-            shapes = Shapes,
-            content = content
+        colors = colors,
+        typography = Typography,
+        shapes = Shapes,
+        content = content
     )
 }

@@ -4,12 +4,17 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyGridScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -46,29 +51,33 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
      * https://developer.android.com/jetpack/compose/lists
      */
     @Composable
-    private fun CreateGrid(photos: ArrayList<Uri>,size:Dp){
-        LazyVerticalGrid(
-            cells = GridCells.Adaptive(minSize = size)
-        ) {
-            items(photos.size) { index ->
-                Box(
-                    modifier = Modifier.size(size)
-                ) {
-                    Image(
-                        painter = rememberCoilPainter(
-                            request = photos[index]
-                        ),
-                        contentDescription = null,
+    private fun CreateGrid(photos: ArrayList<Uri>,size:Dp) {
+        MaterialTheme() {
+            LazyVerticalGrid(
+                cells = GridCells.Adaptive(minSize = size),
+            ) {
+                items(photos.size) { index ->
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(1.dp)
-                            .clickable {
-                                navController.navigate(
-                                    route = Screens.FullImage_ShowFullImage + "/${photos[index]}")
-                            }
-                            .fillMaxWidth(),
-                        contentScale = ContentScale.Crop
-                    )
+                            .size(size)
+                    ) {
+                        Image(
+                            painter = rememberCoilPainter(
+                                request = photos[index]
+                            ),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(1.dp)
+                                .clickable {
+                                    navController.navigate(
+                                        route = Screens.FullImage_ShowFullImage + "/${photos[index]}"
+                                    )
+                                }
+                                .fillMaxWidth(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
         }
