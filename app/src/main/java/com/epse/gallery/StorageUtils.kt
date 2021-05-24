@@ -8,17 +8,21 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.annotation.RequiresApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.PermissionChecker
-import androidx.core.database.getStringOrNull
 
 class StorageUtils {
 
     companion object {
 
         /**
-         * This companion object must be refreshed every time
+         * This companion object must be refreshed every time.
+         * isValid indicates if the ArrayList has been refreshed by the time the application
+         * is resumed or started
          */
+        var isValid by mutableStateOf( false)
         private val imagesURIs: ArrayList<Uri> = ArrayList()
 
         /**

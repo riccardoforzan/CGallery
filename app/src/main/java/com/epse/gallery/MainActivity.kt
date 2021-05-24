@@ -28,19 +28,32 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onStart() {
-        super.onStart()
+        Log.d("DEB","ONSTR")
         setContent {
             //Start reading the image and cache them
             isPortrait = (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
+
+            Log.d("DEB","Legge")
+            StorageUtils.acquireImageURIs(this@MainActivity)
+            StorageUtils.isValid = true
+
+            Log.d("DEB LGH",StorageUtils.getImageURIs().size.toString())
+
             ManagePermissions()
         }
+        super.onStart()
+    }
+
+    override fun onPause() {
+        StorageUtils.isValid = false
+        super.onPause()
     }
 
     @Composable
     private fun ManagePermissions(){
         val actualPermission = StorageUtils.hasReadStoragePermission(this)
         if(actualPermission){
-            //Permission granted
+            //Permission grante
             SetNavigation()
         } else {
             /**
@@ -54,12 +67,13 @@ class MainActivity : ComponentActivity() {
                 val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
                 val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
 
+                Log.d("Debug rationale",shouldShowRationaleUI.toString())
+
                 if(shouldShowRationaleUI){
                     ErrorScreen(this).RationaleUI()
                 } else {
                     ErrorScreen(this).ReadStorageDenied()
                 }
-
             } else {
                 ErrorScreen(this).ReadStorageDenied()
             }
@@ -70,9 +84,8 @@ class MainActivity : ComponentActivity() {
         //Check if permissions has changed while the app was in background
         val actualPermission = StorageUtils.hasReadStoragePermission(this)
         if(actualPermission){
-            /**
-             * TODO: When an image has been deleted while app is suspended there is inconsistency
-             */
+            Log.d("DEB","ONRES")
+            StorageUtils.acquireImageURIs(this)
             super.onResume()
         } else {
             super.onStart()
@@ -121,8 +134,6 @@ class MainActivity : ComponentActivity() {
              * storage
              */
             composable(route = Screens.ImagesGrid_ShowGrid){
-                Log.d("DEB","Called")
-                StorageUtils.acquireImageURIs(this@MainActivity)
                 ImagesGrid(this@MainActivity,navController).ShowGrid()
             }
 
