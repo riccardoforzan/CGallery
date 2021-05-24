@@ -7,8 +7,7 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.FloatingActionButton
@@ -28,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.epse.gallery.MainActivity
+import com.epse.gallery.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 import kotlin.math.roundToInt
 
@@ -44,7 +44,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
 
     @Composable
     fun ShowFullImage(imageURI: Uri) {
-        myURI = imageURI
+        myURI = Uri.parse(imageURI.toString())
         val paint = rememberCoilPainter(myURI)
         Box(modifier = Modifier
             .fillMaxSize()
@@ -81,11 +81,31 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
 
                             val newOffSetX = offsetX + pan.x * zoom
                             val maxOffSetX = (paint.intrinsicSize.width / 2) * (zoom - 1)
-                            offsetX = maxOf(maxOffSetX * (-1), minOf(maxOffSetX, newOffSetX))
+                            offsetX = maxOf(maxOffSetX *(-1), minOf(maxOffSetX, newOffSetX))
+                            if(zoom==1f){
+                                val images=StorageUtils.getImageURIs()
+                                if(pan.x>=50){
+                                    var index=images.indexOf(myURI)-1
+                                    if(index<=-1)
+                                        index=0
+                                    navController.navigate(
+                                        route = Screens.FullImage_ShowFullImage + "/${StorageUtils.getImageURIs()[index]}"
+                                    )
+                                }
+                                if(pan.x<=-50){
+                                    var index=images.indexOf(myURI)+1
+                                    if(index>=images.size)
+                                        index=images.size-1
+                                    navController.navigate(
+                                        route = Screens.FullImage_ShowFullImage + "/${StorageUtils.getImageURIs()[index]}"
+                                    )
+                                }
+
+                            }
 
                             val newOffSetY = offsetY + pan.y * zoom
                             val maxOffSetY = (paint.intrinsicSize.height / 2) * (zoom - 1)
-                            offsetY = maxOf(maxOffSetY * (-1), minOf(maxOffSetY, newOffSetY))
+                            offsetY = maxOf(maxOffSetY *(-1), minOf(maxOffSetY, newOffSetY))
 
                             showButton=false
                             expandedState=false
@@ -119,6 +139,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
             }
         }
     }
+
     @Composable
     private fun MultiActionButton() {
         val transition = updateTransition(targetState = expandedState)
@@ -131,7 +152,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
         FloatingActionButton(
             backgroundColor = Color.White,
             modifier = Modifier
-                .padding(bottom=10.dp,start=25.dp)
+                .padding(bottom = 10.dp, start = 25.dp)
                 .size(scale),
             onClick = {
             }
@@ -144,7 +165,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
         FloatingActionButton(
             backgroundColor = Color.White,
             modifier = Modifier
-                .padding(bottom=10.dp,start=25.dp)
+                .padding(bottom = 10.dp, start = 25.dp)
                 .size(scale),
             onClick = {
                 navController.navigate(

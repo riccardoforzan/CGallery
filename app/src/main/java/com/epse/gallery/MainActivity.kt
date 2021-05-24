@@ -55,8 +55,10 @@ class MainActivity : ComponentActivity() {
                 val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
 
                 if(shouldShowRationaleUI){
+                    Log.d("BENE","BENE")
                     ErrorScreen(this).RationaleUI()
                 } else {
+                    Log.d("CIAO","CIAO")
                     ErrorScreen(this).ReadStorageDenied()
                 }
 
