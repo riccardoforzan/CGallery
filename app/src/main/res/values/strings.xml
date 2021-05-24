@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">CGallery</string>
 
+    <string name="no_images">Ops, it seems like this device does not contain images…</string>
+
 
     <!--Permissions management-->
     <string name="btn_manage_permissions">Manage permissions</string>

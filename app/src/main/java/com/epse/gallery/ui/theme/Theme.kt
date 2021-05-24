@@ -6,25 +6,38 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
+/**
+ * Some components like Button supports only colours found in android.graphics.Color
+ */
+
 private val DarkColorPalette = darkColors(
-        primary = Purple200,
-        primaryVariant = Purple700,
-        secondary = Teal200
+    primary = Red,
+    primaryVariant = Magenta,
+    onPrimary = White,
+
+    secondary = Yellow,
+    onSecondary = White,
+
+    surface = Black,
+    onSurface = White,
+
+    background = Black,
+    onBackground = White
 )
 
 private val LightColorPalette = lightColors(
-        primary = Purple500,
-        primaryVariant = Purple700,
-        secondary = Teal200
+    primary = Blue,
+    primaryVariant = Cyan,
+    onPrimary = White,
 
-        /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+    secondary = Yellow,
+    onSecondary = White,
+
+    surface = White,
+    onSurface = Black,
+
+    background = White,
+    onBackground = Black,
 )
 
 @Composable
@@ -36,9 +49,9 @@ fun GalleryTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
     }
 
     MaterialTheme(
-            colors = colors,
-            typography = Typography,
-            shapes = Shapes,
-            content = content
+        colors = colors,
+        typography = Typography,
+        shapes = Shapes,
+        content = content
     )
 }

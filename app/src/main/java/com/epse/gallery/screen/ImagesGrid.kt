@@ -2,20 +2,30 @@ package com.epse.gallery.screen
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyGridScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
+import com.epse.gallery.R
 import com.epse.gallery.StorageUtils
+import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
 
 /**
@@ -31,12 +41,17 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
     @Composable
     fun ShowGrid() {
 
-        //Minimum size of each image
-        val size = 120.dp
+        Log.d("IMG","CAlled")
 
         val photos = StorageUtils.getImageURIs()
 
-        CreateGrid(photos,size)
+        if(photos.size > 0) {
+            //Minimum size of each image
+            val size = 120.dp
+            CreateGrid(photos, size)
+        } else {
+            NoPhotos()
+        }
     }
 
     /**
@@ -46,30 +61,56 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
      * https://developer.android.com/jetpack/compose/lists
      */
     @Composable
-    private fun CreateGrid(photos: ArrayList<Uri>,size:Dp){
-        LazyVerticalGrid(
-            cells = GridCells.Adaptive(minSize = size)
-        ) {
-            items(photos.size) { index ->
-                Box(
-                    modifier = Modifier.size(size)
-                ) {
-                    Image(
-                        painter = rememberCoilPainter(
-                            request = photos[index]
-                        ),
-                        contentDescription = null,
+    private fun CreateGrid(photos: ArrayList<Uri>,size:Dp) {
+        GalleryTheme() {
+            LazyVerticalGrid(
+                cells = GridCells.Adaptive(minSize = size),
+            ) {
+                items(photos.size) { index ->
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(1.dp)
-                            .clickable {
-                                navController.navigate(
-                                    route = Screens.FullImage_ShowFullImage + "/${photos[index]}")
-                            }
-                            .fillMaxWidth(),
-                        contentScale = ContentScale.Crop
-                    )
+                            .size(size)
+                    ) {
+                        Image(
+                            painter = rememberCoilPainter(
+                                request = photos[index]
+                            ),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(1.dp)
+                                .clickable {
+                                    navController.navigate(
+                                        route = Screens.FullImage_ShowFullImage + "/${photos[index]}"
+                                    )
+                                }
+                                .fillMaxWidth(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
+            }
+        }
+    }
+
+    /**
+     * Screen to show when read on external storage permission has not been granted
+     */
+    @Composable
+    fun NoPhotos(){
+        GalleryTheme(){
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = ctx.getString(R.string.no_images),
+                    color = MaterialTheme.colors.onBackground
+                )
             }
         }
     }

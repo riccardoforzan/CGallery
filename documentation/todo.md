@@ -16,8 +16,7 @@
 
 ## Other
 * [ ] Supporto per le gesture
-* [ ] Supporto per la dark mode
-* [ ] Supporto per tablet
+* [X] Supporto per la dark mode
 * [ ] Scrittura dei metadati su una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
 * [ ] Rierca tra i metadata delle foto quelle taggate con i tag creati
 

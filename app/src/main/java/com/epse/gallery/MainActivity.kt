@@ -22,11 +22,6 @@ import com.epse.gallery.screen.*
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
 
-    /**
-     * This variable is used to manage permission changes while the app is paused
-     */
-    private var readPermission = false
-
     companion object{
         const val storagePermissionCode = 1
         var isPortrait by mutableStateOf(true)
@@ -36,7 +31,6 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         setContent {
             //Start reading the image and cache them
-            StorageUtils.acquireImageURIs(this)
             isPortrait = (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
             ManagePermissions()
         }
@@ -44,8 +38,8 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun ManagePermissions(){
-        readPermission = StorageUtils.hasReadStoragePermission(this)
-        if(readPermission){
+        val actualPermission = StorageUtils.hasReadStoragePermission(this)
+        if(actualPermission){
             //Permission granted
             SetNavigation()
         } else {
@@ -61,13 +55,13 @@ class MainActivity : ComponentActivity() {
                 val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
 
                 if(shouldShowRationaleUI){
-                    PermissionScreen(this).RationateUI()
+                    ErrorScreen(this).RationaleUI()
                 } else {
-                    PermissionScreen(this).ReadStorageDenied()
+                    ErrorScreen(this).ReadStorageDenied()
                 }
 
             } else {
-                PermissionScreen(this).ReadStorageDenied()
+                ErrorScreen(this).ReadStorageDenied()
             }
         }
     }
@@ -75,12 +69,12 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         //Check if permissions has changed while the app was in background
         val actualPermission = StorageUtils.hasReadStoragePermission(this)
-        if(actualPermission== this.readPermission){
-            //Start reading the image and cache them
-            StorageUtils.acquireImageURIs(this)
+        if(actualPermission){
+            /**
+             * TODO: When an image has been deleted while app is suspended there is inconsistency
+             */
             super.onResume()
         } else {
-            this.readPermission = actualPermission
             super.onStart()
         }
     }
@@ -99,7 +93,7 @@ class MainActivity : ComponentActivity() {
             }
         } else {
             setContent{
-                PermissionScreen(this).ReadStorageDenied()
+                ErrorScreen(this).ReadStorageDenied()
             }
         }
 
@@ -123,9 +117,12 @@ class MainActivity : ComponentActivity() {
 
 
             /**
-             * Calls ImagesGrid
+             * Calls the function to show the grid and refreshes the URIs found on the
+             * storage
              */
             composable(route = Screens.ImagesGrid_ShowGrid){
+                Log.d("DEB","Called")
+                StorageUtils.acquireImageURIs(this@MainActivity)
                 ImagesGrid(this@MainActivity,navController).ShowGrid()
             }
 

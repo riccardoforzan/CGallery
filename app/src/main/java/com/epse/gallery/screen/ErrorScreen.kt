@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,15 +19,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.epse.gallery.MainActivity
 import com.epse.gallery.R
+import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
 
-class PermissionScreen(val act:ComponentActivity) {
+class ErrorScreen(private val act:ComponentActivity) {
 
     @ExperimentalFoundationApi
     @Composable
-    fun RationateUI(){
-        MaterialTheme {
-            val typography = MaterialTheme.typography
+    fun RationaleUI(){
+        GalleryTheme(){
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -46,12 +47,16 @@ class PermissionScreen(val act:ComponentActivity) {
                 Spacer(Modifier.height(16.dp))
 
                 Text(
-                    text=act.getString(R.string.permission_read_external_storage_description),
-                    style = typography.h6
+                    text =act.getString(R.string.permission_read_external_storage_description),
+                    color = MaterialTheme.colors.onBackground
                 )
 
                 Button(
                     modifier = Modifier.padding(30.dp),
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = MaterialTheme.colors.primary,
+                        contentColor = MaterialTheme.colors.onPrimary
+                    ),
                     onClick = {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             val permission = Manifest.permission.READ_EXTERNAL_STORAGE
@@ -74,14 +79,18 @@ class PermissionScreen(val act:ComponentActivity) {
      */
     @Composable
     fun ReadStorageDenied(){
-        MaterialTheme{
-            val typography = MaterialTheme.typography
+        GalleryTheme(){
             Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
-                    text=act.getString(R.string.permission_read_external_storage_not_granted),
-                    style = typography.h6
+                    text = act.getString(R.string.permission_read_external_storage_not_granted),
+                    color = MaterialTheme.colors.onBackground
                 )
             }
         }
