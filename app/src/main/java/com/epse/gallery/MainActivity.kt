@@ -167,7 +167,7 @@ class MainActivity : ComponentActivity() {
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
                 //Log.d("DEB Passed URI:",imageURI.toString())
-                ImageDetails(this@MainActivity,navController).ShowDetail(imageURI = Uri.parse(imageURI))
+                ImageDetails(this@MainActivity,navController,imageURI = Uri.parse(imageURI)).ShowDetail(imageURI = Uri.parse(imageURI))
             }
 
         }
