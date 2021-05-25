@@ -36,9 +36,8 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
      */
     @Composable
     fun ShowGrid() {
-        Log.d("DEB","SHG")
         if(StorageUtils.isValid) {
-            var photos = StorageUtils.getImageURIs()
+            val photos = StorageUtils.getImageURIs()
             if (photos.size > 0) {
                 //Minimum size of each image
                 val size = 120.dp

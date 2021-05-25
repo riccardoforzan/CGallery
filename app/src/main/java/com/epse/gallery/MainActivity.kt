@@ -1,6 +1,7 @@
 package com.epse.gallery
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
@@ -54,20 +55,35 @@ class MainActivity : ComponentActivity() {
                 val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
                 val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
 
-                Log.d("Debug rationale",shouldShowRationaleUI.toString())
-
                 if(shouldShowRationaleUI){
                     setContent {
-                        ErrorScreen(this).RationaleUI()
+                        PermissionScreen(this).RationaleUI()
                     }
                 } else {
-                    setContent {
-                        ErrorScreen(this).ReadStorageDenied()
+                    /**
+                     * Check if is the first launch of the UI that asks for permissions
+                     * If found in shared preferences firstTime = false
+                     */
+                    val firstLaunch:Boolean = this.getPreferences(Context.MODE_PRIVATE)
+                        .getBoolean("firstTime",true)
+
+                    Log.d("DEB FL",firstLaunch.toString())
+
+                    Log.d("DEB",firstLaunch.toString())
+
+                    if(firstLaunch) {
+                        setContent{
+                            PermissionScreen(this).RationaleUI()
+                        }
+                    } else {
+                        setContent {
+                            PermissionScreen(this).ReadStorageDenied()
+                        }
                     }
                 }
             } else {
                 setContent {
-                    ErrorScreen(this).ReadStorageDenied()
+                    PermissionScreen(this).ReadStorageDenied()
                 }
             }
         }
@@ -86,13 +102,20 @@ class MainActivity : ComponentActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
                                              grantResults: IntArray) {
 
+        /**
+         * If user managed the permissions at least one time record it
+         */
+        this.getPreferences(Context.MODE_PRIVATE).edit()
+            .putBoolean("firstTime",false)
+            .apply()
+
         if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
             setContent{
                 SetNavigation()
             }
         } else {
             setContent{
-                ErrorScreen(this).ReadStorageDenied()
+                PermissionScreen(this).ReadStorageDenied()
             }
         }
 
