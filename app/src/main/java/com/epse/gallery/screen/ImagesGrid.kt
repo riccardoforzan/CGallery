@@ -75,6 +75,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                                 .fillMaxSize()
                                 .padding(1.dp)
                                 .clickable {
+                                    StorageUtils.setInvalid()
                                     navController.navigate(
                                         route = Screens.FullImage_ShowFullImage + "/${photos[index]}"
                                     )

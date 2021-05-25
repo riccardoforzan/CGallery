@@ -25,6 +25,10 @@ class StorageUtils {
         var isValid by mutableStateOf( false)
         private val imagesURIs: ArrayList<Uri> = ArrayList()
 
+        fun setInvalid(){
+            isValid = false
+        }
+
         /**
          * Boolean function that checks if the application has the READ_EXTERNAL_STORAGE
          * permission granted

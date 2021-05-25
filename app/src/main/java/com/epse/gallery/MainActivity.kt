@@ -27,35 +27,21 @@ class MainActivity : ComponentActivity() {
         var isPortrait by mutableStateOf(true)
     }
 
-    override fun onStart() {
-        Log.d("DEB","ONSTR")
-        setContent {
-            //Start reading the image and cache them
-            isPortrait = (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
-
-            Log.d("DEB","Legge")
-            StorageUtils.acquireImageURIs(this@MainActivity)
-            StorageUtils.isValid = true
-
-            Log.d("DEB LGH",StorageUtils.getImageURIs().size.toString())
-
-            ManagePermissions()
-        }
-        super.onStart()
-    }
-
-    override fun onPause() {
-        StorageUtils.isValid = false
-        super.onPause()
-    }
-
-    @Composable
-    private fun ManagePermissions(){
+    override fun onResume() {
+        super.onResume()
+        //Check if permissions has changed while the app was in background
         val actualPermission = StorageUtils.hasReadStoragePermission(this)
+
         if(actualPermission){
-            //Permission grante
-            SetNavigation()
+            setContent{
+                //Start reading the image and cache them
+                isPortrait = (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
+                StorageUtils.acquireImageURIs(this@MainActivity)
+                StorageUtils.isValid = true
+                SetNavigation()
+            }
         } else {
+
             /**
              * This code block is executed if the permission has been denied.
              * If the version of Android is > 6.0 then check if the application should show an UI
@@ -63,6 +49,7 @@ class MainActivity : ComponentActivity() {
              * If the version od Android is < 6.0 then permission must have been granted during
              * installation.
              */
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
                 val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
@@ -70,26 +57,25 @@ class MainActivity : ComponentActivity() {
                 Log.d("Debug rationale",shouldShowRationaleUI.toString())
 
                 if(shouldShowRationaleUI){
-                    ErrorScreen(this).RationaleUI()
+                    setContent {
+                        ErrorScreen(this).RationaleUI()
+                    }
                 } else {
-                    ErrorScreen(this).ReadStorageDenied()
+                    setContent {
+                        ErrorScreen(this).ReadStorageDenied()
+                    }
                 }
             } else {
-                ErrorScreen(this).ReadStorageDenied()
+                setContent {
+                    ErrorScreen(this).ReadStorageDenied()
+                }
             }
         }
     }
 
-    override fun onResume() {
-        //Check if permissions has changed while the app was in background
-        val actualPermission = StorageUtils.hasReadStoragePermission(this)
-        if(actualPermission){
-            Log.d("DEB","ONRES")
-            StorageUtils.acquireImageURIs(this)
-            super.onResume()
-        } else {
-            super.onStart()
-        }
+    override fun onPause() {
+        StorageUtils.isValid = false
+        super.onPause()
     }
 
     /**
