@@ -13,6 +13,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -192,7 +193,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
         }
     }*/
     private var backgroundColor = Color.Black
-    private var myURI by mutableStateOf("")
+    //private var myURI by mutableStateOf("")
     private var lastChange=System.currentTimeMillis()
     private var showButton by mutableStateOf(false)
     private var expandedState by mutableStateOf(false)
@@ -203,12 +204,13 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
 
     @Composable
     fun ShowFullImage(imageURI: Uri) {
-        myURI=imageURI.toString()
-        BuildFullImage()
+        var myURI=imageURI.toString()
+        BuildFullImage(myURI)
     }
 
     @Composable
-    private fun BuildFullImage() {
+    private fun BuildFullImage(stringURI:String) {
+        var myURI by rememberSaveable {mutableStateOf(stringURI)}
         var uri = Uri.parse(myURI)
         val paint = rememberCoilPainter(uri)
         Box(modifier = Modifier
@@ -243,27 +245,27 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                         onGesture = { _, pan, gestureZoom, _ ->
                             val newZoom = zoom * gestureZoom
                             zoom = maxOf(1.0F, minOf(3.0F, newZoom))
-                            val currentTime=System.currentTimeMillis()
-                            if(zoom==1f){
-                                if (pan.x >= 50 && currentTime-lastChange>200) {
+                            val currentTime = System.currentTimeMillis()
+                            if (zoom == 1f) {
+                                if (pan.x >= 50 && currentTime - lastChange > 200) {
                                     uri = Uri.parse(myURI)
-                                    val index= images.indexOf(uri)
-                                    var newIndex = index-1
+                                    val index = images.indexOf(uri)
+                                    var newIndex = index - 1
                                     if (newIndex <= -1)
                                         newIndex = 0
-                                    lastChange=System.currentTimeMillis()
-                                    myURI=images[newIndex].toString()
+                                    lastChange = System.currentTimeMillis()
+                                    myURI = images[newIndex].toString()
                                 }
-                                if (pan.x <= -50 && currentTime-lastChange>200) {
+                                if (pan.x <= -50 && currentTime - lastChange > 200) {
                                     uri = Uri.parse(myURI)
-                                    val index= images.indexOf(uri)
-                                    var newIndex = index+1
+                                    val index = images.indexOf(uri)
+                                    var newIndex = index + 1
                                     if (newIndex >= images.size)
                                         newIndex = images.size - 1
-                                    lastChange=System.currentTimeMillis()
-                                    myURI=images[newIndex].toString()
+                                    lastChange = System.currentTimeMillis()
+                                    myURI = images[newIndex].toString()
                                 }
-                            }else{
+                            } else {
                                 val newOffSetX = offsetX + pan.x * zoom
                                 val maxOffSetX = (paint.intrinsicSize.width / 2) * (zoom - 1)
                                 offsetX = maxOf(maxOffSetX * (-1), minOf(maxOffSetX, newOffSetX))
@@ -291,14 +293,14 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                         }
                 )
                 Column(modifier=Modifier.align(Alignment.BottomEnd)){
-                    MultiActionButton()
+                    MultiActionButton(Uri.parse(myURI))
                 }
             }
         }
     }
 
     @Composable
-    private fun MultiActionButton() {
+    private fun MultiActionButton(myURI:Uri) {
         val transition = updateTransition(targetState = expandedState)
         val rotation: Float by transition.animateFloat { state ->
             if (state) 90f else 0f
