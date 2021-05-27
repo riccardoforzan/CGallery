@@ -16,10 +16,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.epse.gallery.MainActivity.Companion.isPortrait
+import com.epse.gallery.R
 import com.epse.gallery.StorageUtils
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
@@ -39,7 +42,7 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
     private val date: String?
     private val focal: String?
     private val iso: String?
-    private val expTime: Double?
+    private val expTime: Double
     private val exp: String?
     private val model: String?
     private val GPSlatitude: String?
@@ -187,17 +190,17 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                         Column() {
                             TabRow(selectedTabIndex = selectedTab) {
                                 Tab(
-                                    text = { Text("General") },
+                                    text = { Text(ctx.getString(R.string.generalTab)) },
                                     selected = selectedTab == 0,
                                     onClick = { selectedTab = 0 }
                                 )
                                 Tab(
-                                    text = { Text("Shooting") },
+                                    text = { Text(ctx.getString(R.string.shootingTab)) },
                                     selected = selectedTab == 1,
                                     onClick = { selectedTab = 1 }
                                 )
                                 Tab(
-                                    text = { Text("Other") },
+                                    text = { Text(ctx.getString(R.string.otherTab)) },
                                     selected = selectedTab == 2,
                                     onClick = { selectedTab = 2 }
                                 )
@@ -215,72 +218,82 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
     @Composable
     fun ShowTabRowText(selected:Int) {
 
+        val scrollState = rememberScrollState()
+        Column(
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .padding(10.dp)
+        ) {
 
-            val scrollState = rememberScrollState()
-            Column(
-                modifier = Modifier
-                    .verticalScroll(scrollState)
-                //.padding(20.dp)
-            ) {
+            if (selected== 0) {
 
-                if (selected== 0) {
+                //Text("test data : $date")
+                showDetailText(ctx.getString(R.string.imageDName), imageName)
+                showDetailText(ctx.getString(R.string.imageDDate), date)
+                showDetailText(ctx.getString(R.string.imageDPath), imagePath)
+                showDetailText(ctx.getString(R.string.imageDStorage), imageStorage)
+                showDetailText(ctx.getString(R.string.imageDSizeOnDisk), imageSize ,"MB")
 
-                    Text(text = "Name= $imageName", Modifier.height(50.dp))
-                    Text(text = "Path: $imagePath", Modifier.height(50.dp))
-                    Text(text = "Date= $date", Modifier.height(50.dp))
-                    Text(text = "Size= $imageSize MB", Modifier.height(50.dp))
-                    Text(text = "Storage= $imageStorage", Modifier.height(50.dp))
-                    Text(text = "Stuff to scroll", Modifier.height(50.dp))
-                    Text(text = "Stuff to scroll", Modifier.height(50.dp))
-                    Text(text = "Stuff to scroll", Modifier.height(50.dp))
-                    Text(text = "Stuff to scroll", Modifier.height(50.dp))
-                }
-                if (selected == 1) {
+            }
+            if (selected == 1) {
 
-                    if (focal != null) Text(
-                        text = "Focal Length = $focal",
-                        Modifier.height(50.dp)
-                    )
-                    if (iso != null) Text(
-                        text = "ISO = $iso",
-                        Modifier.height(50.dp)
-                    )
-                    if (expTime != 0.0) Text(
-                        text = "exposure time = $expTime",
-                        Modifier.height(50.dp)
-                    )
-                    if (exp != null) Text(
-                        text = "exposure index = $exp",
-                        Modifier.height(50.dp)
-                    )
-                    if (model != null) Text(
-                        text = "Camera model= $model",
-                        Modifier.height(50.dp)
-                    )
-                    if (focal == null && iso == null && expTime == 0.0 && exp == null && model == null) Text(
-                        text = "Shooting data not available",
-                        Modifier.height(50.dp)
-                    )
-                }
-                if (selected == 2) {
-                    if (GPSlongitude != null) Text(
-                        text = "longitude= $GPSlongitude",
-                        Modifier.height(50.dp)
-                    )
-                    if (GPSlatitude != null) Text(
-                        text = "latitude= $GPSlatitude",
-                        Modifier.height(50.dp)
-                    )
-                    if (length != null) Text(
-                        text = "length= $length",
-                        Modifier.height(50.dp)
-                    )
-                    if (width != null) Text(
-                        text = "width= $width",
-                        Modifier.height(50.dp)
+                showDetailText(ctx.getString(R.string.tagFocal), focal)
+                showDetailText(ctx.getString(R.string.tagIso), iso)
+               if(expTime> 0.0) showDetailText(ctx.getString(R.string.tagExpTime), expTime.toString())
+                showDetailText(ctx.getString(R.string.tagModel), model)
+
+                if (focal == null && iso == null && expTime == 0.0  && model == null) {
+                    Text(
+                        text= "${ctx.getString(R.string.shootingTab)} ${ctx.getString(R.string.DataNotAvailable)}",
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray
                     )
                 }
             }
+
+            if (selected == 2) {
+
+                showDetailText(ctx.getString(R.string.tagLongitude), GPSlongitude)
+                showDetailText(ctx.getString(R.string.tagLatitude), GPSlatitude)
+                showDetailText(ctx.getString(R.string.imageSizes), "$width x $length")
+
+                if (GPSlongitude == null && GPSlatitude == null && width == null  && length == null) {
+                    Text(
+                        text= "${ctx.getString(R.string.otherTab)} ${ctx.getString(R.string.DataNotAvailable)}",
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray
+                    )
+                }
+            }
+        }
+        }
+
+    @Composable
+    fun showDetailText(name: String, value: String?, other: String = ""  ){
+        if(value !=null){
+
+            Row(){
+                Text(
+                    text = "$name :",
+                    modifier = Modifier
+                        .wrapContentWidth(Alignment.Start)
+                        .weight(1f)
+                )
+                Spacer(Modifier.height(15.dp))
+                Text(
+                    text = "$value $other",
+                    modifier = Modifier
+                        .wrapContentWidth(Alignment.End)
+                        .weight(2f)
+
+                )
+            }
+            Spacer(Modifier.height(15.dp))
+        }
     }
 }
 
