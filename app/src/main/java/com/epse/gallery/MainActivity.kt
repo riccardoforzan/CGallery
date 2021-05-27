@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.core.content.edit
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import com.epse.gallery.screen.*
@@ -34,13 +35,16 @@ class MainActivity : ComponentActivity() {
         val actualPermission = StorageUtils.hasReadStoragePermission(this)
 
         if(actualPermission){
+
             setContent{
                 //Start reading the image and cache them
-                isPortrait = (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
+                isPortrait =
+                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
                 StorageUtils.acquireImageURIs(this@MainActivity)
                 StorageUtils.isValid = true
                 SetNavigation()
             }
+
         } else {
 
             /**
@@ -55,32 +59,42 @@ class MainActivity : ComponentActivity() {
                 val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
                 val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
 
-                if(shouldShowRationaleUI){
+                /**
+                 * Check if is the first launch of the UI that asks for permissions
+                 * If found in shared preferences firstTime = false
+                 */
+                val firstLaunch:Boolean = this.getPreferences(Context.MODE_PRIVATE)
+                    .getBoolean("firstTime",true)
+
+                if(firstLaunch){
                     setContent {
                         PermissionScreen(this).RationaleUI()
                     }
                 } else {
-                    /**
-                     * Check if is the first launch of the UI that asks for permissions
-                     * If found in shared preferences firstTime = false
-                     */
-                    val firstLaunch:Boolean = this.getPreferences(Context.MODE_PRIVATE)
-                        .getBoolean("firstTime",true)
-
-                    Log.d("DEB FL",firstLaunch.toString())
-
-                    Log.d("DEB",firstLaunch.toString())
-
-                    if(firstLaunch) {
-                        setContent{
-                            PermissionScreen(this).RationaleUI()
+                    val skip:Boolean = this.getPreferences(Context.MODE_PRIVATE)
+                        .getBoolean("skipRationale",false)
+                    when {
+                        skip -> {
+                            this.getPreferences(Context.MODE_PRIVATE).edit {
+                                remove("skipRationale")
+                            }
+                            setContent {
+                                PermissionScreen(this).ReadStorageDenied()
+                            }
                         }
-                    } else {
-                        setContent {
-                            PermissionScreen(this).ReadStorageDenied()
+                        shouldShowRationaleUI -> {
+                            setContent {
+                                PermissionScreen(this).RationaleUI()
+                            }
+                        }
+                        else -> {
+                            setContent {
+                                PermissionScreen(this).ReadStorageDenied()
+                            }
                         }
                     }
                 }
+
             } else {
                 setContent {
                     PermissionScreen(this).ReadStorageDenied()
@@ -105,9 +119,14 @@ class MainActivity : ComponentActivity() {
         /**
          * If user managed the permissions at least one time record it
          */
-        this.getPreferences(Context.MODE_PRIVATE).edit()
-            .putBoolean("firstTime",false)
-            .apply()
+
+        val ft:Boolean = !(this.getPreferences(Context.MODE_PRIVATE).contains("firstTime"))
+        if(ft) {
+            this.getPreferences(Context.MODE_PRIVATE).edit()
+                .putBoolean("firstTime", false)
+                .putBoolean("skipRationale",true)
+                .apply()
+        }
 
         if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
             setContent{
@@ -176,7 +195,9 @@ class MainActivity : ComponentActivity() {
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
                 //Log.d("DEB Passed URI:",imageURI.toString())
-                FullImage(this@MainActivity,navController).ShowFullImage(imageURI = Uri.parse(imageURI))
+                FullImage(this@MainActivity,navController).ShowFullImage(
+                    imageURI = Uri.parse(imageURI)
+                )
             }
 
             composable(
@@ -187,7 +208,8 @@ class MainActivity : ComponentActivity() {
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
                 //Log.d("DEB Passed URI:",imageURI.toString())
-                ImageDetails(this@MainActivity,navController,imageURI = Uri.parse(imageURI)).ShowDetail(imageURI = Uri.parse(imageURI))
+                ImageDetails(this@MainActivity,navController,imageURI = Uri.parse(imageURI))
+                    .ShowDetail(imageURI = Uri.parse(imageURI))
             }
 
         }
