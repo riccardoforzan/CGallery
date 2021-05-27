@@ -2,6 +2,7 @@ package com.epse.gallery
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
@@ -27,115 +28,29 @@ import com.epse.gallery.screen.*
 class MainActivity : ComponentActivity() {
 
     companion object{
-        const val storagePermissionCode = 1
         var isPortrait by mutableStateOf(true)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        StorageUtils.acquireImageURIs(this)
     }
 
     override fun onResume() {
         super.onResume()
-        //Check if permissions has changed while the app was in background
-        val actualPermission = StorageUtils.hasReadStoragePermission(this)
-
-        if(actualPermission){
-            setContent{
-                //Start reading the image and cache them
-                isPortrait =
-                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
-                StorageUtils.acquireImageURIs(this)
-                SetNavigation()
-            }
+        val firstTime:Boolean = !(this.getPreferences(Context.MODE_PRIVATE).contains("firstTime"))
+        if(firstTime){
+            startActivity(Intent(this,FirstTimeActivity::class.java))
         } else {
-            /**
-             * This code block is executed if the permission has been denied.
-             * If the version of Android is > 6.0 then check if the application should show an UI
-             * to ask for permissions.
-             * If the version od Android is < 6.0 then permission must have been granted during
-             * installation.
-             */
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
-                val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
-
-                /**
-                 * Check if is the first launch of the UI that asks for permissions
-                 * If found in shared preferences firstTime = false
-                 */
-                val firstLaunch:Boolean = this.getPreferences(Context.MODE_PRIVATE)
-                    .getBoolean("firstTime",true)
-
-                if(firstLaunch){
-                    setContent {
-                        PermissionScreen(this).RationaleUI()
-                    }
-                } else {
-                    val skip:Boolean = this.getPreferences(Context.MODE_PRIVATE)
-                        .getBoolean("skipRationale",false)
-                    when {
-                        skip -> {
-                            this.getPreferences(Context.MODE_PRIVATE).edit {
-                                remove("skipRationale")
-                            }
-                            setContent {
-                                PermissionScreen(this).ReadStorageDenied()
-                            }
-                        }
-                        shouldShowRationaleUI -> {
-                            setContent {
-                                PermissionScreen(this).RationaleUI()
-                            }
-                        }
-                        else -> {
-                            setContent {
-                                PermissionScreen(this).ReadStorageDenied()
-                            }
-                        }
-                    }
-                }
-
-            } else {
+            //Check if permissions has changed while the app was in background
+            val actualPermission = StorageUtils.hasReadStoragePermission(this)
+            if (actualPermission) {
                 setContent {
-                    PermissionScreen(this).ReadStorageDenied()
+                    //Start reading the image and cache them
+                    isPortrait =
+                        LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
+                    StorageUtils.acquireImageURIs(this)
+                    SetNavigation()
                 }
+            } else {
+                startActivity(Intent(this, PermissionActivity::class.java))
             }
         }
-    }
-
-    /**
-     * Managed permission following guidelines
-     * https://developer.android.com/training/permissions/requesting
-     */
-    @SuppressLint("MissingSuperCall")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
-                                             grantResults: IntArray) {
-
-        /**
-         * If user managed the permissions at least one time record it
-         */
-
-        val ft:Boolean = !(this.getPreferences(Context.MODE_PRIVATE).contains("firstTime"))
-        if(ft) {
-            this.getPreferences(Context.MODE_PRIVATE).edit()
-                .putBoolean("firstTime", false)
-                .putBoolean("skipRationale",true)
-                .apply()
-        }
-
-        if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-            setContent{
-                SetNavigation()
-            }
-        } else {
-            setContent{
-                PermissionScreen(this).ReadStorageDenied()
-            }
-        }
-
     }
 
     /**

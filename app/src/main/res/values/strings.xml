@@ -5,7 +5,7 @@
 
 
     <!--Permissions management-->
-    <string name="btn_manage_permissions">Manage permissions</string>
+    <string name="btn_got_it">Got it</string>
 
     <string name="permission_read_external_storage_description">
         In order to provide functionalities this application requires the permission to read

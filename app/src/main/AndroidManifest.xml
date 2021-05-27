@@ -21,6 +21,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".FirstTimeActivity" />
+        <activity android:name=".PermissionActivity" />
+
     </application>
 
     <!--Permission to read photos from external storage-->

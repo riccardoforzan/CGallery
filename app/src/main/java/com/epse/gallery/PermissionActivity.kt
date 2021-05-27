@@ -1,8 +1,11 @@
-package com.epse.gallery.screen
+package com.epse.gallery
 
 import android.Manifest
 import android.os.Build
+import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -17,14 +20,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.epse.gallery.MainActivity
-import com.epse.gallery.R
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
 
-class PermissionScreen(private val act:ComponentActivity) {
+@ExperimentalFoundationApi
+class PermissionActivity : ComponentActivity() {
 
-    @ExperimentalFoundationApi
+    companion object{
+        const val storagePermissionCode = 1
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        /**
+         * This code block is executed if the permission has been denied.
+         * If the version of Android is > 6.0 then check if the application should show an UI
+         * to ask for permissions.
+         * If the version od Android is < 6.0 then permission must have been granted during
+         * installation.
+         */
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+            val showRequest = this.shouldShowRequestPermissionRationale(permission)
+            if(showRequest){
+                setContent { RationaleUI() }
+            } else {
+                setContent { ReadStorageDenied() }
+            }
+        } else {
+            setContent { ReadStorageDenied() }
+        }
+
+    }
+
     @Composable
     fun RationaleUI(){
         GalleryTheme(){
@@ -47,7 +76,7 @@ class PermissionScreen(private val act:ComponentActivity) {
                 Spacer(Modifier.height(16.dp))
 
                 Text(
-                    text =act.getString(R.string.permission_read_external_storage_description),
+                    text = getString(R.string.permission_read_external_storage_description),
                     color = MaterialTheme.colors.onBackground
                 )
 
@@ -60,12 +89,15 @@ class PermissionScreen(private val act:ComponentActivity) {
                     onClick = {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             val permission = Manifest.permission.READ_EXTERNAL_STORAGE
-                            act.requestPermissions(arrayOf(permission),MainActivity.storagePermissionCode)
+                            requestPermissions(
+                                arrayOf(permission),
+                                storagePermissionCode
+                            )
                         }
                     }
                 ){
                     Text(
-                        text = act.getString(R.string.btn_manage_permissions),
+                        text = getString(R.string.btn_got_it),
                     )
                 }
 
@@ -89,7 +121,7 @@ class PermissionScreen(private val act:ComponentActivity) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = act.getString(R.string.permission_read_external_storage_not_granted),
+                    text = getString(R.string.permission_read_external_storage_not_granted),
                     color = MaterialTheme.colors.onBackground
                 )
             }
