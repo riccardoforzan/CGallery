@@ -36,15 +36,11 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
      */
     @Composable
     fun ShowGrid() {
-        if(StorageUtils.isValid) {
-            val photos = StorageUtils.getImageURIs()
-            if (photos.size > 0) {
-                //Minimum size of each image
-                val size = 120.dp
-                CreateGrid(photos, size)
-            } else {
-                NoPhotos()
-            }
+        val imagesList = StorageUtils.getImageURIs()
+        if (imagesList.isNotEmpty()) {
+            CreateGrid(imagesList)
+        } else {
+            NoPhotos()
         }
     }
 
@@ -55,7 +51,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
      * https://developer.android.com/jetpack/compose/lists
      */
     @Composable
-    private fun CreateGrid(photos: ArrayList<Uri>,size:Dp) {
+    private fun CreateGrid(photos: List<Uri>,size:Dp = 120.dp) {
         GalleryTheme() {
             LazyVerticalGrid(
                 cells = GridCells.Adaptive(minSize = size),
@@ -74,7 +70,6 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                                 .fillMaxSize()
                                 .padding(1.dp)
                                 .clickable {
-                                    StorageUtils.setInvalid()
                                     navController.navigate(
                                         route = Screens.FullImage_ShowFullImage + "/${photos[index]}"
                                     )

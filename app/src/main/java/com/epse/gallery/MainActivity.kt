@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,24 +31,25 @@ class MainActivity : ComponentActivity() {
         var isPortrait by mutableStateOf(true)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        StorageUtils.acquireImageURIs(this)
+    }
+
     override fun onResume() {
         super.onResume()
         //Check if permissions has changed while the app was in background
         val actualPermission = StorageUtils.hasReadStoragePermission(this)
 
         if(actualPermission){
-
             setContent{
                 //Start reading the image and cache them
                 isPortrait =
                     LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
-                StorageUtils.acquireImageURIs(this@MainActivity)
-                StorageUtils.isValid = true
+                StorageUtils.acquireImageURIs(this)
                 SetNavigation()
             }
-
         } else {
-
             /**
              * This code block is executed if the permission has been denied.
              * If the version of Android is > 6.0 then check if the application should show an UI
@@ -101,11 +104,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onPause() {
-        StorageUtils.isValid = false
-        super.onPause()
     }
 
     /**

@@ -8,26 +8,15 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.core.content.PermissionChecker
 
 class StorageUtils {
 
     companion object {
 
-        /**
-         * This companion object must be refreshed every time.
-         * isValid indicates if the ArrayList has been refreshed by the time the application
-         * is resumed or started
-         */
-        var isValid by mutableStateOf( false)
-        private val imagesURIs: ArrayList<Uri> = ArrayList()
-
-        fun setInvalid(){
-            isValid = false
-        }
+        private val imagesURIs = mutableStateListOf<Uri>()
 
         /**
          * Boolean function that checks if the application has the READ_EXTERNAL_STORAGE
@@ -72,7 +61,7 @@ class StorageUtils {
          * REQUIRES READ ACCESS TO THE STORAGE
          * @return ArrayList containing image URIs
          */
-        fun getImageURIs(): ArrayList<Uri> {
+        fun getImageURIs(): SnapshotStateList<Uri> {
             return imagesURIs
         }
 
