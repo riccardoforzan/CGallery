@@ -22,7 +22,7 @@ import com.epse.gallery.R
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
 
-class ErrorScreen(private val act:ComponentActivity) {
+class PermissionScreen(private val act:ComponentActivity) {
 
     @ExperimentalFoundationApi
     @Composable

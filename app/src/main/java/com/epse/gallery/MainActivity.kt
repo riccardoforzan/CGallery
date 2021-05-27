@@ -1,6 +1,7 @@
 package com.epse.gallery
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
@@ -15,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.core.content.edit
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import com.epse.gallery.screen.*
@@ -27,22 +29,24 @@ class MainActivity : ComponentActivity() {
         var isPortrait by mutableStateOf(true)
     }
 
-    override fun onStart() {
-        super.onStart()
-        setContent {
-            //Start reading the image and cache them
-            isPortrait = (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
-            ManagePermissions()
-        }
-    }
-
-    @Composable
-    private fun ManagePermissions(){
+    override fun onResume() {
+        super.onResume()
+        //Check if permissions has changed while the app was in background
         val actualPermission = StorageUtils.hasReadStoragePermission(this)
+
         if(actualPermission){
-            //Permission granted
-            SetNavigation()
+
+            setContent{
+                //Start reading the image and cache them
+                isPortrait =
+                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
+                StorageUtils.acquireImageURIs(this@MainActivity)
+                StorageUtils.isValid = true
+                SetNavigation()
+            }
+
         } else {
+
             /**
              * This code block is executed if the permission has been denied.
              * If the version of Android is > 6.0 then check if the application should show an UI
@@ -50,35 +54,58 @@ class MainActivity : ComponentActivity() {
              * If the version od Android is < 6.0 then permission must have been granted during
              * installation.
              */
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
                 val shouldShowRationaleUI = this.shouldShowRequestPermissionRationale(permission)
 
-                if(shouldShowRationaleUI){
-                    Log.d("BENE","BENE")
-                    ErrorScreen(this).RationaleUI()
+                /**
+                 * Check if is the first launch of the UI that asks for permissions
+                 * If found in shared preferences firstTime = false
+                 */
+                val firstLaunch:Boolean = this.getPreferences(Context.MODE_PRIVATE)
+                    .getBoolean("firstTime",true)
+
+                if(firstLaunch){
+                    setContent {
+                        PermissionScreen(this).RationaleUI()
+                    }
                 } else {
-                    Log.d("CIAO","CIAO")
-                    ErrorScreen(this).ReadStorageDenied()
+                    val skip:Boolean = this.getPreferences(Context.MODE_PRIVATE)
+                        .getBoolean("skipRationale",false)
+                    when {
+                        skip -> {
+                            this.getPreferences(Context.MODE_PRIVATE).edit {
+                                remove("skipRationale")
+                            }
+                            setContent {
+                                PermissionScreen(this).ReadStorageDenied()
+                            }
+                        }
+                        shouldShowRationaleUI -> {
+                            setContent {
+                                PermissionScreen(this).RationaleUI()
+                            }
+                        }
+                        else -> {
+                            setContent {
+                                PermissionScreen(this).ReadStorageDenied()
+                            }
+                        }
+                    }
                 }
 
             } else {
-                ErrorScreen(this).ReadStorageDenied()
+                setContent {
+                    PermissionScreen(this).ReadStorageDenied()
+                }
             }
         }
     }
 
-    override fun onResume() {
-        //Check if permissions has changed while the app was in background
-        val actualPermission = StorageUtils.hasReadStoragePermission(this)
-        if(actualPermission){
-            /**
-             * TODO: When an image has been deleted while app is suspended there is inconsistency
-             */
-            super.onResume()
-        } else {
-            super.onStart()
-        }
+    override fun onPause() {
+        StorageUtils.isValid = false
+        super.onPause()
     }
 
     /**
@@ -89,13 +116,25 @@ class MainActivity : ComponentActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
                                              grantResults: IntArray) {
 
+        /**
+         * If user managed the permissions at least one time record it
+         */
+
+        val ft:Boolean = !(this.getPreferences(Context.MODE_PRIVATE).contains("firstTime"))
+        if(ft) {
+            this.getPreferences(Context.MODE_PRIVATE).edit()
+                .putBoolean("firstTime", false)
+                .putBoolean("skipRationale",true)
+                .apply()
+        }
+
         if(grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
             setContent{
                 SetNavigation()
             }
         } else {
             setContent{
-                ErrorScreen(this).ReadStorageDenied()
+                PermissionScreen(this).ReadStorageDenied()
             }
         }
 
@@ -123,8 +162,6 @@ class MainActivity : ComponentActivity() {
              * storage
              */
             composable(route = Screens.ImagesGrid_ShowGrid){
-                Log.d("DEB","Called")
-                StorageUtils.acquireImageURIs(this@MainActivity)
                 ImagesGrid(this@MainActivity,navController).ShowGrid()
             }
 
@@ -158,7 +195,9 @@ class MainActivity : ComponentActivity() {
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
                 //Log.d("DEB Passed URI:",imageURI.toString())
-                FullImage(this@MainActivity,navController).ShowFullImage(imageURI = Uri.parse(imageURI))
+                FullImage(this@MainActivity,navController).ShowFullImage(
+                    imageURI = Uri.parse(imageURI)
+                )
             }
 
             composable(
@@ -169,7 +208,8 @@ class MainActivity : ComponentActivity() {
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
                 //Log.d("DEB Passed URI:",imageURI.toString())
-                ImageDetails(this@MainActivity,navController,imageURI = Uri.parse(imageURI)).ShowDetail(imageURI = Uri.parse(imageURI))
+                ImageDetails(this@MainActivity,navController,imageURI = Uri.parse(imageURI))
+                    .ShowDetail(imageURI = Uri.parse(imageURI))
             }
 
         }
