@@ -1,8 +1,16 @@
 # Report Compose
 
 ## Introduzione
+Vedi link Medium
 
 ## Android Studio con Compose
+
+## Gestire gli stati
+[Link](https://developer.android.com/jetpack/compose/mental-model)
+
+## Lifecycle degli oggetti di Compose
+Vedi link thinking in compose
+____
 
 ## Design con compose
 
@@ -14,6 +22,8 @@
 * ### Animazioni
 * ### Gestures
 
+____
+
 ## Migrare a Compose
 
 * ### Migrare a Jetpack Compose in app già esistenti
@@ -23,9 +33,6 @@
 * ### Risorse
 * ### Accessibilità
 
-## Gestire gli stati
-
-## Lifecycle degli oggetti di Compose
-
-## Documentazione
+## Sitografia
 * [Documentazione Compose](https://developer.android.com/jetpack/compose/documentation)
+* [Jetpack Compose Indroduzione](https://link.medium.com/0gZ6DLIBReb)

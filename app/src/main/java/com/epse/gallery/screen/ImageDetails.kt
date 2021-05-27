@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -92,9 +93,7 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
             var addedToFavorite by remember { mutableStateOf(false) }
             val paint = rememberCoilPainter(imageURI)
 
-
-
-
+            var selectedTab by rememberSaveable { mutableStateOf(0) }
 
             Scaffold(
                 topBar = {
@@ -122,17 +121,16 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                     )
                 }
             )
-
             {
 
                 if (isPortrait) {
-
 
                     Column(
                         modifier = Modifier
                             //.verticalScroll(scrollState)
                             .padding(5.dp)
                     ) {
+
                         Image(
                             painter = paint,
                             contentDescription = null,
@@ -146,13 +144,26 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
 
                         Spacer(Modifier.height(10.dp))
 
-                        showTabRowText()
-
+                        TabRow(selectedTabIndex = selectedTab) {
+                            Tab(
+                                text = { Text("General") },
+                                selected = selectedTab == 0,
+                                onClick = { selectedTab = 0 }
+                            )
+                            Tab(
+                                text = { Text("Shooting") },
+                                selected = selectedTab == 1,
+                                onClick = { selectedTab = 1 }
+                            )
+                            Tab(
+                                text = { Text("Other") },
+                                selected = selectedTab == 2,
+                                onClick = { selectedTab = 2 }
+                            )
+                        }
+                        ShowTabRowText(selectedTab)
                     }
                 }
-
-
-                //imageStream.close()
 
                 else {
 
@@ -161,6 +172,7 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                             //.verticalScroll(scrollState)
                             .padding(5.dp)
                     ) {
+
                         Image(
                             painter = paint,
                             contentDescription = null,
@@ -170,11 +182,29 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                             //.fillMaxWidth(),
                             contentScale = ContentScale.Crop
                         )
-
                         Spacer(Modifier.width(20.dp))
 
-                        showTabRowText()
+                        Column() {
+                            TabRow(selectedTabIndex = selectedTab) {
+                                Tab(
+                                    text = { Text("General") },
+                                    selected = selectedTab == 0,
+                                    onClick = { selectedTab = 0 }
+                                )
+                                Tab(
+                                    text = { Text("Shooting") },
+                                    selected = selectedTab == 1,
+                                    onClick = { selectedTab = 1 }
+                                )
+                                Tab(
+                                    text = { Text("Other") },
+                                    selected = selectedTab == 2,
+                                    onClick = { selectedTab = 2 }
+                                )
+                            }
+                            ShowTabRowText(selectedTab)
 
+                        }
                     }
                 }
             }
@@ -183,32 +213,9 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
 
 
     @Composable
-    fun showTabRowText() {
+    fun ShowTabRowText(selected:Int) {
 
 
-        Column {
-
-            var selectedTab by remember { mutableStateOf(0) }
-            TabRow(selectedTabIndex = selectedTab) {
-                Tab(
-                    text = { Text("General") },
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 }
-                )
-
-                Tab(
-                    text = { Text("Shooting") },
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 }
-                )
-
-                Tab(
-                    text = { Text("Other") },
-                    selected = selectedTab == 2,
-                    onClick = { selectedTab = 2 }
-                )
-
-            }
             val scrollState = rememberScrollState()
             Column(
                 modifier = Modifier
@@ -216,7 +223,7 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                 //.padding(20.dp)
             ) {
 
-                if (selectedTab == 0) {
+                if (selected== 0) {
 
                     Text(text = "Name= $imageName", Modifier.height(50.dp))
                     Text(text = "Path: $imagePath", Modifier.height(50.dp))
@@ -228,7 +235,7 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                     Text(text = "Stuff to scroll", Modifier.height(50.dp))
                     Text(text = "Stuff to scroll", Modifier.height(50.dp))
                 }
-                if (selectedTab == 1) {
+                if (selected == 1) {
 
                     if (focal != null) Text(
                         text = "Focal Length = $focal",
@@ -255,7 +262,7 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                         Modifier.height(50.dp)
                     )
                 }
-                if (selectedTab == 2) {
+                if (selected == 2) {
                     if (GPSlongitude != null) Text(
                         text = "longitude= $GPSlongitude",
                         Modifier.height(50.dp)
@@ -273,11 +280,8 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                         Modifier.height(50.dp)
                     )
                 }
-
             }
-        }
     }
-
 }
 
 
