@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         val firstTime:Boolean = !(this.getPreferences(Context.MODE_PRIVATE).contains("firstTime"))
         if(firstTime){
-            startActivity(Intent(this,FirstTimeActivity::class.java))
+            startActivity(Intent(this.applicationContext,FirstTimeActivity::class.java))
         } else {
             //Check if permissions has changed while the app was in background
             val actualPermission = StorageUtils.hasReadStoragePermission(this)
