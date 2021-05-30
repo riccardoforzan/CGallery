@@ -1,9 +1,12 @@
 package com.epse.gallery
 
 import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
@@ -30,8 +34,12 @@ class PermissionActivity : ComponentActivity() {
         const val storagePermissionCode = 1
     }
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onStart(){
+
+        Log.d("DEBUG PA","Started")
+
+        super.onStart()
+
         /**
          * This code block is executed if the permission has been denied.
          * If the version of Android is > 6.0 then check if the application should show an UI
@@ -43,13 +51,42 @@ class PermissionActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val permission = Manifest.permission.READ_EXTERNAL_STORAGE
             val showRequest = this.shouldShowRequestPermissionRationale(permission)
-            if(showRequest){
+            //Check if is the first time the application is launched
+            val firstTime = intent.getBooleanExtra("firstTime",false)
+            if(showRequest || firstTime){
                 setContent { RationaleUI() }
             } else {
                 setContent { ReadStorageDenied() }
             }
         } else {
             setContent { ReadStorageDenied() }
+        }
+
+    }
+
+    /**
+     * Managed permission following guidelines
+     * https://developer.android.com/training/permissions/requesting
+     */
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+                                            grantResults: IntArray) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        /**
+         * If user managed the permissions at least one time record it
+         */
+
+        if(grantResults.isNotEmpty() && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            setContent{
+                Log.d("DEBUG PTA","Launch MainActivity")
+                val ctx = LocalContext.current
+                ctx.startActivity(Intent(ctx, MainActivity::class.java))
+            }
+        } else {
+            setContent{
+                ReadStorageDenied()
+            }
         }
 
     }

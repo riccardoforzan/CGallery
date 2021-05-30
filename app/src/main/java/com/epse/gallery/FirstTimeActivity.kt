@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
@@ -31,12 +32,23 @@ import com.google.accompanist.coil.rememberCoilPainter
 @ExperimentalFoundationApi
 class FirstTimeActivity : ComponentActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    companion object{
+        //Used to save a value on SharedPreferences that indicates if is the first launch of the app
+        const val FIRST_TIME = "firstTime"
+    }
+
+    override fun onStart() {
+
+        Log.d("DEBUG FTA","Started")
+
+        super.onStart()
         //Saving in shared preferences that this screen has been displayed
-        this.getPreferences(Context.MODE_PRIVATE).edit()
-            .putBoolean("firstTime",false)
-            .apply()
+        val sp = this.getPreferences(Context.MODE_PRIVATE)
+        //TODO: Why it does not write to SharedPreferences?
+        with(sp.edit()) {
+            putBoolean(FIRST_TIME, false)
+            apply()
+        }
         setContent{
             PresentationScreen()
         }
@@ -76,7 +88,13 @@ class FirstTimeActivity : ComponentActivity() {
                         contentColor = MaterialTheme.colors.onPrimary
                     ),
                     onClick = {
-                        startActivity(Intent(this@FirstTimeActivity,PermissionActivity::class.java))
+                        setContent {
+                            Log.d("DEBUG FTA","Button pressed")
+                            val ctx = LocalContext.current
+                            val int = Intent(ctx, PermissionActivity::class.java)
+                            int.putExtra("firstTime",true)
+                            ctx.startActivity(int)
+                        }
                     }
                 ){
                     Text(

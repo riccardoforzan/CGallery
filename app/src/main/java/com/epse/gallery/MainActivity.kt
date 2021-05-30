@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.edit
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
@@ -33,13 +34,22 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        val firstTime:Boolean = !(this.getPreferences(Context.MODE_PRIVATE).contains("firstTime"))
+
+        //TODO: Not writing in FirstTimeActivity or not reading here?
+        val firstTime:Boolean = !(this.getPreferences(Context.MODE_PRIVATE)
+            .contains(FirstTimeActivity.FIRST_TIME))
+
         if(firstTime){
-            startActivity(Intent(this.applicationContext,FirstTimeActivity::class.java))
+            Log.d("DEBUG","Launch First Time")
+            setContent{
+                val ctx = LocalContext.current
+                ctx.startActivity(Intent(ctx,FirstTimeActivity::class.java))
+            }
         } else {
             //Check if permissions has changed while the app was in background
             val actualPermission = StorageUtils.hasReadStoragePermission(this)
             if (actualPermission) {
+                Log.d("DEBUG","Launch Navigation")
                 setContent {
                     //Start reading the image and cache them
                     isPortrait =
@@ -48,7 +58,11 @@ class MainActivity : ComponentActivity() {
                     SetNavigation()
                 }
             } else {
-                startActivity(Intent(this, PermissionActivity::class.java))
+                setContent {
+                    Log.d("DEBUG","Launch PermissionActivity")
+                    val ctx = LocalContext.current
+                    ctx.startActivity(Intent(ctx, PermissionActivity::class.java))
+                }
             }
         }
     }
