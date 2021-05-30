@@ -4,8 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -39,7 +37,6 @@ class PermissionActivity : ComponentActivity() {
         Log.d("DEBUG PA","Started")
 
         super.onStart()
-
         /**
          * This code block is executed if the permission has been denied.
          * If the version of Android is > 6.0 then check if the application should show an UI
@@ -61,7 +58,6 @@ class PermissionActivity : ComponentActivity() {
         } else {
             setContent { ReadStorageDenied() }
         }
-
     }
 
     /**
@@ -70,12 +66,7 @@ class PermissionActivity : ComponentActivity() {
      */
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
                                             grantResults: IntArray) {
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        /**
-         * If user managed the permissions at least one time record it
-         */
 
         if(grantResults.isNotEmpty() && grantResults[0]== PackageManager.PERMISSION_GRANTED){
             setContent{
@@ -88,12 +79,17 @@ class PermissionActivity : ComponentActivity() {
                 ReadStorageDenied()
             }
         }
+    }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity()
+        finish()
     }
 
     @Composable
     fun RationaleUI(){
-        GalleryTheme(){
+        GalleryTheme{
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -148,7 +144,7 @@ class PermissionActivity : ComponentActivity() {
      */
     @Composable
     fun ReadStorageDenied(){
-        GalleryTheme(){
+        GalleryTheme{
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -1,13 +1,7 @@
 package com.epse.gallery
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
-import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -53,9 +47,15 @@ class FirstTimeActivity : ComponentActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity()
+        finish()
+    }
+
     @Composable
     fun PresentationScreen(){
-        GalleryTheme(){
+        GalleryTheme{
             Text(text = "DA SOSTITUIRE CON UNA O PIÙ SCHERMATE INTRODUTTIVE")
             Column(
                 modifier = Modifier
