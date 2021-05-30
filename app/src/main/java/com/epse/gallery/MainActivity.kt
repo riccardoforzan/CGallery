@@ -30,14 +30,15 @@ class MainActivity : ComponentActivity() {
 
     companion object{
         var isPortrait by mutableStateOf(true)
+        const val SHARED_PREFERENCES = "com.epse.gallery_preferences"
     }
 
     override fun onResume() {
         super.onResume()
 
-        //TODO: Not writing in FirstTimeActivity or not reading here?
-        val firstTime:Boolean = !(this.getPreferences(Context.MODE_PRIVATE)
-            .contains(FirstTimeActivity.FIRST_TIME))
+        //Check in shared preferences if is the first launch
+        val sp = this.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val firstTime:Boolean = !(sp.contains(FirstTimeActivity.FIRST_TIME))
 
         if(firstTime){
             Log.d("DEBUG","Launch First Time")

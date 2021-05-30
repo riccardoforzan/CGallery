@@ -38,13 +38,12 @@ class FirstTimeActivity : ComponentActivity() {
     }
 
     override fun onStart() {
+        super.onStart()
 
         Log.d("DEBUG FTA","Started")
 
-        super.onStart()
         //Saving in shared preferences that this screen has been displayed
-        val sp = this.getPreferences(Context.MODE_PRIVATE)
-        //TODO: Why it does not write to SharedPreferences?
+        val sp = this.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
         with(sp.edit()) {
             putBoolean(FIRST_TIME, false)
             apply()
