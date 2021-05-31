@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CGallery</string>
+
+    <string name="no_images">Ops, sembra che questo dispositivo non contenga immagini…</string>
+
+    <string name="delete_confirmation">Eliminare il file dalla memoria del dispositivo?</string>
+    <string name="delete">Elimina</string>
+
+
+    <!--Permissions management-->
+    <string name="btn_got_it">Ho capito</string>
+
+    <string name="permission_read_external_storage_description">
+        Per fornire le funzionalità questa applicazione ha bisogno dei permessi di lettura e
+        scrittura sulla memoria esterna. Se stai vedendo questa schermata significa che i permessi
+        richiesti non sono stati concessi
+    </string>
+
+    <string name="permission_read_external_storage_not_granted">
+        Il permesso in lettura alla memoria esterna non è stato concesso</string>
+    <string name="permission_write_external_storage_not_granted">
+        Il permesso in scrittura alla memoria esterna non è stato concesso</string>
+
+    <string name="generalTab">Generali</string>
+    <string name="shootingTab">Fotografia</string>
+    <string name="otherTab">Altro</string>
+    <string name="DataNotAvailable">Dati non disponibili</string>
+
+    <string name="imageDName">Nome</string>
+    <string name="imageDPath">Percorso</string>
+    <string name="imageDDate">Data di creazione</string>
+    <string name="imageDSizeOnDisk">Dimensione</string>
+    <string name="imageDStorage">Storage</string>
+    <string name="tagFocal">Lunghezza focale</string>
+    <string name="tagIso">ISO</string>
+    <string name="tagExpTime">Tempo di esposizione</string>
+    <string name="tagModel">Camera model</string>
+    <string name="tagLatitude">Latitudine</string>
+    <string name="tagLongitude">Longitudine</string>
+    <string name="imageSizes">Dimensioni</string>
+    <string name="tagXRes">Risoluzione orizzontale</string>
+    <string name="tagYRes">Risoluzione verticale</string>
+    <string name="tagFAperture">F apertura</string>
+    <string name="tagMaxFAperture">Max F apertura</string>
+
+</resources>

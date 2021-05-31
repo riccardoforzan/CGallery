@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.epse.gallery">
 
+    <!--Permission to read photos from external storage-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!--Permission to write on the external storage-->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/app_icon"
@@ -21,18 +29,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".FirstTimeActivity" />
+        <activity android:name=".PermissionActivity" />
+
     </application>
-
-    <!--Permission to read photos from external storage-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <!--Permission to write on the external storage-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!--
-    Permission to access the Internet, used to fetch images from https://picsum.photos
-    This permission should always be available because is not marked as dangerous
-    -->
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

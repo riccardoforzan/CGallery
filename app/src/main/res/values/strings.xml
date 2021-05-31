@@ -3,9 +3,12 @@
 
     <string name="no_images">Ops, it seems like this device does not contain images…</string>
 
+    <string name="delete_confirmation">Delete the file from the device memory?</string>
+    <string name="delete">Delete</string>
+
 
     <!--Permissions management-->
-    <string name="btn_manage_permissions">Manage permissions</string>
+    <string name="btn_got_it">Got it</string>
 
     <string name="permission_read_external_storage_description">
         In order to provide functionalities this application requires the permission to read
@@ -17,17 +20,15 @@
         The permission to read the external storage has not been granted</string>
     <string name="permission_write_external_storage_not_granted">
         The permission to write on the external storage has not been granted</string>
-    <string name="permission_internet_not_granted">
-        The permission to access the internet has not been granted</string>
 
 
     <string name="generalTab">General</string>
     <string name="shootingTab">Shooting</string>
     <string name="otherTab">Other</string>
-    <string name="DataNotAvailable">Data Not Available</string>
+    <string name="DataNotAvailable">Data not available</string>
 
-    <string name="imageDName">Image name</string>
-    <string name="imageDPath">Image path</string>
+    <string name="imageDName">Name</string>
+    <string name="imageDPath">Path</string>
     <string name="imageDDate">Creation date</string>
     <string name="imageDSizeOnDisk">Size</string>
     <string name="imageDStorage">Storage</string>
@@ -35,11 +36,11 @@
     <string name="tagIso">ISO</string>
     <string name="tagExpTime">Exposure time</string>
     <string name="tagModel">Camera model</string>
-    <string name="tagLatitude">latitude</string>
-    <string name="tagLongitude">longitude</string>
+    <string name="tagLatitude">Latitude</string>
+    <string name="tagLongitude">Longitude</string>
     <string name="imageSizes">Image Sizes</string>
-    <string name="tagXRes">width resolution</string>
-    <string name="tagYRes">length resolution</string>
+    <string name="tagXRes">Width resolution</string>
+    <string name="tagYRes">Length resolution</string>
     <string name="tagFAperture">F aperture</string>
     <string name="tagMaxFAperture">Max F aperture</string>
 </resources>

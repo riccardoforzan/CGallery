@@ -35,7 +35,9 @@ import kotlin.math.pow
 import kotlin.math.round
 
 
-class ImageDetails(private val ctx: Context, private val navController: NavHostController,imageURI: Uri) {
+@ExperimentalMaterialApi
+class ImageDetails(private val ctx: Context,
+                   private val navController: NavHostController, imageURI: Uri) {
 
     private var imageName: String?
     private var imagePath: String?
@@ -91,12 +93,12 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
 
         length = imageEI.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)
         width = imageEI.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)
-        val ExifDate = imageEI.getAttribute(ExifInterface.TAG_DATETIME)
+        val exifDate = imageEI.getAttribute(ExifInterface.TAG_DATETIME)
 
 
         //val sdf= SimpleDateFormat("yyyy:MM:dd hh:mm:ss");
-        date =  SimpleDateFormat("yyyy:MM:dd hh:mm:ss").parse(ExifDate)
-        formattedDate =  SimpleDateFormat("dd/MM/yyy hh:mm").format(date)
+        date =  SimpleDateFormat("yyyy:MM:dd hh:mm:ss",Locale.US).parse(exifDate)
+        formattedDate =  SimpleDateFormat("dd/MM/yyy hh:mm",Locale.US).format(date)
 
         focal = imageEI.getAttribute(ExifInterface.TAG_FOCAL_LENGTH)
         iso = imageEI.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
@@ -253,21 +255,21 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
             if (selected== 0) {
 
                 //Text("test data : $date")
-                showDetailText(stringResource(R.string.imageDName), imageName)
-                showDetailText(stringResource(R.string.imageDDate), formattedDate)
-                showDetailText(stringResource(R.string.imageDPath), imagePath)
-                showDetailText(stringResource(R.string.imageDStorage), imageStorage)
-                showDetailText(stringResource(R.string.imageDSizeOnDisk), imageSize ,"MB")
+                ShowDetailText(stringResource(R.string.imageDName), imageName)
+                ShowDetailText(stringResource(R.string.imageDDate), formattedDate)
+                ShowDetailText(stringResource(R.string.imageDPath), imagePath)
+                ShowDetailText(stringResource(R.string.imageDStorage), imageStorage)
+                ShowDetailText(stringResource(R.string.imageDSizeOnDisk), imageSize ,"MB")
 
             }
             if (selected == 1) {
 
-                if(fAperture> 0.0)  showDetailText(stringResource(R.string.tagFAperture), fAperture.toString())
-                if(fMaxAperture> 0.0)  showDetailText(stringResource(R.string.tagMaxFAperture), fMaxAperture.toString())
-                showDetailText(stringResource(R.string.tagFocal), focal)
-                showDetailText(stringResource(R.string.tagIso), iso)
-               if(expTime> 0.0) showDetailText(stringResource(R.string.tagExpTime), expTime.toString())
-                showDetailText(stringResource(R.string.tagModel), model)
+                if(fAperture> 0.0)  ShowDetailText(stringResource(R.string.tagFAperture), fAperture.toString())
+                if(fMaxAperture> 0.0)  ShowDetailText(stringResource(R.string.tagMaxFAperture), fMaxAperture.toString())
+                ShowDetailText(stringResource(R.string.tagFocal), focal)
+                ShowDetailText(stringResource(R.string.tagIso), iso)
+               if(expTime> 0.0) ShowDetailText(stringResource(R.string.tagExpTime), expTime.toString())
+                ShowDetailText(stringResource(R.string.tagModel), model)
 
 
                 if (focal == null && iso == null && expTime == 0.0  && model == null) {
@@ -283,11 +285,11 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
 
             if (selected == 2) {
 
-                showDetailText(stringResource(R.string.tagLongitude), GPSlongitude)
-                showDetailText(stringResource(R.string.tagLatitude), GPSlatitude)
-                showDetailText(stringResource(R.string.imageSizes), "$width x $length")
-                if(xResolution> 0) showDetailText(stringResource(R.string.tagYRes), "$xResolution dpi" )
-                if(xResolution> 0) showDetailText(stringResource(R.string.tagXRes), "$yResolution dpi")
+                ShowDetailText(stringResource(R.string.tagLongitude), GPSlongitude)
+                ShowDetailText(stringResource(R.string.tagLatitude), GPSlatitude)
+                ShowDetailText(stringResource(R.string.imageSizes), "$width x $length")
+                if(xResolution> 0) ShowDetailText(stringResource(R.string.tagYRes), "$xResolution dpi" )
+                if(xResolution> 0) ShowDetailText(stringResource(R.string.tagXRes), "$yResolution dpi")
 
                 if (GPSlongitude == null && GPSlatitude == null && width == null  && length == null) {
                     Text(
@@ -303,7 +305,7 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
         }
 
     @Composable
-    fun showDetailText(name: String, value: String?, other: String = ""  ){
+    fun ShowDetailText(name: String, value: String?, other: String = ""  ){
         if(value !=null){
 
             Row(){
