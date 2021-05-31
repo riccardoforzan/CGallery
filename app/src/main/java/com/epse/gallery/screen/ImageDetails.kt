@@ -45,7 +45,7 @@ class ImageDetails(private val ctx: Context,
     private var imageSize: String?
 
 
-    private val date: Date
+    private val date: Date?
     private val formattedDate : String?
 
     private val focal: String?
@@ -96,9 +96,14 @@ class ImageDetails(private val ctx: Context,
         val exifDate = imageEI.getAttribute(ExifInterface.TAG_DATETIME)
 
 
-        //val sdf= SimpleDateFormat("yyyy:MM:dd hh:mm:ss");
-        date =  SimpleDateFormat("yyyy:MM:dd hh:mm:ss",Locale.US).parse(exifDate)
-        formattedDate =  SimpleDateFormat("dd/MM/yyy hh:mm",Locale.US).format(date)
+        if(exifDate!= null) {
+            date = SimpleDateFormat("yyyy:MM:dd hh:mm:ss", Locale.US).parse(exifDate)
+            formattedDate = SimpleDateFormat("dd/MM/yyy hh:mm", Locale.US).format(date)
+        }
+        else{
+            date = null
+            formattedDate = null
+        }
 
         focal = imageEI.getAttribute(ExifInterface.TAG_FOCAL_LENGTH)
         iso = imageEI.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
