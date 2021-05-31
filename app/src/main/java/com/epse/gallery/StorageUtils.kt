@@ -8,6 +8,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.core.content.PermissionChecker
@@ -201,6 +202,7 @@ class StorageUtils {
          * @return true if deleted, false otherwise
          */
         fun deleteImage(context: Context,uri:Uri): Boolean{
+            //TODO: FIX
             val deletedRows = context.contentResolver.delete(uri,null,null)
             //Refresh the imageURIs array
             acquireImageURIs(context = context)

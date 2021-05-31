@@ -1,7 +1,9 @@
 package com.epse.gallery.screen
 
+import android.app.RecoverableSecurityException
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
@@ -21,6 +23,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.epse.gallery.MainActivity
+import com.epse.gallery.R
 import com.epse.gallery.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 import kotlinx.coroutines.launch
@@ -221,7 +225,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
     @ExperimentalMaterialApi
     @Composable
     private fun BackDrop() {
-        var height:Dp
+        val height:Dp
         if(MainActivity.isPortrait)
             height=650.dp
         else
@@ -234,33 +238,45 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
             frontLayerContent = {
                                 Column(modifier=Modifier.fillMaxSize()){
                                     Text(
-                                        text="Eliminare il file? Il file verrà definitivamente rimosso dal dispositivo",
+                                        text= stringResource(id = R.string.delete_confirmation),
                                         modifier=Modifier.padding(10.dp),
                                         color=Color.Gray,
                                         fontStyle=FontStyle.Italic
                                     )
-                                    Row(modifier=Modifier
+                                    Row(modifier= Modifier
                                         .fillMaxSize()
                                         .padding(10.dp)
                                         .clickable(
                                             indication = null,
                                             interactionSource = remember { MutableInteractionSource() }) {
-                                            StorageUtils.deleteImage(ctx,Uri.parse(defaultImage))
+                                            delete(ctx, Uri.parse(defaultImage))
                                             navController.navigate(route = Screens.ImagesGrid_ShowGrid)
-
                                         }
                                     ){
                                         Icon(
                                             Icons.Filled.Delete,
-                                            contentDescription = "Elimina il file"
+                                            contentDescription = stringResource(id = R.string.delete)
                                         )
-                                        Text(text="Elimina il file",modifier=Modifier.padding(start=15.dp))
+                                        Text(text=stringResource(id = R.string.delete),
+                                            modifier=Modifier.padding(start=15.dp))
                                     }
                                 }
             },
             peekHeight = height,
             headerHeight = 0.dp
         )
+    }
+
+    private fun delete(ctx:Context,imguri: Uri){
+        try {
+            StorageUtils.deleteImage(ctx,imguri)
+        }catch (securityException: SecurityException) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                TODO("ASK FOR PERMISSIONS")
+            } else {
+                throw securityException
+            }
+        }
     }
 
 
