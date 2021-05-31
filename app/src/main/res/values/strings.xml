@@ -38,4 +38,8 @@
     <string name="tagLatitude">latitude</string>
     <string name="tagLongitude">longitude</string>
     <string name="imageSizes">Image Sizes</string>
+    <string name="tagXRes">width resolution</string>
+    <string name="tagYRes">length resolution</string>
+    <string name="tagFAperture">F aperture</string>
+    <string name="tagMaxFAperture">Max F aperture</string>
 </resources>

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -26,6 +27,10 @@ import com.epse.gallery.R
 import com.epse.gallery.StorageUtils
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
+import java.text.SimpleDateFormat
+import java.util.*
+
+
 import kotlin.math.pow
 import kotlin.math.round
 
@@ -37,16 +42,27 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
     private var imageStorage: String?
     private var imageSize: String?
 
-    private val length: String?
-    private val width: String?
-    private val date: String?
+
+    private val date: Date
+    private val formattedDate : String?
+
     private val focal: String?
     private val iso: String?
+    //private val flashFired: Int?
+
+    private val fAperture: Double
+    private val fMaxAperture: Double
     private val expTime: Double
-    private val exp: String?
     private val model: String?
+
+    private val length: String?
+    private val width: String?
     private val GPSlatitude: String?
     private val GPSlongitude: String?
+    private val xResolution: Int
+    private val yResolution: Int
+    private val colorSpace: String?
+
 
 
     init {
@@ -75,15 +91,24 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
 
         length = imageEI.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)
         width = imageEI.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)
-        date = imageEI.getAttribute(ExifInterface.TAG_DATETIME)
+        val ExifDate = imageEI.getAttribute(ExifInterface.TAG_DATETIME)
+
+
+        //val sdf= SimpleDateFormat("yyyy:MM:dd hh:mm:ss");
+        date =  SimpleDateFormat("yyyy:MM:dd hh:mm:ss").parse(ExifDate)
+        formattedDate =  SimpleDateFormat("dd/MM/yyy hh:mm").format(date)
+
         focal = imageEI.getAttribute(ExifInterface.TAG_FOCAL_LENGTH)
         iso = imageEI.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
-        expTime =
-            round(imageEI.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME, 0.0) * 1000) / 1000
-        exp = imageEI.getAttribute(ExifInterface.TAG_EXPOSURE_INDEX)
+        expTime = round(imageEI.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME, -1.0) * 1000) / 1000
+        fAperture =  imageEI.getAttributeDouble(ExifInterface.TAG_APERTURE_VALUE, -1.0)
+        fMaxAperture =  imageEI.getAttributeDouble(ExifInterface.TAG_MAX_APERTURE_VALUE, -1.0)
         model = imageEI.getAttribute(ExifInterface.TAG_MODEL)
         GPSlatitude = imageEI.getAttribute(ExifInterface.TAG_GPS_LATITUDE)
         GPSlongitude = imageEI.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)
+        xResolution  = imageEI.getAttributeDouble(ExifInterface.TAG_X_RESOLUTION, -1.0).toInt()
+        yResolution  = imageEI.getAttributeDouble(ExifInterface.TAG_Y_RESOLUTION,-1.0).toInt()
+        colorSpace  = imageEI.getAttribute(ExifInterface.TAG_COLOR_SPACE)
 
     }
 
@@ -190,17 +215,17 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                         Column() {
                             TabRow(selectedTabIndex = selectedTab) {
                                 Tab(
-                                    text = { Text(ctx.getString(R.string.generalTab)) },
+                                    text = { Text(stringResource(R.string.generalTab)) },
                                     selected = selectedTab == 0,
                                     onClick = { selectedTab = 0 }
                                 )
                                 Tab(
-                                    text = { Text(ctx.getString(R.string.shootingTab)) },
+                                    text = { Text(stringResource(R.string.shootingTab)) },
                                     selected = selectedTab == 1,
                                     onClick = { selectedTab = 1 }
                                 )
                                 Tab(
-                                    text = { Text(ctx.getString(R.string.otherTab)) },
+                                    text = { Text(stringResource(R.string.otherTab)) },
                                     selected = selectedTab == 2,
                                     onClick = { selectedTab = 2 }
                                 )
@@ -228,23 +253,26 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
             if (selected== 0) {
 
                 //Text("test data : $date")
-                showDetailText(ctx.getString(R.string.imageDName), imageName)
-                showDetailText(ctx.getString(R.string.imageDDate), date)
-                showDetailText(ctx.getString(R.string.imageDPath), imagePath)
-                showDetailText(ctx.getString(R.string.imageDStorage), imageStorage)
-                showDetailText(ctx.getString(R.string.imageDSizeOnDisk), imageSize ,"MB")
+                showDetailText(stringResource(R.string.imageDName), imageName)
+                showDetailText(stringResource(R.string.imageDDate), formattedDate)
+                showDetailText(stringResource(R.string.imageDPath), imagePath)
+                showDetailText(stringResource(R.string.imageDStorage), imageStorage)
+                showDetailText(stringResource(R.string.imageDSizeOnDisk), imageSize ,"MB")
 
             }
             if (selected == 1) {
 
-                showDetailText(ctx.getString(R.string.tagFocal), focal)
-                showDetailText(ctx.getString(R.string.tagIso), iso)
-               if(expTime> 0.0) showDetailText(ctx.getString(R.string.tagExpTime), expTime.toString())
-                showDetailText(ctx.getString(R.string.tagModel), model)
+                if(fAperture> 0.0)  showDetailText(stringResource(R.string.tagFAperture), fAperture.toString())
+                if(fMaxAperture> 0.0)  showDetailText(stringResource(R.string.tagMaxFAperture), fMaxAperture.toString())
+                showDetailText(stringResource(R.string.tagFocal), focal)
+                showDetailText(stringResource(R.string.tagIso), iso)
+               if(expTime> 0.0) showDetailText(stringResource(R.string.tagExpTime), expTime.toString())
+                showDetailText(stringResource(R.string.tagModel), model)
+
 
                 if (focal == null && iso == null && expTime == 0.0  && model == null) {
                     Text(
-                        text= "${ctx.getString(R.string.shootingTab)} ${ctx.getString(R.string.DataNotAvailable)}",
+                        text= "${stringResource(R.string.shootingTab)} ${stringResource(R.string.DataNotAvailable)}",
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center,
@@ -255,13 +283,15 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
 
             if (selected == 2) {
 
-                showDetailText(ctx.getString(R.string.tagLongitude), GPSlongitude)
-                showDetailText(ctx.getString(R.string.tagLatitude), GPSlatitude)
-                showDetailText(ctx.getString(R.string.imageSizes), "$width x $length")
+                showDetailText(stringResource(R.string.tagLongitude), GPSlongitude)
+                showDetailText(stringResource(R.string.tagLatitude), GPSlatitude)
+                showDetailText(stringResource(R.string.imageSizes), "$width x $length")
+                if(xResolution> 0) showDetailText(stringResource(R.string.tagYRes), "$xResolution dpi" )
+                if(xResolution> 0) showDetailText(stringResource(R.string.tagXRes), "$yResolution dpi")
 
                 if (GPSlongitude == null && GPSlatitude == null && width == null  && length == null) {
                     Text(
-                        text= "${ctx.getString(R.string.otherTab)} ${ctx.getString(R.string.DataNotAvailable)}",
+                        text= "${stringResource(R.string.otherTab)} ${stringResource(R.string.DataNotAvailable)}",
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center,
@@ -281,14 +311,14 @@ class ImageDetails(private val ctx: Context, private val navController: NavHostC
                     text = "$name :",
                     modifier = Modifier
                         .wrapContentWidth(Alignment.Start)
-                        .weight(1f)
+                        .weight(2f)
                 )
                 Spacer(Modifier.height(15.dp))
                 Text(
                     text = "$value $other",
                     modifier = Modifier
                         .wrapContentWidth(Alignment.End)
-                        .weight(2f)
+                        .weight(3f)
 
                 )
             }
