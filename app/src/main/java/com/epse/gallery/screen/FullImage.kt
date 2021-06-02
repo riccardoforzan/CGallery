@@ -1,10 +1,7 @@
 package com.epse.gallery.screen
 
-import android.app.RecoverableSecurityException
 import android.content.Context
 import android.net.Uri
-import android.os.Build
-import android.util.Log
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
@@ -25,8 +22,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -37,6 +32,7 @@ import com.epse.gallery.R
 import com.epse.gallery.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 import kotlinx.coroutines.launch
+import androidx.core.app.ActivityCompat.startIntentSenderForResult
 import kotlin.math.roundToInt
 
 @ExperimentalFoundationApi
@@ -202,9 +198,8 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                 )
             }
         }*/
-    private var backgroundColor = Color.Black
 
-    //private var myURI by mutableStateOf("")
+    private var backgroundColor = Color.Black
     private var lastChange = System.currentTimeMillis()
     private var showButton by mutableStateOf(false)
     private var expandedState by mutableStateOf(false)
@@ -225,9 +220,10 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
     @ExperimentalMaterialApi
     @Composable
     private fun BackDrop() {
+        val coroutineScope = rememberCoroutineScope()
         val height:Dp
         if(MainActivity.isPortrait)
-            height=650.dp
+            height=550.dp
         else
             height=250.dp
         val backDropState = rememberBackdropScaffoldState(BackdropValue.Revealed)
@@ -249,8 +245,12 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                                         .clickable(
                                             indication = null,
                                             interactionSource = remember { MutableInteractionSource() }) {
-                                            delete(ctx, Uri.parse(defaultImage))
-                                            navController.navigate(route = Screens.ImagesGrid_ShowGrid)
+                                            coroutineScope.launch{
+                                                val uri=Uri.parse(defaultImage)
+                                                MainActivity.deletedImageUri=uri
+                                                StorageUtils.delete(ctx, uri)
+                                                navController.navigate(route = Screens.ImagesGrid_ShowGrid)
+                                            }
                                         }
                                     ){
                                         Icon(
@@ -265,18 +265,6 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
             peekHeight = height,
             headerHeight = 0.dp
         )
-    }
-
-    private fun delete(ctx:Context,imguri: Uri){
-        try {
-            StorageUtils.deleteImage(ctx,imguri)
-        }catch (securityException: SecurityException) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                TODO("ASK FOR PERMISSIONS")
-            } else {
-                throw securityException
-            }
-        }
     }
 
 
