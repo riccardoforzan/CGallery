@@ -28,6 +28,7 @@ class PermissionActivity : ComponentActivity() {
 
     companion object{
         const val storagePermissionCode = 1
+        const val storageWritePermission=2
     }
 
     override fun onStart(){
@@ -119,9 +120,9 @@ class PermissionActivity : ComponentActivity() {
                     ),
                     onClick = {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+                            val permission = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             requestPermissions(
-                                arrayOf(permission),
+                                permission,
                                 storagePermissionCode
                             )
                         }

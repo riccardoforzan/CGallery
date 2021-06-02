@@ -47,11 +47,11 @@ class MainActivity : ComponentActivity() {
         intentSenderLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
             if(it.resultCode == RESULT_OK) {
                 Log.d("CIAO","CIAO")
-                /*if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                     lifecycleScope.launch {
                         StorageUtils.delete(this@MainActivity,deletedImageUri ?: return@launch)
                     }
-                }*/
+                }
             }
         }
     }

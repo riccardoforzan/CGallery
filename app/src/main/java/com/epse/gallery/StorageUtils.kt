@@ -9,6 +9,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.activity.result.IntentSenderRequest
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
@@ -52,11 +53,11 @@ class StorageUtils {
         fun hasWriteStoragePermission(context: Context): Boolean {
             val permission =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 } else {
                     PermissionChecker.checkSelfPermission(
                         context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                 }
             return permission == PackageManager.PERMISSION_GRANTED
@@ -219,8 +220,11 @@ class StorageUtils {
         suspend fun delete(context:Context,uri:Uri){
             withContext(Dispatchers.IO){
                 try{
-                    context.contentResolver.delete(uri,null,null)
+                    Log.d("DEBUG", hasWriteStoragePermission(context).toString())
+                    val cazzo=context.contentResolver.delete(uri,null,null)
+                    Log.d("PIPPO",cazzo.toString())
                 }catch(e:SecurityException){
+                    Log.d("EXCEPTION",e.toString())
                     val intentSender = when {
                         Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                             MediaStore.createDeleteRequest(context.contentResolver, listOf(uri)).intentSender
