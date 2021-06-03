@@ -185,7 +185,6 @@ class StorageUtils {
                     projection, null, null, null
                 )
                 cursor!!.moveToFirst()
-                cursor.close()
                 
                 val sizeIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE)
                 val nameIndex = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
@@ -194,6 +193,8 @@ class StorageUtils {
                 rv["size"] = cursor.getString(sizeIndex)
                 rv["name"] = cursor.getString(nameIndex)
                 rv["path"] = cursor.getString(dataIndex)
+
+                cursor.close()
             }
             return rv
         }
