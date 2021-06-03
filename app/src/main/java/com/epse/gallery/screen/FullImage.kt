@@ -1,5 +1,6 @@
 package com.epse.gallery.screen
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -222,6 +223,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
 
     @ExperimentalMaterialApi
     @Composable
+    @SuppressLint("RestrictedApi")
     private fun BackDrop() {
         val coroutineScope = rememberCoroutineScope()
         val height:Dp = if(MainActivity.isPortrait)
@@ -269,6 +271,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                                                     }
                                                 }
                                                 StorageUtils.delete(ctx, uri)
+                                                navController.backStack.clear()
                                                 navController.navigate(route = Screens.ImagesGrid_ShowGrid)
 
                                             }
