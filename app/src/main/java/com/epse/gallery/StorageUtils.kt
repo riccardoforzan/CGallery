@@ -1,6 +1,7 @@
 package com.epse.gallery
 
 import android.Manifest
+import android.app.RecoverableSecurityException
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
@@ -9,9 +10,14 @@ import android.provider.MediaStore
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import androidx.activity.result.IntentSenderRequest
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.core.content.PermissionChecker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class StorageUtils {
 
@@ -47,11 +53,11 @@ class StorageUtils {
         fun hasWriteStoragePermission(context: Context): Boolean {
             val permission =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 } else {
                     PermissionChecker.checkSelfPermission(
                         context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
                 }
             return permission == PackageManager.PERMISSION_GRANTED
@@ -100,7 +106,7 @@ class StorageUtils {
 
             val columnIndex = imageCursor!!.getColumnIndex(MediaStore.Images.Media._ID)
 
-            while (imageCursor!!.moveToNext()) {
+            while (imageCursor.moveToNext()) {
                 val id = imageCursor.getLong(columnIndex)
                 val imageUri =
                     ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
@@ -179,7 +185,7 @@ class StorageUtils {
                     projection, null, null, null
                 )
                 cursor!!.moveToFirst()
-
+                
                 val sizeIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE)
                 val nameIndex = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
                 val dataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
@@ -189,9 +195,7 @@ class StorageUtils {
                 rv["path"] = cursor.getString(dataIndex)
 
                 cursor.close()
-
             }
-
             return rv
         }
 
@@ -201,12 +205,43 @@ class StorageUtils {
          * @param uri URI of the image to look for
          * @return true if deleted, false otherwise
          */
-        fun deleteImage(context: Context,uri:Uri): Boolean{
+        /*fun deleteImage(context: Context,uri:Uri): Boolean{
             //TODO: FIX
             val deletedRows = context.contentResolver.delete(uri,null,null)
             //Refresh the imageURIs array
             acquireImageURIs(context = context)
             return deletedRows == 1
+        }*/
+
+        @ExperimentalMaterialApi
+        @ExperimentalFoundationApi
+        suspend fun delete(context:Context,uri:Uri){
+            withContext(Dispatchers.IO){
+                try{
+                    context.contentResolver.delete(uri,null,null)
+                }catch(e:SecurityException){
+                    Log.d("EXCEPTION",e.toString())
+                    val intentSender = when {
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                            MediaStore.createDeleteRequest(context.contentResolver, listOf(uri)).intentSender
+                        }
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                            val recoverableSecurityException = e as? RecoverableSecurityException
+                            recoverableSecurityException?.userAction?.actionIntent?.intentSender
+                        }
+                        else -> null
+                    }
+                    intentSender?.let { sender ->
+                        MainActivity.intentSenderLauncher.launch(
+                            IntentSenderRequest.Builder(sender).build()
+                        )
+                    }
+                }
+                finally{
+                    //Refresh the imageURIs array
+                    acquireImageURIs(context = context)
+                }
+            }
         }
 
     }

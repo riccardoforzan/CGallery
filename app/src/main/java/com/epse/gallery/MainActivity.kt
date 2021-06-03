@@ -1,12 +1,20 @@
 package com.epse.gallery
 
+import android.app.RecoverableSecurityException
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.os.PersistableBundle
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
@@ -16,24 +24,48 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import com.epse.gallery.screen.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
-
     companion object{
+        lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
         var isPortrait by mutableStateOf(true)
-        const val SHARED_PREFERENCES = "com.epse.gallery_preferences"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        intentSenderLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+            if(it.resultCode == RESULT_OK) {
+                //Addressing API 29 (Android 10) tricky behaviour
+                if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                    val name = getString(R.string.shared_preferences)
+                    val sp = getSharedPreferences(name, Context.MODE_PRIVATE)
+                    val spKey = getString(R.string.API29_delete)
+                    val deletedImage = sp.getString(spKey,null)
+                    if(deletedImage!=null) {
+                        val deletedImageUri = Uri.parse(deletedImage)
+                        lifecycleScope.launch {
+                            StorageUtils.delete(this@MainActivity, deletedImageUri ?: return@launch)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-
         //Check in shared preferences if is the first launch
-        val sp = this.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val name = getString(R.string.shared_preferences)
+        val sp = this.getSharedPreferences(name, Context.MODE_PRIVATE)
         val firstTime:Boolean = !(sp.contains(FirstTimeActivity.FIRST_TIME))
 
         if(firstTime){
