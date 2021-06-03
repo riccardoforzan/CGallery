@@ -36,20 +36,25 @@ import kotlinx.coroutines.withContext
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
     companion object{
-        var deletedImageUri: Uri? = null
         lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
         var isPortrait by mutableStateOf(true)
-        const val SHARED_PREFERENCES = "com.epse.gallery_preferences"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         intentSenderLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
             if(it.resultCode == RESULT_OK) {
-                Log.d("CIAO","CIAO")
+                //Addressing API 29 (Android 10) tricky behaviour
                 if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                    lifecycleScope.launch {
-                        StorageUtils.delete(this@MainActivity,deletedImageUri ?: return@launch)
+                    val name = getString(R.string.shared_preferences)
+                    val sp = getSharedPreferences(name, Context.MODE_PRIVATE)
+                    val spKey = getString(R.string.API29_delete)
+                    val deletedImage = sp.getString(spKey,null)
+                    if(deletedImage!=null) {
+                        val deletedImageUri = Uri.parse(deletedImage)
+                        lifecycleScope.launch {
+                            StorageUtils.delete(this@MainActivity, deletedImageUri ?: return@launch)
+                        }
                     }
                 }
             }
@@ -59,7 +64,8 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         //Check in shared preferences if is the first launch
-        val sp = this.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val name = getString(R.string.shared_preferences)
+        val sp = this.getSharedPreferences(name, Context.MODE_PRIVATE)
         val firstTime:Boolean = !(sp.contains(FirstTimeActivity.FIRST_TIME))
 
         if(firstTime){
@@ -89,9 +95,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
-
 
     /**
      * Composable function used to init the nav controller and it's path.

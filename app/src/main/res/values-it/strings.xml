@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CGallery</string>
 
     <string name="no_images">Ops, sembra che questo dispositivo non contenga immagini…</string>
 

@@ -1,32 +1,33 @@
 <resources>
-    <string name="app_name">CGallery</string>
 
+    <!--App strings -->
+    <string name="app_name" translatable="false">CGallery</string>
+    <string name="shared_preferences" translatable="false">com.epse.gallery_preferences</string>
+    <string name="API29_delete" translatable="false">URItoDelete_API29</string>
+
+
+    <!--User UI-->
     <string name="no_images">Ops, it seems like this device does not contain images…</string>
-
     <string name="delete_confirmation">Delete the file from the device memory?</string>
     <string name="delete">Delete</string>
 
-
     <!--Permissions management-->
     <string name="btn_got_it">Got it</string>
-
     <string name="permission_read_external_storage_description">
         In order to provide functionalities this application requires the permission to read
         and write the external storage. If you are viewing this screen this permission has not been
         granted to the application.
     </string>
-
     <string name="permission_read_external_storage_not_granted">
         The permission to read the external storage has not been granted</string>
     <string name="permission_write_external_storage_not_granted">
         The permission to write on the external storage has not been granted</string>
 
-
+    <!--ImageDetails parameters-->
     <string name="generalTab">General</string>
     <string name="shootingTab">Shooting</string>
     <string name="otherTab">Other</string>
     <string name="DataNotAvailable">Data not available</string>
-
     <string name="imageDName">Name</string>
     <string name="imageDPath">Path</string>
     <string name="imageDDate">Creation date</string>

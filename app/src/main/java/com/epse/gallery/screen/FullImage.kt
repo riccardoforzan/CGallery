@@ -2,6 +2,7 @@ package com.epse.gallery.screen
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
@@ -33,10 +34,12 @@ import com.epse.gallery.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 import kotlinx.coroutines.launch
 import androidx.core.app.ActivityCompat.startIntentSenderForResult
+import com.epse.gallery.FirstTimeActivity
 import kotlin.math.roundToInt
 
 @ExperimentalFoundationApi
 class FullImage(private val ctx: Context, private val navController: NavHostController) {
+
     /*
         private var backgroundColor = Color.Black
         private lateinit var myURI: Uri
@@ -221,11 +224,10 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
     @Composable
     private fun BackDrop() {
         val coroutineScope = rememberCoroutineScope()
-        val height:Dp
-        if(MainActivity.isPortrait)
-            height=550.dp
+        val height:Dp = if(MainActivity.isPortrait)
+            550.dp
         else
-            height=250.dp
+            250.dp
         val backDropState = rememberBackdropScaffoldState(BackdropValue.Revealed)
         BackdropScaffold(
             scaffoldState = backDropState,
@@ -247,9 +249,28 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                                             interactionSource = remember { MutableInteractionSource() }) {
                                             coroutineScope.launch{
                                                 val uri=Uri.parse(defaultImage)
-                                                MainActivity.deletedImageUri=uri
+                                                /**
+                                                 * The way Android 10 handles deletion is a bit
+                                                 * tricky: the image is deleted after two calls.
+                                                 * This parameter on shared preferences is used to
+                                                 * address this specific behaviour of API 29
+                                                 */
+                                                if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                                                    val name =
+                                                        ctx.getString(R.string.shared_preferences)
+                                                    val sp = ctx.getSharedPreferences(
+                                                        name,
+                                                        Context.MODE_PRIVATE
+                                                    )
+                                                    val spKey = ctx.getString(R.string.API29_delete)
+                                                    with(sp.edit()) {
+                                                        putString(spKey, uri.toString())
+                                                        apply()
+                                                    }
+                                                }
                                                 StorageUtils.delete(ctx, uri)
                                                 navController.navigate(route = Screens.ImagesGrid_ShowGrid)
+
                                             }
                                         }
                                     ){

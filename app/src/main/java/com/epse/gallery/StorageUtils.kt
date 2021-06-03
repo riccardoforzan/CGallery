@@ -106,7 +106,7 @@ class StorageUtils {
 
             val columnIndex = imageCursor!!.getColumnIndex(MediaStore.Images.Media._ID)
 
-            while (imageCursor!!.moveToNext()) {
+            while (imageCursor.moveToNext()) {
                 val id = imageCursor.getLong(columnIndex)
                 val imageUri =
                     ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
@@ -185,7 +185,8 @@ class StorageUtils {
                     projection, null, null, null
                 )
                 cursor!!.moveToFirst()
-
+                cursor.close()
+                
                 val sizeIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE)
                 val nameIndex = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
                 val dataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
@@ -193,11 +194,7 @@ class StorageUtils {
                 rv["size"] = cursor.getString(sizeIndex)
                 rv["name"] = cursor.getString(nameIndex)
                 rv["path"] = cursor.getString(dataIndex)
-
-                cursor.close()
-
             }
-
             return rv
         }
 
@@ -220,9 +217,7 @@ class StorageUtils {
         suspend fun delete(context:Context,uri:Uri){
             withContext(Dispatchers.IO){
                 try{
-                    Log.d("DEBUG", hasWriteStoragePermission(context).toString())
-                    val cazzo=context.contentResolver.delete(uri,null,null)
-                    Log.d("PIPPO",cazzo.toString())
+                    context.contentResolver.delete(uri,null,null)
                 }catch(e:SecurityException){
                     Log.d("EXCEPTION",e.toString())
                     val intentSender = when {

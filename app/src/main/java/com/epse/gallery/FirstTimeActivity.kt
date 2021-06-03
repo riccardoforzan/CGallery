@@ -35,7 +35,8 @@ class FirstTimeActivity : ComponentActivity() {
         Log.d("DEBUG FTA","Started")
 
         //Saving in shared preferences that this screen has been displayed
-        val sp = this.getSharedPreferences(MainActivity.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val name = getString(R.string.shared_preferences)
+        val sp = this.getSharedPreferences(name, Context.MODE_PRIVATE)
         with(sp.edit()) {
             putBoolean(FIRST_TIME, false)
             apply()
