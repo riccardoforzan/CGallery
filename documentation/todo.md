@@ -8,7 +8,6 @@
 * [x] SnackBar per la conferma di cancellazione
 * [ ] ImagesDetails con modello grafico [Riferimento](https://developer.android.com/jetpack/compose/tutorial)
 * [x] Rendere responsive ImagesGrid
-* [x] Fixare gli stati di Navigation
 * [x] Implementare i metodi su StroageUtils (cancellazione e recupero ulteriori files)
 * [x] Schermata di installazione per richiedere accesso in lettura alle foto del sistema
 * [x] Supporto per la dark mode
@@ -16,10 +15,12 @@
 
 ## TODO
 * [ ] Creazione di una pagina di presentazione dell'applicazione
+* [ ] Aggiungere un banner di avviso se l'eliminazione di una foto non è consentita perchè manca il permesso in lettura
+* [ ] Possibilità di cambiare l'ordinamento delle foto
+* [ ] Portare tutte le stringhe in in res/strings.xml
+* [ ] Aggiunta di una pagina di impostazioni (Dai un nome alla galleria, seleziona la grandezza delle immagini e l'ordinamento di default)
 * [X] Aggiunta del tasto per apertura della fotocamera
 * [ ] Adattamento dinamico delle dimensioni
-* [ ] Possibilità di cambiare l'ordinamento delle foto
-* [ ] Aggiunta di una pagina di impostazioni
 * [ ] Aggiunta del tasto per la condivisione in ImagesDetails [Documentazione](https://developer.android.com/training/sharing/send)
 * [ ] Aggiunta della descrizione come meta ad una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
 
