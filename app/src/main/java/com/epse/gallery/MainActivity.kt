@@ -122,6 +122,13 @@ class MainActivity : ComponentActivity() {
             }
 
             /**
+             * Navigation to the settings screen
+             */
+            composable(route = Screens.Settings_ShowSettings){
+                Settings(this@MainActivity,navController).ShowSettings()
+            }
+
+            /**
              * This is how we are supposed to pass custom objects
              * but this way does not work right now because
              * 'Parcelables don't support default values'

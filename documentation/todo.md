@@ -12,14 +12,16 @@
 * [x] Implementare i metodi su StroageUtils (cancellazione e recupero ulteriori files)
 * [x] Schermata di installazione per richiedere accesso in lettura alle foto del sistema
 * [x] Supporto per la dark mode
-+ [x] Supporto per le gesture
+* [x] Supporto per le gesture
 
 ## TODO
 * [ ] Creazione di una pagina di presentazione dell'applicazione
-* [ ] Aggiunta della descrizione come meta ad una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
+* [X] Aggiunta del tasto per apertura della fotocamera
+* [ ] Adattamento dinamico delle dimensioni
+* [ ] Possibilità di cambiare l'ordinamento delle foto
 * [ ] Aggiunta di una pagina di impostazioni
-* [ ] Aggiunta del tasto per la condivisione
-* [ ] Aggiunta del tasto per apertura della fotocamera
+* [ ] Aggiunta del tasto per la condivisione in ImagesDetails [Documentazione](https://developer.android.com/training/sharing/send)
+* [ ] Aggiunta della descrizione come meta ad una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
 
 ## TEST
 * [ ] Debug sugli stati dell'applicazione

@@ -1,16 +1,20 @@
 package com.epse.gallery.screen
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
-import android.util.Log
+import android.provider.MediaStore
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +42,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
     fun ShowGrid() {
         val imagesList = StorageUtils.getImageURIs()
         if (imagesList.isNotEmpty()) {
-            CreateGrid(imagesList)
+            BottomNavigation(imagesList)
         } else {
             NoPhotos()
         }
@@ -102,6 +106,47 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                     color = MaterialTheme.colors.onBackground
                 )
             }
+        }
+    }
+
+    @Composable
+    fun BottomNavigation(photos: List<Uri>) {
+        val fabShape = CircleShape
+        val scaffoldState = rememberScaffoldState()
+        val scope = rememberCoroutineScope()
+        GalleryTheme {
+            Scaffold(
+                scaffoldState = scaffoldState,
+                topBar = {
+                    //TODO: Get from shared preferences the title
+                    TopAppBar(title = { Text("MyGallery") })
+                },
+                floatingActionButtonPosition = FabPosition.Center,
+                isFloatingActionButtonDocked = true,
+                floatingActionButton = {
+                    FloatingActionButton(
+                        shape = fabShape,
+                        onClick = {
+                            //Launch camera intent
+                            val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                            ctx.startActivity(cameraIntent)
+                        }
+                    ) {
+                        Icon(Icons.Filled.Add, "Add a new photo to this library")
+                    }
+                },
+                bottomBar = {
+                    BottomAppBar(cutoutShape = fabShape) {
+                        IconButton(
+                            onClick = { navController.navigate(route = Screens.Settings_ShowSettings) }
+                        ){
+                            Icon(Icons.Filled.Settings,"")
+                        }
+                    }
+                },
+                content = {
+                    CreateGrid(photos = photos)
+                })
         }
     }
 

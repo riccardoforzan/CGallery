@@ -10,8 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -123,9 +122,8 @@ class ImageDetails(private val ctx: Context,
     @ExperimentalFoundationApi
     @Composable
     fun ShowDetail(imageURI: Uri) {
-        GalleryTheme() {
+        GalleryTheme {
 
-            var addedToFavorite by remember { mutableStateOf(false) }
             val paint = rememberCoilPainter(imageURI)
 
             var selectedTab by rememberSaveable { mutableStateOf(0) }
@@ -142,14 +140,10 @@ class ImageDetails(private val ctx: Context,
 
                         actions = {
                             //IconButton that does nothing
-                            IconButton(onClick = { addedToFavorite = !addedToFavorite }) {
-                                if (addedToFavorite) Icon(
-                                    Icons.Filled.Favorite,
-                                    contentDescription = null
-                                )
-                                else Icon(
-                                    Icons.Filled.FavoriteBorder,
-                                    contentDescription = null
+                            IconButton(onClick = { /**TODO: Implement the share intent*/ }) {
+                                Icon(
+                                    Icons.Filled.Share,
+                                    contentDescription = "Share this content"
                                 )
                             }
                         }

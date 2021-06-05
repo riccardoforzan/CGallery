@@ -12,6 +12,7 @@ sealed class Screens {
         const val ImagesGrid_ShowGrid = "ImagesGrid.ShowGrid"
         const val FullImage_ShowFullImage = "FullImage.ShowFullImage"
         const val ImageDetails_ShowDetail = "ImageDetails.ShowDetail"
+        const val Settings_ShowSettings = "Settings.ShowSettings"
     }
 
 }

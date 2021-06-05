@@ -15,7 +15,7 @@ private val DarkColorPalette = darkColors(
     primaryVariant = Magenta,
     onPrimary = White,
 
-    secondary = Yellow,
+    secondary = Green,
     onSecondary = White,
 
     surface = Black,
@@ -30,7 +30,7 @@ private val LightColorPalette = lightColors(
     primaryVariant = Cyan,
     onPrimary = White,
 
-    secondary = Yellow,
+    secondary = Green,
     onSecondary = White,
 
     surface = White,
