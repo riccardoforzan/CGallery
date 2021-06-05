@@ -11,7 +11,6 @@
 
 **Esempi generici:**
 * [Jetpack Compose Projects](https://foso.github.io/Jetpack-Compose-Playground/compose_projects/)
-* [Compose Examples](https://github.com/MoIbrahim15/AndroidComposeSamples)
 
 **Esempi specifici:**
 * [Compose Pictures](https://github.com/hi-manshu/ComposePictures)
