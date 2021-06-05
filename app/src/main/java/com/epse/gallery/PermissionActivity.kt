@@ -28,7 +28,6 @@ class PermissionActivity : ComponentActivity() {
 
     companion object{
         const val storagePermissionCode = 1
-        const val storageWritePermission=2
     }
 
     override fun onStart(){
@@ -71,7 +70,9 @@ class PermissionActivity : ComponentActivity() {
             setContent{
                 Log.d("DEBUG PTA","Launch MainActivity")
                 val ctx = LocalContext.current
-                ctx.startActivity(Intent(ctx, MainActivity::class.java))
+                val int = Intent(ctx, MainActivity::class.java)
+                int.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                ctx.startActivity(int)
             }
         } else {
             setContent{

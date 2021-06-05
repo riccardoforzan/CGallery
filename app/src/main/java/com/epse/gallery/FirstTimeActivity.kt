@@ -90,6 +90,7 @@ class FirstTimeActivity : ComponentActivity() {
                             Log.d("DEBUG FTA","Button pressed")
                             val ctx = LocalContext.current
                             val int = Intent(ctx, PermissionActivity::class.java)
+                            int.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             int.putExtra("firstTime",true)
                             ctx.startActivity(int)
                         }

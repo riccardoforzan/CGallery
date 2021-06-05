@@ -15,6 +15,15 @@
 + [x] Supporto per le gesture
 
 ## TODO
-* [ ] Aggiunta del metadato descrizione ad una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
+* [ ] Creazione di una pagina di presentazione dell'applicazione
+* [ ] Aggiunta della descrizione come meta ad una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
 * [ ] Aggiunta di una pagina di impostazioni
+* [ ] Aggiunta del tasto per la condivisione
+* [ ] Aggiunta del tasto per apertura della fotocamera
+
+## TEST
+* [ ] Debug sugli stati dell'applicazione
+
+## BUG NOTI
+* [ ] Cambiando i permessi (da non concessi a concessi) in background e premendo riptetutamente il tasto indietro mostra lo stato precedente
 
