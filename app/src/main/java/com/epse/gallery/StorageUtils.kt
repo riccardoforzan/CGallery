@@ -74,12 +74,16 @@ class StorageUtils {
 
         /**
          * This function refreshes the URIs of the available photos inside the device's storage.
-         * REQUIRES READ ACCESS TO THE STORAGE
+         * If order param does not equal to ASC or DESC, by default returns order by DESC and does
+         * not throw any exception.
+         * THIS FUNCTION REQUIRES READ ACCESS TO THE STORAGE
          * @param context context of the application, used to query the internal storage
+         * @param order specifies if sort the URI list returned
+         *              by ascending date (ASC) or descending (DESC)
          * @return ArrayList containing image URIs
          * @throws SecurityException if the permission to read the storage has not been granted
          */
-        fun acquireImageURIs(context: Context){
+        fun acquireImageURIs(context: Context, order:String){
 
             /**
              * Clear up the actual list
@@ -93,15 +97,17 @@ class StorageUtils {
             if (!hasReadStoragePermission(context = context))
                 throw SecurityException(context.getString(R.string.permission_read_external_storage_not_granted))
 
-            /**
-             * Setting un the query
-             */
+            //Setting un the query
             val columns = arrayOf(MediaStore.Images.Media._ID)
             val orderBy = MediaStore.Images.Media.DATE_TAKEN
 
+            val queryOrder =
+                if(order == "ASC" || order == "DESC") order
+                else "DESC"
+
             val imageCursor: Cursor? = context.contentResolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns,
-                null, null, "$orderBy DESC"
+                null, null, "$orderBy $queryOrder"
             )
 
             val columnIndex = imageCursor!!.getColumnIndex(MediaStore.Images.Media._ID)
@@ -205,14 +211,6 @@ class StorageUtils {
          * @param uri URI of the image to look for
          * @return true if deleted, false otherwise
          */
-        /*fun deleteImage(context: Context,uri:Uri): Boolean{
-            //TODO: FIX
-            val deletedRows = context.contentResolver.delete(uri,null,null)
-            //Refresh the imageURIs array
-            acquireImageURIs(context = context)
-            return deletedRows == 1
-        }*/
-
         @ExperimentalMaterialApi
         @ExperimentalFoundationApi
         suspend fun delete(context:Context,uri:Uri){
@@ -239,7 +237,7 @@ class StorageUtils {
                 }
                 finally{
                     //Refresh the imageURIs array
-                    acquireImageURIs(context = context)
+                    acquireImageURIs(context = context,"DESC")
                 }
             }
         }

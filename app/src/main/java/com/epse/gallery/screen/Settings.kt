@@ -1,9 +1,11 @@
 package com.epse.gallery.screen
 
 import android.content.Context
-import androidx.annotation.FloatRange
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -12,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.SemanticsProperties.Role
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -47,6 +50,43 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
                 ){
                     //ChangeGalleryName()
                     //ChangeImageSize()
+                    ChangeDefaultOrder()
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun ChangeDefaultOrder(){
+        val radioOptions = listOf("ASC", "DESC")
+        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+
+        Column(Modifier.selectableGroup()) {
+            radioOptions.forEach { text ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .selectable(
+                            selected = (text == selectedOption),
+                            onClick = {
+                                onOptionSelected(text)
+                                Log.d("DEBUG Checked",selectedOption)
+                            },
+                            role = androidx.compose.ui.semantics.Role.RadioButton
+                        )
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = (text == selectedOption),
+                        onClick = null // null recommended for accessibility with screenreaders
+                    )
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.body1.merge(),
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
                 }
             }
         }
@@ -55,6 +95,7 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
     @Composable
     fun ChangeImageSize(){
 
+        //Constants for the size of the pictures
         val default = 120F
         val maxSize = 240.0F
         val range = 1.00f..maxSize
@@ -62,7 +103,7 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
         val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
         val actualSize:Float = sp.getFloat(SPUtils.image_size_on_grid, default)
         var sliderPosition by remember { mutableStateOf(actualSize) }
-        var size = sliderPosition
+        val size = sliderPosition
 
         Text(text="Move the slider to see a preview of how big will the image be")
         Box(

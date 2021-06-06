@@ -11,6 +11,7 @@ class SPUtils {
         const val API29_delete = "URItoDelete_API29"
         const val gallery_title = "GalleryTitle"
         const val image_size_on_grid = "ImageSizeOnGrid"
+        const val default_order = "DefaultOrder"
     }
 
 }

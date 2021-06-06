@@ -1,14 +1,11 @@
 package com.epse.gallery
 
-import android.app.RecoverableSecurityException
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,9 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import com.epse.gallery.screen.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
@@ -83,7 +78,7 @@ class MainActivity : ComponentActivity() {
                     //Start reading the image and cache them
                     isPortrait =
                         LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
-                    StorageUtils.acquireImageURIs(this)
+                    StorageUtils.acquireImageURIs(this, "ASC")
                     SetNavigation()
                 }
             } else {
