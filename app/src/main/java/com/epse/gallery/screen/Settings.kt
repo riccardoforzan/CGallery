@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.epse.gallery.R
 import com.epse.gallery.SPUtils
+import com.epse.gallery.StorageUtils
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
 
@@ -47,9 +48,9 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
-                    //ChangeGalleryName()
+                    ChangeGalleryName()
                     Divider()
-                    //ChangeImageSize()
+                    ChangeImageSize()
                     Divider()
                     ChangeDefaultOrder()
                 }
@@ -72,7 +73,11 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
             stringResource(id = R.string.date_asceinding)
         )
 
-        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[1]) }
+        val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
+        val saved = sp.getString(SPUtils.default_order,"DESC")!!
+        val default = if(saved == "DESC") 0 else 1
+
+        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[default]) }
 
         Column(Modifier.selectableGroup()) {
             radioOptions.forEach { text ->
@@ -113,11 +118,11 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
             putString(SPUtils.default_order, order)
             apply()
         }
+        StorageUtils.setQueryOrder(order = order,ctx)
     }
 
     @Composable
     fun ChangeImageSize(){
-
         //Constants for the size of the pictures
         val default = 120F
         val maxSize = 240.0F

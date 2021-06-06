@@ -25,6 +25,15 @@ class StorageUtils {
 
         private val imagesURIs = mutableStateListOf<Uri>()
 
+        private var queryOrder = "DESC"
+
+        fun setQueryOrder(order:String,context: Context){
+            queryOrder =
+                if(order == "ASC" || order == "DESC") order
+                else "DESC"
+            acquireImageURIs(context)
+        }
+
         /**
          * Boolean function that checks if the application has the READ_EXTERNAL_STORAGE
          * permission granted
@@ -78,12 +87,10 @@ class StorageUtils {
          * not throw any exception.
          * THIS FUNCTION REQUIRES READ ACCESS TO THE STORAGE
          * @param context context of the application, used to query the internal storage
-         * @param order specifies if sort the URI list returned
-         *              by ascending date (ASC) or descending (DESC)
          * @return ArrayList containing image URIs
          * @throws SecurityException if the permission to read the storage has not been granted
          */
-        fun acquireImageURIs(context: Context, order:String){
+        fun acquireImageURIs(context: Context){
 
             /**
              * Clear up the actual list
@@ -100,10 +107,6 @@ class StorageUtils {
             //Setting un the query
             val columns = arrayOf(MediaStore.Images.Media._ID)
             val orderBy = MediaStore.Images.Media.DATE_TAKEN
-
-            val queryOrder =
-                if(order == "ASC" || order == "DESC") order
-                else "DESC"
 
             val imageCursor: Cursor? = context.contentResolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns,
@@ -237,7 +240,7 @@ class StorageUtils {
                 }
                 finally{
                     //Refresh the imageURIs array
-                    acquireImageURIs(context = context,"DESC")
+                    acquireImageURIs(context = context)
                 }
             }
         }

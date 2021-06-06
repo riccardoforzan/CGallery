@@ -78,7 +78,11 @@ class MainActivity : ComponentActivity() {
                     //Start reading the image and cache them
                     isPortrait =
                         LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
-                    StorageUtils.acquireImageURIs(this, "ASC")
+
+                    //Getting preferred order
+                    val preforder = sp.getString(SPUtils.default_order,"DESC")!!
+                    StorageUtils.setQueryOrder(preforder,this)
+                    StorageUtils.acquireImageURIs(this)
                     SetNavigation()
                 }
             } else {
