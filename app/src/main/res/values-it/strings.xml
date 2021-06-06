@@ -6,20 +6,22 @@
     <string name="delete_confirmation">Eliminare il file dalla memoria del dispositivo?</string>
     <string name="delete">Elimina</string>
 
+    <string name="app_description">
+        Questa applicazione implementa una galleria (per sole immagini) utilizzando Jetpack Compose.\nQuesta applicazione supporta le lingue Italiano e Inglese.\nQuesta applicazione supporta gestures e anche la modalità scura 😱\nGoditi il nostro lavoro 😊
+    </string>
+
 
     <!--Permissions management-->
     <string name="btn_got_it">Ho capito</string>
-
-    <string name="permission_read_external_storage_description">
-        Per fornire le funzionalità questa applicazione ha bisogno dei permessi di lettura e
-        scrittura sulla memoria esterna. Se stai vedendo questa schermata significa che i permessi
-        richiesti non sono stati concessi
-    </string>
 
     <string name="permission_read_external_storage_not_granted">
         Il permesso in lettura alla memoria esterna non è stato concesso</string>
     <string name="permission_write_external_storage_not_granted">
         Il permesso in scrittura alla memoria esterna non è stato concesso</string>
+
+    <string name="permission_external_storage_description">
+            Per fornire le funzionalità questa applicazione ha bisogno dei permessi di lettura e scrittura sulla memoria esterna.\nIl permesso in lettura è necessario per mostrare le foto.\nIl permesso in scrittura è necessario per eliminare le foto.\nSe stai vedendo questa schermata significa che il permesso in lettura non è stato concesso.
+    </string>
 
     <string name="generalTab">Generali</string>
     <string name="shootingTab">Fotografia</string>
@@ -42,7 +44,11 @@
     <string name="tagYRes">Risoluzione verticale</string>
     <string name="tagFAperture">F apertura</string>
     <string name="tagMaxFAperture">Max F apertura</string>
-    <string name="date_asceinding">Data crescente</string>
+
     <string name="date_descending">Data decrescente</string>
+    <string name="date_ascending">Data crescente</string>
+    <string name="start_using">Comincia a usarla</string>
+    <string name="share_with">Condividi con</string>
+    <string name="start_taking_photos">Comincia a fare foto</string>
 
 </resources>

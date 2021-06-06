@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.epse.gallery.R
-import com.epse.gallery.SPUtils
+import com.epse.gallery.SPStrings
 import com.epse.gallery.StorageUtils
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
@@ -70,11 +70,11 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
          */
         val radioOptions = listOf(
             stringResource(id = R.string.date_descending),
-            stringResource(id = R.string.date_asceinding)
+            stringResource(id = R.string.date_ascending)
         )
 
-        val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
-        val saved = sp.getString(SPUtils.default_order,"DESC")!!
+        val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
+        val saved = sp.getString(SPStrings.default_order,"DESC")!!
         val default = if(saved == "DESC") 0 else 1
 
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[default]) }
@@ -112,10 +112,10 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
     }
 
     private fun updateSPOrder(option:Int){
-        val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
+        val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
         val order = if(option==0) "DESC" else "ASC"
         with(sp.edit()) {
-            putString(SPUtils.default_order, order)
+            putString(SPStrings.default_order, order)
             apply()
         }
         StorageUtils.setQueryOrder(order = order,ctx)
@@ -128,8 +128,8 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
         val maxSize = 240.0F
         val range = 1.00f..maxSize
 
-        val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
-        val actualSize:Float = sp.getFloat(SPUtils.image_size_on_grid, default)
+        val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
+        val actualSize:Float = sp.getFloat(SPStrings.image_size_on_grid, default)
         var sliderPosition by remember { mutableStateOf(actualSize) }
         val size = sliderPosition
 
@@ -154,9 +154,9 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
             onValueChange = { sliderPosition = it },
             onValueChangeFinished = {
                 //Update value on shared preferences
-                val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
+                val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
                 with(sp.edit()) {
-                    putFloat(SPUtils.image_size_on_grid, size)
+                    putFloat(SPStrings.image_size_on_grid, size)
                     apply()
                 }
             }
@@ -168,8 +168,8 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
         Text(text = "Set your gallery name")
 
         //Set a placeholder with the value saved on shared preferences
-        val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
-        val actual = sp.getString(SPUtils.gallery_title, "")!!
+        val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
+        val actual = sp.getString(SPStrings.gallery_title, "")!!
 
         var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
             mutableStateOf(TextFieldValue(actual))
@@ -180,9 +180,9 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
             onValueChange = {
                 text = it
                 //Update on shared preferences
-                val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
+                val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
                 with(sp.edit()) {
-                    putString(SPUtils.gallery_title, text.text)
+                    putString(SPStrings.gallery_title, text.text)
                     apply()
                 }
             },

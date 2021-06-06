@@ -1,9 +1,9 @@
 package com.epse.gallery
 
 /**
- * This class contains all the keys used to put objects in Shared Preferences
+ * This class contains all the strings used as keys to put objects in Shared Preferences
  */
-class SPUtils {
+class SPStrings {
 
     companion object{
         const val first_time = "firstTime"

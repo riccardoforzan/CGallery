@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -27,13 +26,10 @@ import com.google.accompanist.coil.rememberCoilPainter
 class PermissionActivity : ComponentActivity() {
 
     companion object{
-        const val storagePermissionCode = 1
+        private const val storagePermissionCode = 1
     }
 
     override fun onStart(){
-
-        Log.d("DEBUG PA","Started")
-
         super.onStart()
         /**
          * This code block is executed if the permission has been denied.
@@ -41,13 +37,15 @@ class PermissionActivity : ComponentActivity() {
          * to ask for permissions.
          * If the version od Android is < 6.0 then permission must have been granted during
          * installation.
+         * Using an extra in the intent allow us to show the RationaleUI the first time the user
+         * starts the application. This is needed because shouldShowRequestPermissionRationale returns
+         * false at the first start of the application.
          */
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val permission = Manifest.permission.READ_EXTERNAL_STORAGE
             val showRequest = this.shouldShowRequestPermissionRationale(permission)
             //Check if is the first time the application is launched
-            val firstTime = intent.getBooleanExtra("firstTime",false)
+            val firstTime = intent.getBooleanExtra(SPStrings.first_time,false)
             if(showRequest || firstTime){
                 setContent { RationaleUI() }
             } else {
@@ -59,34 +57,17 @@ class PermissionActivity : ComponentActivity() {
     }
 
     /**
-     * Managed permission following guidelines
-     * https://developer.android.com/training/permissions/requesting
+     * Terminate the application on back pressed
      */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
-                                            grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if(grantResults.isNotEmpty() && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            setContent{
-                Log.d("DEBUG PTA","Launch MainActivity")
-                val ctx = LocalContext.current
-                val int = Intent(ctx, MainActivity::class.java)
-                int.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                ctx.startActivity(int)
-            }
-        } else {
-            setContent{
-                ReadStorageDenied()
-            }
-        }
-    }
-
     override fun onBackPressed() {
         super.onBackPressed()
         finishAffinity()
         finish()
     }
 
+    /**
+     * UI where it's explained what permissions are needed and for what purpose.
+     */
     @Composable
     fun RationaleUI(){
         GalleryTheme{
@@ -109,7 +90,7 @@ class PermissionActivity : ComponentActivity() {
                 Spacer(Modifier.height(16.dp))
 
                 Text(
-                    text = getString(R.string.permission_read_external_storage_description),
+                    text = getString(R.string.permission_external_storage_description),
                     color = MaterialTheme.colors.onBackground
                 )
 
@@ -140,7 +121,29 @@ class PermissionActivity : ComponentActivity() {
     }
 
     /**
-     * Screen to show when read on external storage permission has not been granted
+     * Managed permission following guidelines.
+     * https://developer.android.com/training/permissions/requesting
+     */
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+                                            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if(grantResults.isNotEmpty() && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            setContent{
+                val ctx = LocalContext.current
+                val int = Intent(ctx, MainActivity::class.java)
+                int.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                ctx.startActivity(int)
+            }
+        } else {
+            setContent{
+                ReadStorageDenied()
+            }
+        }
+    }
+
+    /**
+     * Screen to show when read on external storage permission has not been granted.
      */
     @Composable
     fun ReadStorageDenied(){

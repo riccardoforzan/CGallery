@@ -2,11 +2,9 @@ package com.epse.gallery
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -16,10 +14,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
@@ -32,7 +26,6 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     companion object{
         lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
-        var isPortrait by mutableStateOf(true)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +34,9 @@ class MainActivity : ComponentActivity() {
             if(it.resultCode == RESULT_OK) {
                 //Addressing API 29 (Android 10) tricky behaviour
                 if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                    val name = SPUtils.preferences
+                    val name = SPStrings.preferences
                     val sp = getSharedPreferences(name, Context.MODE_PRIVATE)
-                    val spKey = SPUtils.API29_delete
+                    val spKey = SPStrings.API29_delete
                     val deletedImage = sp.getString(spKey,null)
                     if(deletedImage!=null) {
                         val deletedImageUri = Uri.parse(deletedImage)
@@ -59,12 +52,11 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         //Check in shared preferences if is the first launch
-        val name = SPUtils.preferences
+        val name = SPStrings.preferences
         val sp = this.getSharedPreferences(name, Context.MODE_PRIVATE)
-        val firstTime:Boolean = !(sp.contains(SPUtils.first_time))
+        val firstTime:Boolean = !(sp.contains(SPStrings.first_time))
 
         if(firstTime){
-            Log.d("DEBUG","Launch First Time")
             setContent{
                 val ctx = LocalContext.current
                 ctx.startActivity(Intent(ctx,FirstTimeActivity::class.java))
@@ -73,21 +65,15 @@ class MainActivity : ComponentActivity() {
             //Check if permissions has changed while the app was in background
             val actualPermission = StorageUtils.hasReadStoragePermission(this)
             if (actualPermission) {
-                Log.d("DEBUG","Launch Navigation")
                 setContent {
                     //Start reading the image and cache them
-                    isPortrait =
-                        LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
-
                     //Getting preferred order
-                    val preforder = sp.getString(SPUtils.default_order,"DESC")!!
-                    StorageUtils.setQueryOrder(preforder,this)
-                    StorageUtils.acquireImageURIs(this)
+                    val order = sp.getString(SPStrings.default_order,"DESC")!!
+                    StorageUtils.setQueryOrder(order,this)
                     SetNavigation()
                 }
             } else {
                 setContent {
-                    Log.d("DEBUG","Launch PermissionActivity")
                     val ctx = LocalContext.current
                     ctx.startActivity(Intent(ctx, PermissionActivity::class.java))
                 }

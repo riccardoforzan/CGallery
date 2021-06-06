@@ -2,8 +2,11 @@ package com.epse.gallery.screen
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
@@ -22,6 +25,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.Dp
@@ -31,7 +35,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.google.accompanist.coil.rememberCoilPainter
 import kotlinx.coroutines.launch
-import androidx.core.app.ActivityCompat.startIntentSenderForResult
 import com.epse.gallery.*
 import com.epse.gallery.R
 import kotlin.math.roundToInt
@@ -224,7 +227,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
     @SuppressLint("RestrictedApi")
     private fun BackDrop() {
         val coroutineScope = rememberCoroutineScope()
-        val height:Dp = if(MainActivity.isPortrait)
+        val height:Dp = if(LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT)
             550.dp
         else
             250.dp
@@ -247,21 +250,21 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                                         .clickable(
                                             indication = null,
                                             interactionSource = remember { MutableInteractionSource() }) {
-                                            coroutineScope.launch{
-                                                val uri=Uri.parse(defaultImage)
+                                            coroutineScope.launch {
+                                                val uri = Uri.parse(defaultImage)
                                                 /**
                                                  * The way Android 10 handles deletion is a bit
                                                  * tricky: the image is deleted after two calls.
                                                  * This parameter on shared preferences is used to
                                                  * address this specific behaviour of API 29
                                                  */
-                                                if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                                                    val name = SPUtils.preferences
+                                                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                                                    val name = SPStrings.preferences
                                                     val sp = ctx.getSharedPreferences(
                                                         name,
                                                         Context.MODE_PRIVATE
                                                     )
-                                                    val spKey = SPUtils.API29_delete
+                                                    val spKey = SPStrings.API29_delete
                                                     with(sp.edit()) {
                                                         putString(spKey, uri.toString())
                                                         apply()
@@ -411,10 +414,16 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                 .padding(bottom = 10.dp, start = 25.dp)
                 .size(scale),
             onClick = {
-                coroutineScope.launch {
-                    backDropState.conceal()
-                    expandedState = false
-                    showButton = false
+                if(!StorageUtils.hasWriteStoragePermission(ctx)){
+                    //Launch a toast with error message
+                    errorMessage()
+                } else {
+                    //Start deleting
+                    coroutineScope.launch {
+                        backDropState.conceal()
+                        expandedState = false
+                        showButton = false
+                    }
                 }
             }
         ) {
@@ -454,5 +463,13 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                     .rotate(rotation)
             )
         }
+    }
+
+    fun errorMessage(){
+        Toast.makeText(
+            ctx,
+            ctx.getString(R.string.permission_write_external_storage_not_granted),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

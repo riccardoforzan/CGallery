@@ -1,6 +1,8 @@
 package com.epse.gallery.screen
 
 import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
 import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import androidx.compose.foundation.*
@@ -17,11 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.epse.gallery.MainActivity.Companion.isPortrait
 import com.epse.gallery.R
 import com.epse.gallery.StorageUtils
 import com.epse.gallery.ui.theme.GalleryTheme
@@ -58,8 +60,8 @@ class ImageDetails(private val ctx: Context,
 
     private val length: String?
     private val width: String?
-    private val GPSlatitude: String?
-    private val GPSlongitude: String?
+    private val gpslatitude: String?
+    private val gpslongitude: String?
     private val xResolution: Int
     private val yResolution: Int
     private val colorSpace: String?
@@ -74,15 +76,15 @@ class ImageDetails(private val ctx: Context,
         imageStorage = null
         imageSize = null
         while (attributesIterator.hasNext()) {
-            val E = attributesIterator.next()
-            when (E.key) {
-                "name" -> imageName = E.value
-                "path" -> imagePath = E.value
+            val entry = attributesIterator.next()
+            when (entry.key) {
+                "name" -> imageName = entry.value
+                "path" -> imagePath = entry.value
                 "size" -> {
-                    val sizeMB = round(E.value.toDouble() / 2.0.pow(20.0) * 100) / 100
+                    val sizeMB = round(entry.value.toDouble() / 2.0.pow(20.0) * 100) / 100
                     imageSize = sizeMB.toString()
                 }
-                "storage" -> imageStorage = E.value
+                "storage" -> imageStorage = entry.value
             }
         }
 
@@ -96,7 +98,7 @@ class ImageDetails(private val ctx: Context,
 
 
         if(exifDate!= null) {
-            date = SimpleDateFormat("yyyy:MM:dd hh:mm:ss", Locale.US).parse(exifDate)
+            date = SimpleDateFormat("yyyy:MM:dd hh:mm:ss", Locale.US).parse(exifDate)!!
             formattedDate = SimpleDateFormat("dd/MM/yyy hh:mm", Locale.US).format(date)
         }
         else{
@@ -110,8 +112,8 @@ class ImageDetails(private val ctx: Context,
         fAperture =  imageEI.getAttributeDouble(ExifInterface.TAG_APERTURE_VALUE, -1.0)
         fMaxAperture =  imageEI.getAttributeDouble(ExifInterface.TAG_MAX_APERTURE_VALUE, -1.0)
         model = imageEI.getAttribute(ExifInterface.TAG_MODEL)
-        GPSlatitude = imageEI.getAttribute(ExifInterface.TAG_GPS_LATITUDE)
-        GPSlongitude = imageEI.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)
+        gpslatitude = imageEI.getAttribute(ExifInterface.TAG_GPS_LATITUDE)
+        gpslongitude = imageEI.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)
         xResolution  = imageEI.getAttributeDouble(ExifInterface.TAG_X_RESOLUTION, -1.0).toInt()
         yResolution  = imageEI.getAttributeDouble(ExifInterface.TAG_Y_RESOLUTION,-1.0).toInt()
         colorSpace  = imageEI.getAttribute(ExifInterface.TAG_COLOR_SPACE)
@@ -140,10 +142,23 @@ class ImageDetails(private val ctx: Context,
 
                         actions = {
                             //IconButton that does nothing
-                            IconButton(onClick = { /**TODO: Implement the share intent*/ }) {
+                            IconButton(onClick = {
+                                val sharingIntent = Intent(Intent.ACTION_SEND)
+                                sharingIntent.type = "image/*"
+                                sharingIntent.putExtra(Intent.EXTRA_STREAM, imageURI)
+                                val title = ctx.getString(R.string.share_with)
+                                ctx.startActivities(
+                                    arrayOf(
+                                        Intent.createChooser(
+                                            sharingIntent,
+                                            title
+                                        )
+                                    )
+                                )
+                            }) {
                                 Icon(
                                     Icons.Filled.Share,
-                                    contentDescription = "Share this content"
+                                    contentDescription = stringResource(id = R.string.share_with)
                                 )
                             }
                         }
@@ -152,7 +167,7 @@ class ImageDetails(private val ctx: Context,
             )
             {
 
-                if (isPortrait) {
+                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
 
                     Column(
                         modifier = Modifier
@@ -166,26 +181,30 @@ class ImageDetails(private val ctx: Context,
                             modifier = Modifier
                                 .height(200.dp)
                                 .clip(shape = RoundedCornerShape(5.dp))
-                                .align(Alignment.CenterHorizontally),
+                                .align(Alignment.CenterHorizontally)
+                                .clickable {
+                                    //Clicking the image pops back
+                                    navController.popBackStack()
+                                },
                             //.fillMaxWidth(),
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
                         )
 
                         Spacer(Modifier.height(10.dp))
 
                         TabRow(selectedTabIndex = selectedTab) {
                             Tab(
-                                text = { Text("General") },
+                                text = { Text(stringResource(id = R.string.generalTab)) },
                                 selected = selectedTab == 0,
                                 onClick = { selectedTab = 0 }
                             )
                             Tab(
-                                text = { Text("Shooting") },
+                                text = { Text(stringResource(id = R.string.shootingTab)) },
                                 selected = selectedTab == 1,
                                 onClick = { selectedTab = 1 }
                             )
                             Tab(
-                                text = { Text("Other") },
+                                text = { Text(stringResource(id = R.string.otherTab)) },
                                 selected = selectedTab == 2,
                                 onClick = { selectedTab = 2 }
                             )
@@ -207,13 +226,17 @@ class ImageDetails(private val ctx: Context,
                             contentDescription = null,
                             modifier = Modifier
                                 .width(150.dp)
-                                .clip(shape = RoundedCornerShape(5.dp)),
+                                .clip(shape = RoundedCornerShape(5.dp))
+                                .clickable {
+                                    //Clicking the image pops back
+                                    navController.popBackStack()
+                                },
                             //.fillMaxWidth(),
                             contentScale = ContentScale.Crop
                         )
                         Spacer(Modifier.width(20.dp))
 
-                        Column() {
+                        Column {
                             TabRow(selectedTabIndex = selectedTab) {
                                 Tab(
                                     text = { Text(stringResource(R.string.generalTab)) },
@@ -284,13 +307,13 @@ class ImageDetails(private val ctx: Context,
 
             if (selected == 2) {
 
-                ShowDetailText(stringResource(R.string.tagLongitude), GPSlongitude)
-                ShowDetailText(stringResource(R.string.tagLatitude), GPSlatitude)
+                ShowDetailText(stringResource(R.string.tagLongitude), gpslongitude)
+                ShowDetailText(stringResource(R.string.tagLatitude), gpslatitude)
                 ShowDetailText(stringResource(R.string.imageSizes), "$width x $length")
                 if(xResolution> 0) ShowDetailText(stringResource(R.string.tagYRes), "$xResolution dpi" )
                 if(xResolution> 0) ShowDetailText(stringResource(R.string.tagXRes), "$yResolution dpi")
 
-                if (GPSlongitude == null && GPSlatitude == null && width == null  && length == null) {
+                if (gpslongitude == null && gpslatitude == null && width == null  && length == null) {
                     Text(
                         text= "${stringResource(R.string.otherTab)} ${stringResource(R.string.DataNotAvailable)}",
                         modifier = Modifier
@@ -304,10 +327,9 @@ class ImageDetails(private val ctx: Context,
         }
 
     @Composable
-    fun ShowDetailText(name: String, value: String?, other: String = ""  ){
+    fun ShowDetailText(name: String, value: String?, other: String = ""){
         if(value !=null){
-
-            Row(){
+            Row{
                 Text(
                     text = "$name :",
                     modifier = Modifier
@@ -327,15 +349,3 @@ class ImageDetails(private val ctx: Context,
         }
     }
 }
-
-
-
-/*
-@ExperimentalFoundationApi
-@Preview(showBackground = true)
-@Composable
-fun DisplayImagePreview() {
-    ShowDetail(Uri.parse("content://media/external/images/media/31"))
-}*/
-
-

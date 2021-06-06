@@ -90,7 +90,7 @@ class StorageUtils {
          * @return ArrayList containing image URIs
          * @throws SecurityException if the permission to read the storage has not been granted
          */
-        fun acquireImageURIs(context: Context){
+        private fun acquireImageURIs(context: Context){
 
             /**
              * Clear up the actual list
@@ -149,10 +149,6 @@ class StorageUtils {
         fun getFileData(context: Context,uri:Uri):Map<String,String>{
 
             val rv = HashMap<String,String>()
-
-            /**
-             * TODO: Alternative way to get the full path because DATA is deprecated
-             */
 
             /**
              * If the version of Android is <Q then the MediaStore.Images.Media.VOLUME_NAME

@@ -24,13 +24,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.epse.gallery.R
-import com.epse.gallery.SPUtils
+import com.epse.gallery.SPStrings
 import com.epse.gallery.StorageUtils
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
 
 /**
- * @param ctx: context of the calling activity
+ * This UI shows the grid with all the photos.
+ * It's responsive to changes made on the settings page.
+ * @param ctx context of the calling activity
+ * @param navController navController registered for the application
  */
 @ExperimentalFoundationApi
 class ImagesGrid(private val ctx: Context, private val navController: NavHostController) {
@@ -43,25 +46,30 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
     fun ShowGrid() {
         val imagesList = StorageUtils.getImageURIs()
         if (imagesList.isNotEmpty()) {
-            BottomNavigation(imagesList)
+            SetupUI(imagesList)
         } else {
             NoPhotos()
         }
     }
 
+    /**
+     * This function sets up the UI top bar and bottom bar and calls the function to print out the
+     * grid of images.
+     * @param photos list of Uri photos to feed CreateGrid function
+     */
     @Composable
-    fun BottomNavigation(photos: List<Uri>) {
+    fun SetupUI(photos: List<Uri>) {
         val fabShape = CircleShape
         val scaffoldState = rememberScaffoldState()
-        val scope = rememberCoroutineScope()
         GalleryTheme {
             Scaffold(
                 scaffoldState = scaffoldState,
                 topBar = {
                     //Getting title of the gallery from shared preferences
-                    val name = SPUtils.preferences
+                    val name = SPStrings.preferences
                     val sp = ctx.getSharedPreferences(name, Context.MODE_PRIVATE)
-                    val title:String = sp.getString(SPUtils.gallery_title,"DEFAULT")!!
+                    val defaultTitle = ctx.getString(R.string.app_name)
+                    val title:String = sp.getString(SPStrings.gallery_title,defaultTitle)!!
                     TopAppBar(title = { Text(text=title) })
                 },
                 floatingActionButtonPosition = FabPosition.Center,
@@ -75,7 +83,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                             ctx.startActivity(cameraIntent)
                         }
                     ) {
-                        Icon(Icons.Filled.Add, "Add a new photo to this library")
+                        Icon(Icons.Filled.Add, ctx.getString(R.string.start_taking_photos))
                     }
                 },
                 bottomBar = {
@@ -89,8 +97,8 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                 },
                 content = {
                     //Get size of the box for the images from the shared preferences
-                    val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
-                    val size = sp.getFloat(SPUtils.image_size_on_grid, 120.0F)
+                    val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
+                    val size = sp.getFloat(SPStrings.image_size_on_grid, 120.0F)
                     //Create grid with all the photos
                     CreateGrid(photos = photos,size.dp)
                 })
@@ -137,7 +145,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
     }
 
     /**
-     * Screen to show when read on external storage permission has not been granted
+     * Screen to show when no photos are detected
      */
     @Composable
     fun NoPhotos(){
@@ -154,7 +162,25 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                     text = ctx.getString(R.string.no_images),
                     color = MaterialTheme.colors.onBackground
                 )
-            }
+
+                Button(
+                    modifier = Modifier.padding(30.dp),
+                    colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = MaterialTheme.colors.primary,
+                        contentColor = MaterialTheme.colors.onPrimary
+                    ),
+                    onClick = {
+                            //Launch camera intent
+                            val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                            ctx.startActivity(cameraIntent)
+                    }
+                ) {
+                    Text(
+                        text = ctx.getString(R.string.start_taking_photos),
+                    )
+                }
+
+            }//column
         }
     }
 
