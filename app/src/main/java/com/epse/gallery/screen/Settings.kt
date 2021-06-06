@@ -1,6 +1,7 @@
 package com.epse.gallery.screen
 
 import android.content.Context
+import androidx.annotation.FloatRange
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -45,7 +46,7 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
                     //ChangeGalleryName()
-                    ChangeImageSize()
+                    //ChangeImageSize()
                 }
             }
         }
@@ -53,9 +54,17 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
 
     @Composable
     fun ChangeImageSize(){
-        var sliderPosition by remember { mutableStateOf(0.5f) }
-        var size = sliderPosition*120
 
+        val default = 120F
+        val maxSize = 240.0F
+        val range = 1.00f..maxSize
+
+        val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
+        val actualSize:Float = sp.getFloat(SPUtils.image_size_on_grid, default)
+        var sliderPosition by remember { mutableStateOf(actualSize) }
+        var size = sliderPosition
+
+        Text(text="Move the slider to see a preview of how big will the image be")
         Box(
             modifier = Modifier.size(size.dp)
         ) {
@@ -71,10 +80,17 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
         }
 
         Slider(
-            steps = 10,
             value = sliderPosition,
+            valueRange = range,
             onValueChange = { sliderPosition = it },
-            onValueChangeFinished = {}
+            onValueChangeFinished = {
+                //Update value on shared preferences
+                val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
+                with(sp.edit()) {
+                    putFloat(SPUtils.image_size_on_grid, size)
+                    apply()
+                }
+            }
         )
     }
 
@@ -94,9 +110,9 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
             value = text,
             onValueChange = {
                 text = it
+                //Update on shared preferences
                 val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
                 with(sp.edit()) {
-                    //Save the text value
                     putString(SPUtils.gallery_title, text.text)
                     apply()
                 }

@@ -10,6 +10,7 @@ class SPUtils {
         const val preferences = "com.epse.gallery_preferences"
         const val API29_delete = "URItoDelete_API29"
         const val gallery_title = "GalleryTitle"
+        const val image_size_on_grid = "ImageSizeOnGrid"
     }
 
 }

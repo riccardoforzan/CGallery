@@ -49,6 +49,54 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
         }
     }
 
+    @Composable
+    fun BottomNavigation(photos: List<Uri>) {
+        val fabShape = CircleShape
+        val scaffoldState = rememberScaffoldState()
+        val scope = rememberCoroutineScope()
+        GalleryTheme {
+            Scaffold(
+                scaffoldState = scaffoldState,
+                topBar = {
+                    //Getting title of the gallery from shared preferences
+                    val name = SPUtils.preferences
+                    val sp = ctx.getSharedPreferences(name, Context.MODE_PRIVATE)
+                    val title:String = sp.getString(SPUtils.gallery_title,"DEFAULT")!!
+                    TopAppBar(title = { Text(text=title) })
+                },
+                floatingActionButtonPosition = FabPosition.Center,
+                isFloatingActionButtonDocked = true,
+                floatingActionButton = {
+                    FloatingActionButton(
+                        shape = fabShape,
+                        onClick = {
+                            //Launch camera intent
+                            val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                            ctx.startActivity(cameraIntent)
+                        }
+                    ) {
+                        Icon(Icons.Filled.Add, "Add a new photo to this library")
+                    }
+                },
+                bottomBar = {
+                    BottomAppBar(cutoutShape = fabShape) {
+                        IconButton(
+                            onClick = { navController.navigate(route = Screens.Settings_ShowSettings) }
+                        ){
+                            Icon(Icons.Filled.Settings,"")
+                        }
+                    }
+                },
+                content = {
+                    //Get size of the box for the images from the shared preferences
+                    val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
+                    val size = sp.getFloat(SPUtils.image_size_on_grid, 120.0F)
+                    //Create grid with all the photos
+                    CreateGrid(photos = photos,size.dp)
+                })
+        }
+    }
+
     /**
      * This functions prints on screen a grid with photos and columns number passed as a parameter
      * @param photos ArrayList containing URIs
@@ -56,8 +104,8 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
      * https://developer.android.com/jetpack/compose/lists
      */
     @Composable
-    private fun CreateGrid(photos: List<Uri>,size:Dp = 120.dp) {
-        GalleryTheme() {
+    private fun CreateGrid(photos: List<Uri>,size:Dp) {
+        GalleryTheme {
             LazyVerticalGrid(
                 cells = GridCells.Adaptive(minSize = size),
             ) {
@@ -107,50 +155,6 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                     color = MaterialTheme.colors.onBackground
                 )
             }
-        }
-    }
-
-    @Composable
-    fun BottomNavigation(photos: List<Uri>) {
-        val fabShape = CircleShape
-        val scaffoldState = rememberScaffoldState()
-        val scope = rememberCoroutineScope()
-        GalleryTheme {
-            Scaffold(
-                scaffoldState = scaffoldState,
-                topBar = {
-                    //Getting title of the gallery from shared preferences
-                    val name = SPUtils.preferences
-                    val sp = ctx.getSharedPreferences(name, Context.MODE_PRIVATE)
-                    val title:String = sp.getString(SPUtils.gallery_title,"DEFAULT")!!
-                    TopAppBar(title = { Text(text=title) })
-                },
-                floatingActionButtonPosition = FabPosition.Center,
-                isFloatingActionButtonDocked = true,
-                floatingActionButton = {
-                    FloatingActionButton(
-                        shape = fabShape,
-                        onClick = {
-                            //Launch camera intent
-                            val cameraIntent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
-                            ctx.startActivity(cameraIntent)
-                        }
-                    ) {
-                        Icon(Icons.Filled.Add, "Add a new photo to this library")
-                    }
-                },
-                bottomBar = {
-                    BottomAppBar(cutoutShape = fabShape) {
-                        IconButton(
-                            onClick = { navController.navigate(route = Screens.Settings_ShowSettings) }
-                        ){
-                            Icon(Icons.Filled.Settings,"")
-                        }
-                    }
-                },
-                content = {
-                    CreateGrid(photos = photos)
-                })
         }
     }
 
