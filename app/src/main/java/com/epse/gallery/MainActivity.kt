@@ -46,9 +46,9 @@ class MainActivity : ComponentActivity() {
             if(it.resultCode == RESULT_OK) {
                 //Addressing API 29 (Android 10) tricky behaviour
                 if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                    val name = getString(R.string.shared_preferences)
+                    val name = SPUtils.preferences
                     val sp = getSharedPreferences(name, Context.MODE_PRIVATE)
-                    val spKey = getString(R.string.API29_delete)
+                    val spKey = SPUtils.API29_delete
                     val deletedImage = sp.getString(spKey,null)
                     if(deletedImage!=null) {
                         val deletedImageUri = Uri.parse(deletedImage)
@@ -64,9 +64,9 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         //Check in shared preferences if is the first launch
-        val name = getString(R.string.shared_preferences)
+        val name = SPUtils.preferences
         val sp = this.getSharedPreferences(name, Context.MODE_PRIVATE)
-        val firstTime:Boolean = !(sp.contains(FirstTimeActivity.FIRST_TIME))
+        val firstTime:Boolean = !(sp.contains(SPUtils.first_time))
 
         if(firstTime){
             Log.d("DEBUG","Launch First Time")

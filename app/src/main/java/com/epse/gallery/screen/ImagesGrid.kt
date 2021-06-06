@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 import com.epse.gallery.R
+import com.epse.gallery.SPUtils
 import com.epse.gallery.StorageUtils
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
@@ -118,8 +119,11 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
             Scaffold(
                 scaffoldState = scaffoldState,
                 topBar = {
-                    //TODO: Get from shared preferences the title
-                    TopAppBar(title = { Text("MyGallery") })
+                    //Getting title of the gallery from shared preferences
+                    val name = SPUtils.preferences
+                    val sp = ctx.getSharedPreferences(name, Context.MODE_PRIVATE)
+                    val title:String = sp.getString(SPUtils.gallery_title,"DEFAULT")!!
+                    TopAppBar(title = { Text(text=title) })
                 },
                 floatingActionButtonPosition = FabPosition.Center,
                 isFloatingActionButtonDocked = true,

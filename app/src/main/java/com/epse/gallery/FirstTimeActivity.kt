@@ -24,21 +24,15 @@ import com.google.accompanist.coil.rememberCoilPainter
 @ExperimentalFoundationApi
 class FirstTimeActivity : ComponentActivity() {
 
-    companion object{
-        //Used to save a value on SharedPreferences that indicates if is the first launch of the app
-        const val FIRST_TIME = "firstTime"
-    }
-
     override fun onStart() {
         super.onStart()
 
         Log.d("DEBUG FTA","Started")
 
         //Saving in shared preferences that this screen has been displayed
-        val name = getString(R.string.shared_preferences)
-        val sp = this.getSharedPreferences(name, Context.MODE_PRIVATE)
+        val sp = this.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
         with(sp.edit()) {
-            putBoolean(FIRST_TIME, false)
+            putBoolean(SPUtils.first_time, false)
             apply()
         }
         setContent{

@@ -2,8 +2,6 @@
 
     <!--App strings -->
     <string name="app_name" translatable="false">CGallery</string>
-    <string name="shared_preferences" translatable="false">com.epse.gallery_preferences</string>
-    <string name="API29_delete" translatable="false">URItoDelete_API29</string>
 
 
     <!--User UI-->

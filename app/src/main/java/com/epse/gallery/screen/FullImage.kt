@@ -29,13 +29,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
-import com.epse.gallery.MainActivity
-import com.epse.gallery.R
-import com.epse.gallery.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 import kotlinx.coroutines.launch
 import androidx.core.app.ActivityCompat.startIntentSenderForResult
-import com.epse.gallery.FirstTimeActivity
+import com.epse.gallery.*
+import com.epse.gallery.R
 import kotlin.math.roundToInt
 
 @ExperimentalFoundationApi
@@ -258,13 +256,12 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                                                  * address this specific behaviour of API 29
                                                  */
                                                 if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                                                    val name =
-                                                        ctx.getString(R.string.shared_preferences)
+                                                    val name = SPUtils.preferences
                                                     val sp = ctx.getSharedPreferences(
                                                         name,
                                                         Context.MODE_PRIVATE
                                                     )
-                                                    val spKey = ctx.getString(R.string.API29_delete)
+                                                    val spKey = SPUtils.API29_delete
                                                     with(sp.edit()) {
                                                         putString(spKey, uri.toString())
                                                         apply()
