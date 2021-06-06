@@ -42,5 +42,7 @@
     <string name="tagYRes">Risoluzione verticale</string>
     <string name="tagFAperture">F apertura</string>
     <string name="tagMaxFAperture">Max F apertura</string>
+    <string name="date_asceinding">Data crescente</string>
+    <string name="date_descending">Data decrescente</string>
 
 </resources>

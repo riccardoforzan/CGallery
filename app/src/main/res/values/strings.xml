@@ -42,4 +42,8 @@
     <string name="tagYRes">Length resolution</string>
     <string name="tagFAperture">F aperture</string>
     <string name="tagMaxFAperture">Max F aperture</string>
+
+    <!--Settings management-->
+    <string name="date_asceinding">Date ascending</string>
+    <string name="date_descending">Date descending</string>
 </resources>

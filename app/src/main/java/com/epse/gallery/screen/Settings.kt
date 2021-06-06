@@ -1,7 +1,6 @@
 package com.epse.gallery.screen
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -14,7 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.semantics.SemanticsProperties.Role
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -49,7 +48,9 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
                     //ChangeGalleryName()
+                    Divider()
                     //ChangeImageSize()
+                    Divider()
                     ChangeDefaultOrder()
                 }
             }
@@ -58,8 +59,20 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
 
     @Composable
     fun ChangeDefaultOrder(){
-        val radioOptions = listOf("ASC", "DESC")
-        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+
+        Text(text="Select the default order to show images")
+
+        /**
+         * The order of those two options must be DESCENDING, ASCENDING  because in the function
+         * saveToSharedPreferences 0 is mapped to DESC and 1 to ASC and those values are used in
+         * the query
+         */
+        val radioOptions = listOf(
+            stringResource(id = R.string.date_descending),
+            stringResource(id = R.string.date_asceinding)
+        )
+
+        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[1]) }
 
         Column(Modifier.selectableGroup()) {
             radioOptions.forEach { text ->
@@ -71,7 +84,8 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
                             selected = (text == selectedOption),
                             onClick = {
                                 onOptionSelected(text)
-                                Log.d("DEBUG Checked",selectedOption)
+                                //Update shared preferences
+                                updateSPOrder(radioOptions.indexOf(text))
                             },
                             role = androidx.compose.ui.semantics.Role.RadioButton
                         )
@@ -89,6 +103,15 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
                     )
                 }
             }
+        }
+    }
+
+    private fun updateSPOrder(option:Int){
+        val sp = ctx.getSharedPreferences(SPUtils.preferences, Context.MODE_PRIVATE)
+        val order = if(option==0) "DESC" else "ASC"
+        with(sp.edit()) {
+            putString(SPUtils.default_order, order)
+            apply()
         }
     }
 
