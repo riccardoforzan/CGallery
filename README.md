@@ -20,7 +20,7 @@ ____
 * [x] Passaggio argomenti via navController alle funzioni composable
 * [x] Progettare composable Immagine a schermo intero (con floating button)
 * [x] SnackBar per la conferma di cancellazione
-* [ ] ImagesDetails con modello grafico [Riferimento](https://developer.android.com/jetpack/compose/tutorial)
+* [x] ImagesDetails con modello grafico [Riferimento](https://developer.android.com/jetpack/compose/tutorial)
 * [x] Rendere responsive ImagesGrid
 * [x] Implementare i metodi su StroageUtils (cancellazione e recupero ulteriori files)
 * [x] Schermata di installazione per richiedere accesso in lettura alle foto del sistema
