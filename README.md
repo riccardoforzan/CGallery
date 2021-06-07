@@ -28,16 +28,16 @@ ____
 * [x] Supporto per le gesture
 
 ## TODO (Updated 5/6/2021)
-* [X] Creazione di una pagina di presentazione dell'applicazione
-* [X] Aggiungere un banner di avviso se l'eliminazione di una foto non è consentita perchè manca il permesso in lettura (Aggiunto un toast, da provare)
-* [X] Possibilità di cambiare l'ordinamento delle foto
-* [X] Portare tutte le stringhe in in res/strings.xml
-* [X] Aggiunta di una pagina di impostazioni (Nome galleria, ordinamento e dimensione immagini)
-* [X] Aggiunta del tasto per apertura della fotocamera
-* [X] Click sull'immagine da ImageDetails che riporti a FullImage
-* [ ] Adattamento dinamico delle dimensioni dei banner
+* [x] Creazione di una pagina di presentazione dell'applicazione
+* [x] Aggiungere un banner di avviso se l'eliminazione di una foto non è consentita perchè manca il permesso in lettura (Aggiunto un toast, da provare)
+* [x] Possibilità di cambiare l'ordinamento delle foto
+* [x] Portare tutte le stringhe in in res/strings.xml
+* [x] Aggiunta di una pagina di impostazioni (Nome galleria, ordinamento e dimensione immagini)
+* [x] Aggiunta del tasto per apertura della fotocamera
+* [x] Click sull'immagine da ImageDetails che riporti a FullImage
+* [x] Adattamento dinamico delle dimensioni dei banner
 * [ ] ImagesGrid aggiungere padding alla fine della schermata in modo che la barra di navigazione non copra le ultime foto
-* [X] Aggiunta del tasto per la condivisione in ImagesDetails [Documentazione](https://developer.android.com/training/sharing/send)
+* [x] Aggiunta del tasto per la condivisione in ImagesDetails [Documentazione](https://developer.android.com/training/sharing/send)
 * [ ] Aggiunta della descrizione come meta ad una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
 
 ## TEST
@@ -45,3 +45,4 @@ ____
 
 ## BUG NOTI
 * [ ] Cambiando i permessi (da non concessi a concessi) in background e premendo riptetutamente il tasto indietro mostra lo stato precedente
+* [ ] Cancellazione in Android API 29
