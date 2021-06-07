@@ -414,7 +414,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                 .padding(bottom = 10.dp, start = 25.dp)
                 .size(scale),
             onClick = {
-                if(!StorageUtils.hasWriteStoragePermission(ctx)){
+                if(!StorageUtils.hasWriteStoragePermission(ctx) && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
                     //Launch a toast with error message
                     errorMessage()
                 } else {
@@ -472,4 +472,5 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
             Toast.LENGTH_SHORT
         ).show()
     }
+
 }
