@@ -29,16 +29,16 @@ ____
 
 ## TODO (Updated 5/6/2021)
 * [x] Creazione di una pagina di presentazione dell'applicazione
-* [x] Aggiungere un banner di avviso se l'eliminazione di una foto non è consentita perchè manca il permesso in lettura (Aggiunto un toast, da provare)
+* [x] Aggiungere un banner di avviso se l'eliminazione di una foto non è consentita perchè manca il permesso in lettura
 * [x] Possibilità di cambiare l'ordinamento delle foto
 * [x] Portare tutte le stringhe in in res/strings.xml
 * [x] Aggiunta di una pagina di impostazioni (Nome galleria, ordinamento e dimensione immagini)
 * [x] Aggiunta del tasto per apertura della fotocamera
 * [x] Click sull'immagine da ImageDetails che riporti a FullImage
 * [x] Adattamento dinamico delle dimensioni dei banner
-* [ ] ImagesGrid aggiungere padding alla fine della schermata in modo che la barra di navigazione non copra le ultime foto
+* [ ] **ImagesGrid:** aggiungere padding alla fine della schermata in modo che la barra di navigazione non copra le ultime foto
 * [x] Aggiunta del tasto per la condivisione in ImagesDetails [Documentazione](https://developer.android.com/training/sharing/send)
-* [ ] Aggiunta della descrizione come meta ad una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
+* [ ] **Opzionale** Aggiunta della descrizione come meta ad una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
 
 ## TEST
 * [ ] Debug sugli stati dell'applicazione
