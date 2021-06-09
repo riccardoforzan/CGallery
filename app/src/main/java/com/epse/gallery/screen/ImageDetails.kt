@@ -106,14 +106,25 @@ class ImageDetails(private val ctx: Context,
             formattedDate = null
         }
 
+        val latlong = imageEI.getLatLong()
+        if (latlong != null){
+            gpslatitude = "${(round(latlong[0] * 1000) / 1000)} ${imageEI.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF)}"
+            gpslongitude = "${(round(latlong[1] * 1000) / 1000)} ${imageEI.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF)}"
+        }
+        else {
+            gpslatitude = null
+            gpslongitude = null
+        }
+
+
+
         focal = imageEI.getAttribute(ExifInterface.TAG_FOCAL_LENGTH)
         iso = imageEI.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
         expTime = round(imageEI.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME, -1.0) * 1000) / 1000
         fAperture =  imageEI.getAttributeDouble(ExifInterface.TAG_APERTURE_VALUE, -1.0)
         fMaxAperture =  imageEI.getAttributeDouble(ExifInterface.TAG_MAX_APERTURE_VALUE, -1.0)
         model = imageEI.getAttribute(ExifInterface.TAG_MODEL)
-        gpslatitude = imageEI.getAttribute(ExifInterface.TAG_GPS_LATITUDE)
-        gpslongitude = imageEI.getAttribute(ExifInterface.TAG_GPS_LONGITUDE)
+
         xResolution  = imageEI.getAttributeDouble(ExifInterface.TAG_X_RESOLUTION, -1.0).toInt()
         yResolution  = imageEI.getAttributeDouble(ExifInterface.TAG_Y_RESOLUTION,-1.0).toInt()
         colorSpace  = imageEI.getAttribute(ExifInterface.TAG_COLOR_SPACE)
