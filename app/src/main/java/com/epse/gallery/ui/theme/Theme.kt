@@ -30,7 +30,7 @@ private val LightColorPalette = lightColors(
     primaryVariant = Cyan,
     onPrimary = White,
 
-    secondary = Green,
+    secondary = Orange,
     onSecondary = White,
 
     surface = White,

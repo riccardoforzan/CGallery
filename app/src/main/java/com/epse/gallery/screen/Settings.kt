@@ -13,8 +13,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.epse.gallery.R
@@ -22,6 +24,7 @@ import com.epse.gallery.SPStrings
 import com.epse.gallery.StorageUtils
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
+import java.lang.Math.max
 
 class Settings(private val ctx: Context, private val navController: NavHostController) {
 
@@ -123,10 +126,16 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
 
     @Composable
     fun ChangeImageSize(){
-        //Constants for the size of the pictures
-        val default = 120F
-        val maxSize = 240.0F
-        val range = 1.00f..maxSize
+
+        //Screen attributes
+        val width = LocalConfiguration.current.screenWidthDp
+        val height = LocalConfiguration.current.screenHeightDp
+        val maxSize = (kotlin.math.min(width, height)).toFloat()
+
+        //Size for the pictures
+        val minSize:Float = ((kotlin.math.min(width,height))/10).toFloat()
+        val default:Float = maxSize/3
+        val range = minSize..maxSize
 
         val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
         val actualSize:Float = sp.getFloat(SPStrings.image_size_on_grid, default)
