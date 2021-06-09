@@ -95,12 +95,15 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                         }
                     }
                 },
-                content = {
-                    //Get size of the box for the images from the shared preferences
-                    val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
-                    val size = sp.getFloat(SPStrings.image_size_on_grid, 120.0F)
-                    //Create grid with all the photos
-                    CreateGrid(photos = photos,size.dp)
+                content = {innerPadding ->
+                        // Apply the padding globally to the whole BottomNavScreensController
+                        Box(modifier = Modifier.padding(innerPadding)) {
+                            //Get size of the box for the images from the shared preferences
+                            val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
+                            val size = sp.getFloat(SPStrings.image_size_on_grid, 120.0F)
+                            //Create grid with all the photos
+                            CreateGrid(photos = photos,size.dp)
+                        }
                 })
         }
     }
@@ -149,12 +152,12 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
      */
     @Composable
     fun NoPhotos(){
-        GalleryTheme(){
+        GalleryTheme{
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .padding(16.dp),
+                    .padding(1.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
