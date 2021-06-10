@@ -16,7 +16,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.epse.gallery.R
@@ -24,7 +23,6 @@ import com.epse.gallery.SPStrings
 import com.epse.gallery.StorageUtils
 import com.epse.gallery.ui.theme.GalleryTheme
 import com.google.accompanist.coil.rememberCoilPainter
-import java.lang.Math.max
 
 class Settings(private val ctx: Context, private val navController: NavHostController) {
 
@@ -34,7 +32,7 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text("Settings") },
+                        title = { Text(stringResource(id = R.string.settings )) },
                         navigationIcon = {
                             IconButton(onClick = {
                                 navController.popBackStack()
@@ -64,7 +62,7 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
     @Composable
     fun ChangeDefaultOrder(){
 
-        Text(text="Select the default order to show images")
+        Text(text= stringResource(id = R.string.default_image_order))
 
         /**
          * The order of those two options must be DESCENDING, ASCENDING  because in the function
@@ -142,7 +140,7 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
         var sliderPosition by remember { mutableStateOf(actualSize) }
         val size = sliderPosition
 
-        Text(text="Move the slider to see a preview of how big will the image be")
+        Text(text= stringResource(id = R.string.move_slider))
         Box(
             modifier = Modifier.size(size.dp)
         ) {
@@ -174,7 +172,7 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
 
     @Composable
     fun ChangeGalleryName() {
-        Text(text = "Set your gallery name")
+        Text(text = stringResource(id = R.string.set_gallery_name))
 
         //Set a placeholder with the value saved on shared preferences
         val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
@@ -195,10 +193,10 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
                     apply()
                 }
             },
-            label = { Text("Set your gallery name") },
+            label = { Text(text = stringResource(id = R.string.set_gallery_name))},
         )
 
-        Text("New gallery name: ${text.text}")
+        Text(stringResource(id = R.string.new_gallery_name) + ": " + text.text)
     }
 
 

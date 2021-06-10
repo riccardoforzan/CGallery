@@ -52,6 +52,11 @@
 
 
     <!--Settings management-->
+    <string name="settings">Settings</string>
+    <string name="default_image_order">Default order for images</string>
+    <string name="move_slider">Mode the slider to see a preview of elements size</string>
+    <string name="set_gallery_name">Set your gallery name</string>
+    <string name="new_gallery_name">New gallery name</string>
     <string name="date_ascending">Date ascending</string>
     <string name="date_descending">Date descending</string>
 </resources>
