@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -44,29 +45,21 @@ class ImageDetails(private val ctx: Context,
     private var imagePath: String?
     private var imageStorage: String?
     private var imageSize: String?
-
-
     private val date: Date?
     private val formattedDate : String?
-
-    private val focal: String?
+    private val focal: Double
     private val iso: String?
-    //private val flashFired: Int?
-
     private val fAperture: Double
     private val fMaxAperture: Double
     private val expTime: Double
     private val model: String?
-
-    private val length: String?
-    private val width: String?
+    private val length: Int
+    private val width: Int
     private val gpslatitude: String?
     private val gpslongitude: String?
     private val xResolution: Int
     private val yResolution: Int
     private val colorSpace: String?
-
-
 
     init {
         val fileAttributes: Map<String, String> = StorageUtils.getFileData(ctx, imageURI)
@@ -92,11 +85,7 @@ class ImageDetails(private val ctx: Context,
         val imageStream = ctx.contentResolver.openInputStream(imageURI)
         val imageEI = ExifInterface(imageStream!!)
 
-        length = imageEI.getAttribute(ExifInterface.TAG_IMAGE_LENGTH)
-        width = imageEI.getAttribute(ExifInterface.TAG_IMAGE_WIDTH)
         val exifDate = imageEI.getAttribute(ExifInterface.TAG_DATETIME)
-
-
         if(exifDate!= null) {
             date = SimpleDateFormat("yyyy:MM:dd hh:mm:ss", Locale.US).parse(exifDate)!!
             formattedDate = SimpleDateFormat("dd/MM/yyy hh:mm", Locale.US).format(date)
@@ -116,19 +105,17 @@ class ImageDetails(private val ctx: Context,
             gpslongitude = null
         }
 
-
-
-        focal = imageEI.getAttribute(ExifInterface.TAG_FOCAL_LENGTH)
+        length = imageEI.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1)
+        width = imageEI.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1)
+        focal = imageEI.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, -1.0)
         iso = imageEI.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)
         expTime = round(imageEI.getAttributeDouble(ExifInterface.TAG_EXPOSURE_TIME, -1.0) * 1000) / 1000
         fAperture =  imageEI.getAttributeDouble(ExifInterface.TAG_APERTURE_VALUE, -1.0)
         fMaxAperture =  imageEI.getAttributeDouble(ExifInterface.TAG_MAX_APERTURE_VALUE, -1.0)
         model = imageEI.getAttribute(ExifInterface.TAG_MODEL)
-
         xResolution  = imageEI.getAttributeDouble(ExifInterface.TAG_X_RESOLUTION, -1.0).toInt()
         yResolution  = imageEI.getAttributeDouble(ExifInterface.TAG_Y_RESOLUTION,-1.0).toInt()
         colorSpace  = imageEI.getAttribute(ExifInterface.TAG_COLOR_SPACE)
-
     }
 
 
@@ -152,7 +139,7 @@ class ImageDetails(private val ctx: Context,
                         },
 
                         actions = {
-                            //IconButton that does nothing
+
                             IconButton(onClick = {
                                 val sharingIntent = Intent(Intent.ACTION_SEND)
                                 sharingIntent.type = "image/*"
@@ -182,7 +169,6 @@ class ImageDetails(private val ctx: Context,
 
                     Column(
                         modifier = Modifier
-                            //.verticalScroll(scrollState)
                             .padding(5.dp)
                     ) {
 
@@ -197,7 +183,6 @@ class ImageDetails(private val ctx: Context,
                                     //Clicking the image pops back
                                     navController.popBackStack()
                                 },
-                            //.fillMaxWidth(),
                             contentScale = ContentScale.Crop,
                         )
 
@@ -228,7 +213,7 @@ class ImageDetails(private val ctx: Context,
 
                     Row(
                         modifier = Modifier
-                            //.verticalScroll(scrollState)
+
                             .padding(5.dp)
                     ) {
 
@@ -242,7 +227,7 @@ class ImageDetails(private val ctx: Context,
                                     //Clicking the image pops back
                                     navController.popBackStack()
                                 },
-                            //.fillMaxWidth(),
+
                             contentScale = ContentScale.Crop
                         )
                         Spacer(Modifier.width(20.dp))
@@ -287,31 +272,40 @@ class ImageDetails(private val ctx: Context,
 
             if (selected== 0) {
 
-                //Text("test data : $date")
                 ShowDetailText(stringResource(R.string.imageDName), imageName)
                 ShowDetailText(stringResource(R.string.imageDDate), formattedDate)
                 ShowDetailText(stringResource(R.string.imageDPath), imagePath)
                 ShowDetailText(stringResource(R.string.imageDStorage), imageStorage)
                 ShowDetailText(stringResource(R.string.imageDSizeOnDisk), imageSize ,"MB")
 
+                if (imageName==null && formattedDate==null && imagePath==null && imageStorage==null && imageSize ==null) {
+                    Text(
+                        text= stringResource(R.string.DataNotAvailable),
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray,
+                        fontStyle = FontStyle.Italic
+                    )
+                }
             }
             if (selected == 1) {
 
                 if(fAperture> 0.0)  ShowDetailText(stringResource(R.string.tagFAperture), fAperture.toString())
                 if(fMaxAperture> 0.0)  ShowDetailText(stringResource(R.string.tagMaxFAperture), fMaxAperture.toString())
-                ShowDetailText(stringResource(R.string.tagFocal), focal)
+                if(focal> 0.0) ShowDetailText(stringResource(R.string.tagFocal), focal.toString(), "mm")
                 ShowDetailText(stringResource(R.string.tagIso), iso)
-               if(expTime> 0.0) ShowDetailText(stringResource(R.string.tagExpTime), expTime.toString())
+                if(expTime> 0.0) ShowDetailText(stringResource(R.string.tagExpTime), expTime.toString(), "s")
                 ShowDetailText(stringResource(R.string.tagModel), model)
 
-
-                if (focal == null && iso == null && expTime == 0.0  && model == null) {
+                if (fAperture< 0 && fMaxAperture < 0 && focal< 0 && iso== null && expTime <0 && model==null) {
                     Text(
-                        text= "${stringResource(R.string.shootingTab)} ${stringResource(R.string.DataNotAvailable)}",
+                        text= stringResource(R.string.DataNotAvailable),
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        color = Color.Gray
+                        color = Color.Gray,
+                        fontStyle = FontStyle.Italic
                     )
                 }
             }
@@ -320,17 +314,18 @@ class ImageDetails(private val ctx: Context,
 
                 ShowDetailText(stringResource(R.string.tagLongitude), gpslongitude)
                 ShowDetailText(stringResource(R.string.tagLatitude), gpslatitude)
-                ShowDetailText(stringResource(R.string.imageSizes), "$width x $length")
+                if(length>0 && width>0 ) ShowDetailText(stringResource(R.string.imageSizes), "$width x $length")
                 if(xResolution> 0) ShowDetailText(stringResource(R.string.tagYRes), "$xResolution dpi" )
                 if(xResolution> 0) ShowDetailText(stringResource(R.string.tagXRes), "$yResolution dpi")
 
-                if (gpslongitude == null && gpslatitude == null && width == null  && length == null) {
+                if (gpslongitude == null && gpslatitude == null && width <=0  && length <=0 && xResolution <=0 && yResolution <=0) {
                     Text(
-                        text= "${stringResource(R.string.otherTab)} ${stringResource(R.string.DataNotAvailable)}",
+                        text= stringResource(R.string.DataNotAvailable),
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        color = Color.Gray
+                        color = Color.Gray,
+                        fontStyle = FontStyle.Italic
                     )
                 }
             }
