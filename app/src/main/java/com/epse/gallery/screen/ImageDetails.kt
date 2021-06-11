@@ -187,32 +187,45 @@ class ImageDetails(private val ctx: Context,
 
                         Spacer(Modifier.height(10.dp))
 
-                        TabRow(
-                            selectedTabIndex = selectedTab,
-                            modifier = Modifier.clip(shape = RoundedCornerShape(topStart = 5.dp, topEnd= 5.dp))
+                        Surface (
+                            elevation = 5.dp,
+                            modifier = Modifier.clip(
+                                shape = RoundedCornerShape(
+                                    topStart = 5.dp,
+                                    topEnd = 5.dp
+                                )
+                            )
                         )
                         {
-                            Tab(
-                                text = { Text(stringResource(id = R.string.generalTab)) },
-                                selected = selectedTab == 0,
-                                onClick = { selectedTab = 0 }
-                            )
-                            Tab(
-                                text = { Text(stringResource(id = R.string.shootingTab)) },
-                                selected = selectedTab == 1,
-                                onClick = { selectedTab = 1 }
-                            )
-                            Tab(
-                                text = { Text(stringResource(id = R.string.otherTab)) },
-                                selected = selectedTab == 2,
-                                onClick = { selectedTab = 2 }
-                            )
+                            Column {
+                                TabRow(
+                                    selectedTabIndex = selectedTab,
+                                    )
+                                {
+                                    Tab(
+                                        text = { Text(stringResource(id = R.string.generalTab)) },
+                                        selected = selectedTab == 0,
+                                        onClick = { selectedTab = 0 }
+                                    )
+                                    Tab(
+                                        text = { Text(stringResource(id = R.string.shootingTab)) },
+                                        selected = selectedTab == 1,
+                                        onClick = { selectedTab = 1 }
+                                    )
+                                    Tab(
+                                        text = { Text(stringResource(id = R.string.otherTab)) },
+                                        selected = selectedTab == 2,
+                                        onClick = { selectedTab = 2 }
+                                    )
+                                }
+                                ShowTabRowText(selectedTab)
+                            }
                         }
-                        ShowTabRowText(selectedTab)
                     }
                 }
 
                 else {
+
 
                     Row(
                         modifier = Modifier.padding(5.dp)
@@ -233,30 +246,40 @@ class ImageDetails(private val ctx: Context,
                         )
                         Spacer(Modifier.width(10.dp))
 
-                        Column {
-                            TabRow(
-                                selectedTabIndex = selectedTab,
-                                modifier = Modifier.clip(shape = RoundedCornerShape(topStart = 5.dp, topEnd= 5.dp))
+                        Surface (
+                            elevation = 5.dp,
+                            modifier = Modifier.clip(
+                                shape = RoundedCornerShape(
+                                    topStart = 5.dp,
+                                    topEnd = 5.dp
+                                )
                             )
-                            {
-                                Tab(
-                                    text = { Text(stringResource(R.string.generalTab)) },
-                                    selected = selectedTab == 0,
-                                    onClick = { selectedTab = 0 }
+                        )
+                        {
+                            Column {
+                                TabRow(
+                                    selectedTabIndex = selectedTab,
                                 )
-                                Tab(
-                                    text = { Text(stringResource(R.string.shootingTab)) },
-                                    selected = selectedTab == 1,
-                                    onClick = { selectedTab = 1 }
-                                )
-                                Tab(
-                                    text = { Text(stringResource(R.string.otherTab)) },
-                                    selected = selectedTab == 2,
-                                    onClick = { selectedTab = 2 }
-                                )
-                            }
-                            ShowTabRowText(selectedTab)
+                                {
+                                    Tab(
+                                        text = { Text(stringResource(R.string.generalTab)) },
+                                        selected = selectedTab == 0,
+                                        onClick = { selectedTab = 0 }
+                                    )
+                                    Tab(
+                                        text = { Text(stringResource(R.string.shootingTab)) },
+                                        selected = selectedTab == 1,
+                                        onClick = { selectedTab = 1 }
+                                    )
+                                    Tab(
+                                        text = { Text(stringResource(R.string.otherTab)) },
+                                        selected = selectedTab == 2,
+                                        onClick = { selectedTab = 2 }
+                                    )
+                                }
+                                ShowTabRowText(selectedTab)
 
+                            }
                         }
                     }
                 }
@@ -273,7 +296,6 @@ class ImageDetails(private val ctx: Context,
             modifier = Modifier
                 .fillMaxHeight()
                 .verticalScroll(scrollState)
-                .border(2.dp, MaterialTheme.colors.primary)
                 .padding(10.dp)
 
         ) {
@@ -282,9 +304,9 @@ class ImageDetails(private val ctx: Context,
 
                 ShowDetailText(stringResource(R.string.imageDName), imageName)
                 ShowDetailText(stringResource(R.string.imageDDate), formattedDate)
-                ShowDetailText(stringResource(R.string.imageDPath), imagePath)
                 ShowDetailText(stringResource(R.string.imageDSizeOnDisk), imageSize ,"MB")
                 ShowDetailText(stringResource(R.string.imageDStorage), imageStorage)
+                ShowDetailText(stringResource(R.string.imageDPath), imagePath)
 
 
                 if (imageName==null && formattedDate==null && imagePath==null && imageStorage==null && imageSize ==null) {
@@ -363,7 +385,7 @@ class ImageDetails(private val ctx: Context,
             }
 
             Spacer(Modifier.height(5.dp))
-            Divider(color= MaterialTheme.colors.primary)
+            Divider(color= Color.Gray)
         }
     }
 }
