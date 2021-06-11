@@ -36,7 +36,13 @@ import java.util.*
 import kotlin.math.pow
 import kotlin.math.round
 
-
+/**
+ * This class retrieve and display all details of a single image (Exif data and other information).
+ *
+ * @param ctx context of the calling activity
+ * @param navController navController registered for the application
+ * @param imageURI Uri of the image whose data has to be displayed
+ */
 @ExperimentalMaterialApi
 class ImageDetails(private val ctx: Context,
                    private val navController: NavHostController, imageURI: Uri) {
@@ -61,7 +67,10 @@ class ImageDetails(private val ctx: Context,
     private val yResolution: Int
     private val colorSpace: String?
 
+    //retrieve data and initializes member variables
     init {
+
+        //retrieve file information calling function getFileData(ctx, imageURI)
         val fileAttributes: Map<String, String> = StorageUtils.getFileData(ctx, imageURI)
         val attributesIterator = fileAttributes.iterator()
         imageName = null
@@ -81,10 +90,11 @@ class ImageDetails(private val ctx: Context,
             }
         }
 
-
+        //retrieve Exif data using ExifInterface
         val imageStream = ctx.contentResolver.openInputStream(imageURI)
         val imageEI = ExifInterface(imageStream!!)
 
+        //parses Date tag
         val exifDate = imageEI.getAttribute(ExifInterface.TAG_DATETIME)
         if(exifDate!= null) {
             date = SimpleDateFormat("yyyy:MM:dd hh:mm:ss", Locale.US).parse(exifDate)!!
@@ -95,7 +105,8 @@ class ImageDetails(private val ctx: Context,
             formattedDate = null
         }
 
-        val latlong = imageEI.getLatLong()
+        //parses GPS coordinates
+        val latlong = imageEI.latLong
         if (latlong != null){
             gpslatitude = "${(round(latlong[0] * 1000) / 1000)} ${imageEI.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF)}"
             gpslongitude = "${(round(latlong[1] * 1000) / 1000)} ${imageEI.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF)}"
@@ -105,6 +116,7 @@ class ImageDetails(private val ctx: Context,
             gpslongitude = null
         }
 
+        //gets others Exif tags
         length = imageEI.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1)
         width = imageEI.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1)
         focal = imageEI.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM, -1.0)
@@ -119,13 +131,19 @@ class ImageDetails(private val ctx: Context,
     }
 
 
+    /**
+     * This functions displays a small preview of the image followed by a table that contains the
+     * details of the image. These two element are displayed in a Column or in a Row depending on
+     * the device orientation.
+     * Image details are distributed into three tables that can be selected trough a TabRow
+     * @param imageURI Uri of the image whose data has to be displayed
+     */
     @ExperimentalFoundationApi
     @Composable
     fun ShowDetail(imageURI: Uri) {
         GalleryTheme {
 
             val paint = rememberCoilPainter(imageURI)
-
             var selectedTab by rememberSaveable { mutableStateOf(0) }
 
             Scaffold(
@@ -133,6 +151,8 @@ class ImageDetails(private val ctx: Context,
                     TopAppBar(
                         title = { Text(imageName.toString()) },
                         navigationIcon = {
+
+                            //button to return to FullImage screen
                             IconButton(onClick = { navController.popBackStack() }) {
                                 Icon(Icons.Filled.ArrowBack, contentDescription = null)
                             }
@@ -140,6 +160,7 @@ class ImageDetails(private val ctx: Context,
 
                         actions = {
 
+                            //button that allows the user to share the image
                             IconButton(onClick = {
                                 val sharingIntent = Intent(Intent.ACTION_SEND)
                                 sharingIntent.type = "image/*"
@@ -165,12 +186,14 @@ class ImageDetails(private val ctx: Context,
             )
             {
 
+                //layout to be displayed if the current device orientation is portrait
                 if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
 
                     Column(
                         modifier = Modifier.padding(5.dp)
                     ) {
 
+                        //preview of the image
                         Image(
                             painter = paint,
                             contentDescription = null,
@@ -187,6 +210,7 @@ class ImageDetails(private val ctx: Context,
 
                         Spacer(Modifier.height(10.dp))
 
+                        //table that displays the image details
                         Surface (
                             elevation = 5.dp,
                             modifier = Modifier.clip(
@@ -218,12 +242,13 @@ class ImageDetails(private val ctx: Context,
                                         onClick = { selectedTab = 2 }
                                     )
                                 }
-                                ShowTabRowText(selectedTab)
+                                ShowTabContent(selectedTab)
                             }
                         }
                     }
                 }
 
+                //layout to be displayed if the current device orientation is landscapes
                 else {
 
 
@@ -231,6 +256,7 @@ class ImageDetails(private val ctx: Context,
                         modifier = Modifier.padding(5.dp)
                     ) {
 
+                        //preview of the image
                         Image(
                             painter = paint,
                             contentDescription = null,
@@ -246,6 +272,7 @@ class ImageDetails(private val ctx: Context,
                         )
                         Spacer(Modifier.width(10.dp))
 
+                        //table that displays the image details
                         Surface (
                             elevation = 5.dp,
                             modifier = Modifier.clip(
@@ -277,7 +304,7 @@ class ImageDetails(private val ctx: Context,
                                         onClick = { selectedTab = 2 }
                                     )
                                 }
-                                ShowTabRowText(selectedTab)
+                                ShowTabContent(selectedTab)
 
                             }
                         }
@@ -287,9 +314,13 @@ class ImageDetails(private val ctx: Context,
         }
     }
 
-
+    /**
+     * This functions displays one of the three tables in witch the details are divided, depending
+     * on the current selected tab of the TabRow
+     * @param selected a numerical value that indicate the current selected tab
+     */
     @Composable
-    fun ShowTabRowText(selected:Int) {
+    fun ShowTabContent(selected:Int) {
 
         val scrollState = rememberScrollState()
         Column(
@@ -307,7 +338,6 @@ class ImageDetails(private val ctx: Context,
                 ShowDetailText(stringResource(R.string.imageDSizeOnDisk), imageSize ,"MB")
                 ShowDetailText(stringResource(R.string.imageDStorage), imageStorage)
                 ShowDetailText(stringResource(R.string.imageDPath), imagePath)
-
 
                 if (imageName==null && formattedDate==null && imagePath==null && imageStorage==null && imageSize ==null) {
                     Text(
@@ -363,6 +393,12 @@ class ImageDetails(private val ctx: Context,
         }
         }
 
+    /**
+     * This functions is used to print a single information about the image.
+     * @param name the name of the data that has to be displayed
+     * @param value the value of the data that has to be displayed
+     * @param other a String that has to be appended after value
+     */
     @Composable
     fun ShowDetailText(name: String, value: String?, other: String = ""){
         if(value !=null){
