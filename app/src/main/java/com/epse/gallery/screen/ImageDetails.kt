@@ -168,8 +168,7 @@ class ImageDetails(private val ctx: Context,
                 if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
 
                     Column(
-                        modifier = Modifier
-                            .padding(5.dp)
+                        modifier = Modifier.padding(5.dp)
                     ) {
 
                         Image(
@@ -188,7 +187,11 @@ class ImageDetails(private val ctx: Context,
 
                         Spacer(Modifier.height(10.dp))
 
-                        TabRow(selectedTabIndex = selectedTab) {
+                        TabRow(
+                            selectedTabIndex = selectedTab,
+                            modifier = Modifier.clip(shape = RoundedCornerShape(topStart = 5.dp, topEnd= 5.dp))
+                        )
+                        {
                             Tab(
                                 text = { Text(stringResource(id = R.string.generalTab)) },
                                 selected = selectedTab == 0,
@@ -212,9 +215,7 @@ class ImageDetails(private val ctx: Context,
                 else {
 
                     Row(
-                        modifier = Modifier
-
-                            .padding(5.dp)
+                        modifier = Modifier.padding(5.dp)
                     ) {
 
                         Image(
@@ -230,10 +231,14 @@ class ImageDetails(private val ctx: Context,
 
                             contentScale = ContentScale.Crop
                         )
-                        Spacer(Modifier.width(20.dp))
+                        Spacer(Modifier.width(10.dp))
 
                         Column {
-                            TabRow(selectedTabIndex = selectedTab) {
+                            TabRow(
+                                selectedTabIndex = selectedTab,
+                                modifier = Modifier.clip(shape = RoundedCornerShape(topStart = 5.dp, topEnd= 5.dp))
+                            )
+                            {
                                 Tab(
                                     text = { Text(stringResource(R.string.generalTab)) },
                                     selected = selectedTab == 0,
@@ -266,8 +271,11 @@ class ImageDetails(private val ctx: Context,
         val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
+                .fillMaxHeight()
                 .verticalScroll(scrollState)
+                .border(2.dp, MaterialTheme.colors.primary)
                 .padding(10.dp)
+
         ) {
 
             if (selected== 0) {
@@ -275,8 +283,9 @@ class ImageDetails(private val ctx: Context,
                 ShowDetailText(stringResource(R.string.imageDName), imageName)
                 ShowDetailText(stringResource(R.string.imageDDate), formattedDate)
                 ShowDetailText(stringResource(R.string.imageDPath), imagePath)
-                ShowDetailText(stringResource(R.string.imageDStorage), imageStorage)
                 ShowDetailText(stringResource(R.string.imageDSizeOnDisk), imageSize ,"MB")
+                ShowDetailText(stringResource(R.string.imageDStorage), imageStorage)
+
 
                 if (imageName==null && formattedDate==null && imagePath==null && imageStorage==null && imageSize ==null) {
                     Text(
@@ -335,6 +344,7 @@ class ImageDetails(private val ctx: Context,
     @Composable
     fun ShowDetailText(name: String, value: String?, other: String = ""){
         if(value !=null){
+           Spacer(Modifier.height(10.dp))
             Row{
                 Text(
                     text = "$name :",
@@ -351,7 +361,9 @@ class ImageDetails(private val ctx: Context,
 
                 )
             }
-            Spacer(Modifier.height(15.dp))
+
+            Spacer(Modifier.height(5.dp))
+            Divider(color= MaterialTheme.colors.primary)
         }
     }
 }
