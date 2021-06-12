@@ -4,6 +4,8 @@
   <img src="https://github.com/riccardoforzan/ProgettoSE/blob/main/app/src/main/res/mipmap-xxxhdpi/app_icon.png"/>
 </p>
 
+**[Relazione su Jetpack Compose](https://docs.google.com/document/d/12CNiPrigRfxPjgjuLXrUTwFWbnnxqSGiqUS9mBNqstQ/edit?usp=sharing)**
+
 Galleria per la visualizzazione di foto sviluppata utlizzando JetPack Compose
 
 ## Tecnologie utilizzate:
@@ -90,13 +92,3 @@ Dentro questo package sono state inserite tutte le UI che vengono usate dalla Na
 * * [x] Possibilità di cambiare il nome della galleria 
 * * [x] Possibilità di cambiare la dimensione mediante uno scroller
 * * [x] Ordinamento per data
-
-____
-
-
-## Opzionale
-* [ ] Aggiunta della descrizione come meta ad una foto [Documentazione](https://developer.android.com/reference/android/media/ExifInterface.html)
-
-## BUG NOTI
-* [ ] Cambiando i permessi (da non concessi a concessi) in background e premendo riptetutamente il tasto indietro mostra lo stato precedente
-* [ ] Cancellazione in Android API 29
