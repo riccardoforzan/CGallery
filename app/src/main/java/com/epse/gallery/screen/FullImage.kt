@@ -2,6 +2,7 @@ package com.epse.gallery.screen
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -39,6 +40,13 @@ import com.epse.gallery.*
 import com.epse.gallery.R
 import kotlin.math.roundToInt
 
+/**
+ * This UI show in full screen the image selected with the possibility of deleting the image.
+ * Scroll left or right to show next or previous image.
+ * Double tap or pinch-to-zoom to perform a zoom action.
+ * @param ctx context of the calling activity
+ * @param navController navController registered for the application
+ */
 @ExperimentalFoundationApi
 class FullImage(private val ctx: Context, private val navController: NavHostController) {
     private var backgroundColor = Color.Black
@@ -51,6 +59,10 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
     private var images = StorageUtils.getImageURIs()
     private lateinit var defaultImage: String
 
+    /**
+     * After receiving an uri, this function starts building the image referenced.
+     * @param imageURI uri of the image in full screen
+     */
     @ExperimentalMaterialApi
     @Composable
     fun ShowFullImage(imageURI: Uri) {
@@ -58,6 +70,11 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
         BackDrop()
     }
 
+    /**
+     * Build a backdrop scaffold.
+     * The back layer is built with the image in full screen.
+     * The front layer contains delete confirmation button.
+     */
     @ExperimentalMaterialApi
     @Composable
     @SuppressLint("RestrictedApi")
@@ -129,6 +146,11 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
     }
 
 
+    /**
+     * Show the image in full screen mode.
+     * In addition performs every type of gestures usable (like double tap, pinch-to-zoom, scrolling..)
+     * @param backDropState the state of the back drop scaffold: used to show or hide deleting option
+     */
     @ExperimentalMaterialApi
     @Composable
     private fun BuildFullImage(backDropState: BackdropScaffoldState) {
@@ -142,6 +164,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
             .background(backgroundColor)
             .pointerInput(Unit) {
                 detectTapGestures(
+                    //on double tap apply or reset zoom
                     onDoubleTap = {
                         if (zoom == 1f)
                             zoom = 2.5f
@@ -151,6 +174,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                             offsetY = 0f
                         }
                     },
+                    //on single tap show or hide multi action button
                     onTap = {
                         showButton = !showButton
                         expandedState = false
@@ -171,6 +195,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                     scaleY = zoom
                 )
                 .pointerInput(Unit) {
+                    //detect gesture like scrolling or pinch-to-zoom
                     detectTransformGestures(
                         onGesture = { _, pan, gestureZoom, _ ->
                             if (backDropState.isRevealed) {
@@ -178,6 +203,8 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                                 zoom = maxOf(1.0F, minOf(3.0F, newZoom))
                                 val currentTime = System.currentTimeMillis()
                                 if (zoom == 1f) {
+                                    // if the image isn't zoomed , the scroll is good perform a recomposition with the previous or the next image
+                                    // currentTime and lastChange are necessary to filter multiple scrolling action
                                     if (pan.x >= 50 && currentTime - lastChange > 200) {
                                         uri = Uri.parse(myURI)
                                         val index = images.indexOf(uri)
@@ -196,7 +223,9 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                                         lastChange = System.currentTimeMillis()
                                         myURI = images[newIndex].toString()
                                     }
-                                } else {
+                                }
+                                // this branch works when the image is zoomed and the user perform a panning gesture.
+                                else {
                                     val newOffSetX = offsetX + pan.x * zoom
                                     val maxOffSetX = (paint.intrinsicSize.width / 2) * (zoom - 1)
                                     offsetX =
@@ -228,15 +257,20 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                         }
                 )
                 Column(modifier = Modifier.align(Alignment.BottomEnd)) {
-                    MultiActionButton(Uri.parse(myURI), backDropState)
+                    MultiActionButton(backDropState)
                 }
             }
         }
     }
 
+    /**
+     * Build a multi action button.
+     * First button (list button) trigger the other three with an animation: delete button, share button and info button.
+     * @param backDropState the state of the back drop scaffold: used to show or hide deleting option
+     */
     @Composable
     @ExperimentalMaterialApi
-    private fun MultiActionButton(myURI: Uri, backDropState: BackdropScaffoldState) {
+    private fun MultiActionButton(backDropState: BackdropScaffoldState) {
         val coroutineScope = rememberCoroutineScope()
         val transition = updateTransition(targetState = expandedState)
         val rotation: Float by transition.animateFloat { state ->
@@ -275,8 +309,33 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                 .padding(bottom = 10.dp, start = 25.dp)
                 .size(scale),
             onClick = {
+                val sharingIntent = Intent(Intent.ACTION_SEND)
+                sharingIntent.type = "image/*"
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, defaultImage)
+                val title = ctx.getString(R.string.share_with)
+                ctx.startActivities(
+                    arrayOf(
+                        Intent.createChooser(
+                            sharingIntent,
+                            title
+                        )
+                    )
+                )
+            }
+        ) {
+            Icon(
+                Icons.Filled.Share,
+                contentDescription = null
+            )
+        }
+        FloatingActionButton(
+            backgroundColor = Color.White,
+            modifier = Modifier
+                .padding(bottom = 10.dp, start = 25.dp)
+                .size(scale),
+            onClick = {
                 navController.navigate(
-                    route = Screens.ImageDetails_ShowDetail + "/${myURI}"
+                    route = Screens.ImageDetails_ShowDetail + "/${defaultImage}"
                 )
             }
         ) {
@@ -302,6 +361,9 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
         }
     }
 
+    /**
+     * Perform a toast error message for absence of write permission
+     */
     fun errorMessage(){
         Toast.makeText(
             ctx,
