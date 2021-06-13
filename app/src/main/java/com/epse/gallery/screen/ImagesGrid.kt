@@ -68,8 +68,12 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                     //Getting title of the gallery from shared preferences
                     val name = SPStrings.preferences
                     val sp = ctx.getSharedPreferences(name, Context.MODE_PRIVATE)
+
                     val defaultTitle = ctx.getString(R.string.app_name)
-                    val title:String = sp.getString(SPStrings.gallery_title,defaultTitle)!!
+                    var title:String = sp.getString(SPStrings.gallery_title,defaultTitle)!!
+                    //If title is a string of 0 char set it at the default value
+                    if (title.isEmpty()) title = defaultTitle
+
                     TopAppBar(
                         title = { Text(text=title) },
                         backgroundColor = MaterialTheme.colors.primary
