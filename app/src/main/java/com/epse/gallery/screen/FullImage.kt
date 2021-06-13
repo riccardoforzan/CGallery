@@ -6,13 +6,16 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -34,10 +37,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
+import com.epse.gallery.R
+import com.epse.gallery.SPStrings
+import com.epse.gallery.StorageUtils
 import com.google.accompanist.coil.rememberCoilPainter
 import kotlinx.coroutines.launch
-import com.epse.gallery.*
-import com.epse.gallery.R
 import kotlin.math.roundToInt
 
 /**
@@ -364,7 +368,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
     /**
      * Perform a toast error message for absence of write permission
      */
-    fun errorMessage(){
+    private fun errorMessage(){
         Toast.makeText(
             ctx,
             ctx.getString(R.string.permission_write_external_storage_not_granted),

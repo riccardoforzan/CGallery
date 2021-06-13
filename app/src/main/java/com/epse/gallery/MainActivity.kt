@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -25,6 +24,7 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
+
     companion object{
         lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
     }
@@ -145,7 +145,6 @@ class MainActivity : ComponentActivity() {
                 })
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
-                //Log.d("DEB Passed URI:",imageURI.toString())
                 FullImage(this@MainActivity,navController).ShowFullImage(
                     imageURI = Uri.parse(imageURI)
                 )
@@ -158,7 +157,6 @@ class MainActivity : ComponentActivity() {
                 })
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
-                //Log.d("DEB Passed URI:",imageURI.toString())
                 ImageDetails(this@MainActivity,navController,imageURI = Uri.parse(imageURI))
                     .ShowDetail(imageURI = Uri.parse(imageURI))
             }

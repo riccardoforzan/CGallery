@@ -33,14 +33,14 @@ class PermissionActivity : ComponentActivity() {
     override fun onResume(){
         super.onResume()
 
-        val per = StorageUtils.hasReadStoragePermission(this)
-        if(per){
-
+        //If permission are granted while the app was not stopped
+        val actualPermissions = StorageUtils.hasReadStoragePermission(this)
+        if(actualPermissions){
+            //Launch the MainActivity
             val ctx = this
             val int = Intent(ctx, MainActivity::class.java)
             int.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             ctx.startActivity(int)
-
         } else {
 
             /**
