@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
+
     companion object{
         lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
     }
@@ -75,7 +76,9 @@ class MainActivity : ComponentActivity() {
             } else {
                 setContent {
                     val ctx = LocalContext.current
-                    ctx.startActivity(Intent(ctx, PermissionActivity::class.java))
+                    val int = Intent(ctx, PermissionActivity::class.java)
+                    int.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    ctx.startActivity(int)
                 }
             }
         }
@@ -142,7 +145,6 @@ class MainActivity : ComponentActivity() {
                 })
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
-                //Log.d("DEB Passed URI:",imageURI.toString())
                 FullImage(this@MainActivity,navController).ShowFullImage(
                     imageURI = Uri.parse(imageURI)
                 )
@@ -155,7 +157,6 @@ class MainActivity : ComponentActivity() {
                 })
             ){ backStackEntry ->
                 val imageURI = backStackEntry.arguments?.getString("imageURI")
-                //Log.d("DEB Passed URI:",imageURI.toString())
                 ImageDetails(this@MainActivity,navController,imageURI = Uri.parse(imageURI))
                     .ShowDetail(imageURI = Uri.parse(imageURI))
             }

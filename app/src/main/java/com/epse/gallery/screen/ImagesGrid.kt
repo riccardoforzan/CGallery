@@ -13,12 +13,12 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -83,7 +83,7 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                             ctx.startActivity(cameraIntent)
                         }
                     ) {
-                        Icon(Icons.Filled.Add, ctx.getString(R.string.start_taking_photos))
+                        Icon(painter = painterResource(id = R.drawable.photo_camera), ctx.getString(R.string.start_taking_photos))
                     }
                 },
                 bottomBar = {
