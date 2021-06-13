@@ -42,6 +42,7 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
                                 Icon(Icons.Filled.ArrowBack, contentDescription = null)
                             }
                         },
+                        backgroundColor = MaterialTheme.colors.primary
                     )
                 }
             ) {

@@ -70,7 +70,10 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                     val sp = ctx.getSharedPreferences(name, Context.MODE_PRIVATE)
                     val defaultTitle = ctx.getString(R.string.app_name)
                     val title:String = sp.getString(SPStrings.gallery_title,defaultTitle)!!
-                    TopAppBar(title = { Text(text=title) })
+                    TopAppBar(
+                        title = { Text(text=title) },
+                        backgroundColor = MaterialTheme.colors.primary
+                    )
                 },
                 floatingActionButtonPosition = FabPosition.Center,
                 isFloatingActionButtonDocked = true,
@@ -87,7 +90,10 @@ class ImagesGrid(private val ctx: Context, private val navController: NavHostCon
                     }
                 },
                 bottomBar = {
-                    BottomAppBar(cutoutShape = fabShape) {
+                    BottomAppBar(
+                        cutoutShape = fabShape,
+                        backgroundColor = MaterialTheme.colors.primary
+                    ) {
                         IconButton(
                             onClick = { navController.navigate(route = Screens.Settings_ShowSettings) }
                         ){

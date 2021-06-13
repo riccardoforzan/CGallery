@@ -157,7 +157,7 @@ class ImageDetails(private val ctx: Context,
                                 Icon(Icons.Filled.ArrowBack, contentDescription = null)
                             }
                         },
-
+                        backgroundColor = MaterialTheme.colors.primary,
                         actions = {
 
                             //button that allows the user to share the image
@@ -224,6 +224,7 @@ class ImageDetails(private val ctx: Context,
                             Column {
                                 TabRow(
                                     selectedTabIndex = selectedTab,
+                                    backgroundColor = MaterialTheme.colors.primary
                                     )
                                 {
                                     Tab(
@@ -286,6 +287,7 @@ class ImageDetails(private val ctx: Context,
                             Column {
                                 TabRow(
                                     selectedTabIndex = selectedTab,
+                                    backgroundColor = MaterialTheme.colors.primary
                                 )
                                 {
                                     Tab(
