@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -29,30 +30,42 @@ class PermissionActivity : ComponentActivity() {
         private const val storagePermissionCode = 1
     }
 
-    override fun onStart(){
-        super.onStart()
-        /**
-         * This code block is executed if the permission has been denied.
-         * If the version of Android is > 6.0 then check if the application should show an UI
-         * to ask for permissions.
-         * If the version od Android is < 6.0 then permission must have been granted during
-         * installation.
-         * Using an extra in the intent allow us to show the RationaleUI the first time the user
-         * starts the application. This is needed because shouldShowRequestPermissionRationale returns
-         * false at the first start of the application.
-         */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val permission = Manifest.permission.READ_EXTERNAL_STORAGE
-            val showRequest = this.shouldShowRequestPermissionRationale(permission)
-            //Check if is the first time the application is launched
-            val firstTime = intent.getBooleanExtra(SPStrings.first_time,false)
-            if(showRequest || firstTime){
-                setContent { RationaleUI() }
+    override fun onResume(){
+        super.onResume()
+
+        val per = StorageUtils.hasReadStoragePermission(this)
+        if(per){
+
+            val ctx = this
+            val int = Intent(ctx, MainActivity::class.java)
+            int.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            ctx.startActivity(int)
+
+        } else {
+
+            /**
+             * This code block is executed if the permission has been denied.
+             * If the version of Android is > 6.0 then check if the application should show an UI
+             * to ask for permissions.
+             * If the version od Android is < 6.0 then permission must have been granted during
+             * installation.
+             * Using an extra in the intent allow us to show the RationaleUI the first time the user
+             * starts the application. This is needed because shouldShowRequestPermissionRationale returns
+             * false at the first start of the application.
+             */
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+                val showRequest = this.shouldShowRequestPermissionRationale(permission)
+                //Check if is the first time the application is launched
+                val firstTime = intent.getBooleanExtra(SPStrings.first_time, false)
+                if (showRequest || firstTime) {
+                    setContent { RationaleUI() }
+                } else {
+                    setContent { ReadStorageDenied() }
+                }
             } else {
                 setContent { ReadStorageDenied() }
             }
-        } else {
-            setContent { ReadStorageDenied() }
         }
     }
 

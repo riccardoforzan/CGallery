@@ -253,7 +253,7 @@ class FullImage(private val ctx: Context, private val navController: NavHostCont
                         .size(30.dp)
                         .align(Alignment.TopStart)
                         .clickable {
-                            navController.navigate(route = Screens.ImagesGrid_ShowGrid)
+                            navController.popBackStack()
                         }
                 )
                 Column(modifier = Modifier.align(Alignment.BottomEnd)) {

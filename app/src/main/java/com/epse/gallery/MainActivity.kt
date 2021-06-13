@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -75,7 +76,9 @@ class MainActivity : ComponentActivity() {
             } else {
                 setContent {
                     val ctx = LocalContext.current
-                    ctx.startActivity(Intent(ctx, PermissionActivity::class.java))
+                    val int = Intent(ctx, PermissionActivity::class.java)
+                    int.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    ctx.startActivity(int)
                 }
             }
         }
