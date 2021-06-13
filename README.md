@@ -6,7 +6,8 @@
 
 **[Relazione su Jetpack Compose](https://docs.google.com/document/d/12CNiPrigRfxPjgjuLXrUTwFWbnnxqSGiqUS9mBNqstQ/edit?usp=sharing)**
 
-Galleria per la visualizzazione di foto sviluppata utlizzando JetPack Compose
+Galleria per la visualizzazione di foto sviluppata utlizzando JetPack Compose. <br>
+Durante lo sviluppo abbiamo utilizzato l'emulatore in versione API 30. <br>
 
 ## Tecnologie utilizzate:
 * [Android Jetpack - Compose](https://developer.android.com/jetpack/compose)
