@@ -104,7 +104,7 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
                 ) {
                     RadioButton(
                         selected = (text == selectedOption),
-                        onClick = null // null recommended for accessibility with screenreaders
+                        onClick = null // null recommended for accessibility with screen readers
                     )
                     Text(
                         text = text,
@@ -165,7 +165,6 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
             onValueChange = { sliderPosition = it },
             onValueChangeFinished = {
                 //Update value on shared preferences
-                val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
                 with(sp.edit()) {
                     putFloat(SPStrings.image_size_on_grid, size)
                     apply()
@@ -191,7 +190,6 @@ class Settings(private val ctx: Context, private val navController: NavHostContr
             onValueChange = {
                 text = it
                 //Update on shared preferences
-                val sp = ctx.getSharedPreferences(SPStrings.preferences, Context.MODE_PRIVATE)
                 with(sp.edit()) {
                     putString(SPStrings.gallery_title, text.text)
                     apply()
